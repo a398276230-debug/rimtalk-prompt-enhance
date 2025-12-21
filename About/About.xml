@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ModMetaData>
+  <name>RimTalk - Enhanced Prompt</name>
+  <author>ruaji</author>
+  <packageId>ruaji.rimtalkpromptenhance</packageId>
+  <description>Enhances RimTalk's health information display with severity levels, detailed descriptions, and pain indicators.
+
+Features:
+- Shows severity percentages for health conditions
+- Displays detailed descriptions of injuries and diseases
+- Indicates pain levels and lethality
+- Intelligent information scaling based on context level
+
+Requires RimTalk to be installed and loaded before this mod.</description>
+  <supportedVersions>
+    <li>1.6</li>
+  </supportedVersions>
+  <modDependencies>
+    <li>
+      <packageId>cj.rimtalk</packageId>
+      <displayName>RimTalk</displayName>
+      <steamWorkshopUrl>steam://url/CommunityFilePage/3259020985</steamWorkshopUrl>
+    </li>
+  </modDependencies>
+  <loadAfter>
+    <li>cj.rimtalk</li>
+  </loadAfter>
+</ModMetaData>

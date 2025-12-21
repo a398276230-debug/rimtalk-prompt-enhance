@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+  <MainButtonDef>
+    <defName>RimTalk_Announcements</defName>
+    <label>通告</label>
+    <description>殖民地通告板，用于向AI发布任务和信息。</description>
+    <tabWindowClass>RimTalkHealthEnhance.MainTabWindow_Announcement</tabWindowClass>
+    <order>99</order>
+  </MainButtonDef>
+</Defs>

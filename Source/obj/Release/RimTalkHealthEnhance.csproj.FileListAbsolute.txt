@@ -1,0 +1,8 @@
+D:\steam\steamapps\common\RimWorld\Mods\rimtalk prompt enhance\Source\obj\Release\RimTalkHealthEnhance.csproj.AssemblyReference.cache
+D:\steam\steamapps\common\RimWorld\Mods\rimtalk prompt enhance\Source\obj\Release\RimTalkHealthEnhance.GeneratedMSBuildEditorConfig.editorconfig
+D:\steam\steamapps\common\RimWorld\Mods\rimtalk prompt enhance\Source\obj\Release\RimTalkHealthEnhance.AssemblyInfoInputs.cache
+D:\steam\steamapps\common\RimWorld\Mods\rimtalk prompt enhance\Source\obj\Release\RimTalkHealthEnhance.AssemblyInfo.cs
+D:\steam\steamapps\common\RimWorld\Mods\rimtalk prompt enhance\Source\obj\Release\RimTalkHealthEnhance.csproj.CoreCompileInputs.cache
+D:\steam\steamapps\common\RimWorld\Mods\rimtalk prompt enhance\1.6\Assemblies\RimTalkHealthEnhance.dll
+D:\steam\steamapps\common\RimWorld\Mods\rimtalk prompt enhance\Source\obj\Release\RimTalkH.4467BE25.Up2Date
+D:\steam\steamapps\common\RimWorld\Mods\rimtalk prompt enhance\Source\obj\Release\RimTalkHealthEnhance.dll
