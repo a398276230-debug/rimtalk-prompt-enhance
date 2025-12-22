@@ -27,7 +27,7 @@ namespace RimTalkHealthEnhance
             var sb = new StringBuilder();
             sb.AppendLine("=== Factions on Map ===");
             
-            // 按关系分组
+            // 按游戏实际关系分组
             var allies = new List<FactionInfo>();
             var neutrals = new List<FactionInfo>();
             var enemies = new List<FactionInfo>();
@@ -40,11 +40,14 @@ namespace RimTalkHealthEnhance
                 if (settings.FilterByGoodwill && goodwill < settings.MinGoodwillToShow)
                     continue;
                 
-                if (goodwill >= 75)
+                // 使用游戏的实际关系状态判断
+                FactionRelationKind relationKind = info.Faction.RelationKindWith(Faction.OfPlayer);
+                
+                if (relationKind == FactionRelationKind.Ally)
                     allies.Add(info);
-                else if (goodwill <= -75 || info.Faction.HostileTo(Faction.OfPlayer))
+                else if (relationKind == FactionRelationKind.Hostile)
                     enemies.Add(info);
-                else
+                else // FactionRelationKind.Neutral
                     neutrals.Add(info);
             }
             
@@ -71,7 +74,7 @@ namespace RimTalkHealthEnhance
             // 输出敌对派系
             if (enemies.Any())
             {
-                sb.AppendLine("Enemies:");
+                sb.AppendLine("Hostile:");
                 foreach (var info in enemies.OrderBy(f => f.Faction.GoodwillWith(Faction.OfPlayer)))
                 {
                     sb.AppendLine(FormatFactionInfo(info));
@@ -96,8 +99,7 @@ namespace RimTalkHealthEnhance
                     factionDict[pawn.Faction] = new FactionInfo
                     {
                         Faction = pawn.Faction,
-                        PawnCount = 0,
-                        IsHostile = pawn.HostileTo(Faction.OfPlayer)
+                        PawnCount = 0
                     };
                 }
                 
@@ -115,11 +117,12 @@ namespace RimTalkHealthEnhance
             // 基本信息：派系名称
             sb.Append($"- {info.Faction.Name}");
             
-            // 好感度
+            // 好感度和关系状态
             if (settings.ShowFactionGoodwill)
             {
                 int goodwill = info.Faction.GoodwillWith(Faction.OfPlayer);
-                string relation = GetRelationLabel(goodwill, info.IsHostile);
+                FactionRelationKind relationKind = info.Faction.RelationKindWith(Faction.OfPlayer);
+                string relation = GetRelationLabel(relationKind);
                 sb.Append($" ({relation}, Goodwill: {goodwill})");
             }
             
@@ -132,20 +135,24 @@ namespace RimTalkHealthEnhance
             return sb.ToString();
         }
         
-        private static string GetRelationLabel(int goodwill, bool isHostile)
+        private static string GetRelationLabel(FactionRelationKind relationKind)
         {
-            if (isHostile || goodwill < -75) return "Enemy";
-            if (goodwill >= 75) return "Ally";
-            if (goodwill >= 25) return "Friendly";
-            if (goodwill >= -25) return "Neutral";
-            return "Unfriendly";
+            switch (relationKind)
+            {
+                case FactionRelationKind.Ally:
+                    return "Ally";
+                case FactionRelationKind.Hostile:
+                    return "Hostile";
+                case FactionRelationKind.Neutral:
+                default:
+                    return "Neutral";
+            }
         }
         
         private class FactionInfo
         {
             public Faction Faction;
             public int PawnCount;
-            public bool IsHostile;
         }
     }
 }
