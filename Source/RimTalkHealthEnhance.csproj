@@ -14,7 +14,7 @@
 
   <ItemGroup>
     <Reference Include="RimTalk">
-      <HintPath>..\..\..\..\..\workshop\content\294100\3551203752\1.6\Assemblies\RimTalk.dll</HintPath>
+      <HintPath>..\..\..\workshop\content\294100\3551203752\1.6\Assemblies\RimTalk.dll</HintPath>
       <Private>false</Private>
     </Reference>
     <Reference Include="Newtonsoft.Json">

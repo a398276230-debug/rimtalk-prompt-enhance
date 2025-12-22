@@ -13,6 +13,13 @@ namespace RimTalkHealthEnhance
             var settings = RimTalkHealthEnhanceMod.Settings;
             if (!settings.ShowColonyAnnouncements) return null;
             
+            // 检查当前地图是否属于玩家殖民地
+            var map = Find.CurrentMap;
+            if (map == null || !map.IsPlayerHome)
+            {
+                return null;
+            }
+            
             var manager = Current.Game.GetComponent<ColonyAnnouncementManager>();
             if (manager?.Data == null) return null;
             

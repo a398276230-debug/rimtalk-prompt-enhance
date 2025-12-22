@@ -27,6 +27,13 @@ namespace RimTalkHealthEnhance
                     return snapshot;
                 }
                 
+                // 检查当前地图是否属于玩家殖民地
+                if (!map.IsPlayerHome)
+                {
+                    Log.Warning("[RimTalk Enhance] Skipping snapshot - not on player home map.");
+                    return snapshot;
+                }
+                
                 // 统计建筑
                 foreach (var building in map.listerBuildings.allBuildingsColonist)
                 {

@@ -59,9 +59,20 @@ namespace RimTalkHealthEnhance
 
             if (currentDay > Data.LastSynthesisDay)
             {
-                Log.Message($"[RimTalk Enhance] Triggering daily synthesis. Day: {currentDay}, Last: {Data.LastSynthesisDay}");
-                Data.LastSynthesisDay = currentDay;
-                _ = MidnightSynthesisService.PerformSynthesis();
+                // 检查当前地图是否属于玩家殖民地
+                var map = Find.CurrentMap;
+                if (map != null && map.IsPlayerHome)
+                {
+                    Log.Message($"[RimTalk Enhance] Triggering daily synthesis. Day: {currentDay}, Last: {Data.LastSynthesisDay}");
+                    Data.LastSynthesisDay = currentDay;
+                    _ = MidnightSynthesisService.PerformSynthesis();
+                }
+                else
+                {
+                    // 如果不在主殖民地，仍然更新日期，避免重复触发
+                    Data.LastSynthesisDay = currentDay;
+                    Log.Message($"[RimTalk Enhance] Skipping daily synthesis - not on player home map. Day: {currentDay}");
+                }
             }
         }
 

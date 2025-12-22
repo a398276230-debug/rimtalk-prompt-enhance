@@ -1,6 +1,6 @@
 is_global = true
 build_property.RootNamespace = RimTalkHealthEnhance
-build_property.ProjectDir = D:\steam\steamapps\common\RimWorld\Mods\rimtalk-prompt-enhance\Source\
+build_property.ProjectDir = D:\steam\steamapps\common\rimtalk-prompt-enhance\Source\
 build_property.EnableComHosting = 
 build_property.EnableGeneratedComInterfaceComImportInterop = 
 build_property.CsWinRTUseWindowsUIXamlProjections = false
