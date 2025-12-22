@@ -88,6 +88,21 @@ namespace RimTalkHealthEnhance
 
             foreach (var announcement in Data.Announcements)
             {
+                // 修复旧事件：如果是自动捕获的事件但没有设置过期时间，根据当前设置补充
+                if (announcement.IsAutoCaptured && 
+                    announcement.Status == AnnouncementStatus.Active && 
+                    announcement.DeadlineTicks <= 0)
+                {
+                    if (announcement.Category == AnnouncementCategory.Quest && settings.AutoCompleteDays > 0)
+                    {
+                        announcement.DeadlineTicks = announcement.CreatedTick + (settings.AutoCompleteDays * 60000);
+                    }
+                    else if (announcement.Category != AnnouncementCategory.Quest && settings.EventExpireDays > 0)
+                    {
+                        announcement.DeadlineTicks = announcement.CreatedTick + (int)(settings.EventExpireDays * 60000);
+                    }
+                }
+                
                 // 检查自动完成 (时间)
                 if (announcement.Status == AnnouncementStatus.Active && 
                     announcement.DeadlineTicks > 0 && 
