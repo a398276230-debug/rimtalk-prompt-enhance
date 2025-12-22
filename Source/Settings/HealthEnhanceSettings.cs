@@ -54,6 +54,14 @@ namespace RimTalkHealthEnhance
         public float CompletedTaskShowDays = 1f;      // 已完成任务保留显示天数
         public int MaxOverviewLength = 500;           // 概况文本最大长度
 
+        // === Faction Relations Settings ===
+        public bool ShowFactionRelations = true;
+        public bool ShowFactionGoodwill = true;
+        public bool ShowFactionMemberCount = true;
+        public bool ShowNeutralFactions = true;
+        public bool FilterByGoodwill = false;
+        public int MinGoodwillToShow = -100;
+
         // === Auto Event Capture Settings ===
         public bool EnableAutoEventCapture = true;
         public bool AutoCaptureQuests = true;
@@ -87,6 +95,7 @@ namespace RimTalkHealthEnhance
         // === Scroll Positions ===
         private Vector2 _healthScrollPosition = Vector2.zero;
         private Vector2 _itemScrollPosition = Vector2.zero;
+        private Vector2 _factionScrollPosition = Vector2.zero;
         private Vector2 _announcementScrollPosition = Vector2.zero;
         private Vector2 _eventScrollPosition = Vector2.zero;
         private Vector2 _aiScrollPosition = Vector2.zero;
@@ -119,6 +128,14 @@ namespace RimTalkHealthEnhance
             Scribe_Values.Look(ref ShowInteractionDesc, "showInteractionDesc", true);
             Scribe_Values.Look(ref OnlyShowImportantBuildings, "onlyShowImportantBuildings", true);
             Scribe_Values.Look(ref InteractionMaxDescLength, "interactionMaxDescLength", 100);
+
+            // Faction Relations
+            Scribe_Values.Look(ref ShowFactionRelations, "showFactionRelations", true);
+            Scribe_Values.Look(ref ShowFactionGoodwill, "showFactionGoodwill", true);
+            Scribe_Values.Look(ref ShowFactionMemberCount, "showFactionMemberCount", true);
+            Scribe_Values.Look(ref ShowNeutralFactions, "showNeutralFactions", true);
+            Scribe_Values.Look(ref FilterByGoodwill, "filterByGoodwill", false);
+            Scribe_Values.Look(ref MinGoodwillToShow, "minGoodwillToShow", -100);
 
             // Announcements
             Scribe_Values.Look(ref ShowColonyAnnouncements, "showColonyAnnouncements", true);
@@ -300,6 +317,72 @@ namespace RimTalkHealthEnhance
             Widgets.Label(listing.GetRect(40f), 
                 "提示：品质等级从低到高为：Awful < Poor < Normal < Good < Excellent < Masterwork < Legendary\n" +
                 "建议设置为Normal或Good以平衡信息量和token消耗");
+            Text.Font = GameFont.Small;
+
+            listing.End();
+            Widgets.EndScrollView();
+        }
+
+        public void DoFactionSettingsWindowContents(Rect inRect)
+        {
+            Rect viewRect = new Rect(0f, 0f, inRect.width - 16f, 600f);
+            Widgets.BeginScrollView(inRect, ref _factionScrollPosition, viewRect);
+
+            Listing_Standard listing = new Listing_Standard();
+            listing.Begin(viewRect);
+
+            Text.Font = GameFont.Medium;
+            Widgets.Label(listing.GetRect(30f), "派系关系设置");
+            Text.Font = GameFont.Small;
+            listing.Gap();
+
+            listing.CheckboxLabeled("启用派系关系显示", ref ShowFactionRelations, 
+                "显示当前地图上存在的其他派系及其与玩家的关系");
+            
+            if (ShowFactionRelations)
+            {
+                listing.Gap();
+                
+                listing.CheckboxLabeled("显示好感度数值", ref ShowFactionGoodwill, 
+                    "显示每个派系对玩家的好感度（-100 到 100）");
+                
+                listing.CheckboxLabeled("显示派系成员数量", ref ShowFactionMemberCount, 
+                    "显示该派系在当前地图上有多少成员");
+                
+                listing.CheckboxLabeled("显示中立派系", ref ShowNeutralFactions, 
+                    "包含中立派系（好感度在 -75 到 75 之间）");
+                
+                listing.Gap();
+                listing.GapLine();
+                listing.Gap();
+                
+                listing.CheckboxLabeled("按好感度过滤", ref FilterByGoodwill, 
+                    "只显示好感度高于指定阈值的派系");
+                
+                if (FilterByGoodwill)
+                {
+                    Widgets.Label(listing.GetRect(22f), $"  └─ 最低好感度: {MinGoodwillToShow}");
+                    MinGoodwillToShow = (int)listing.Slider(MinGoodwillToShow, -100, 100);
+                    
+                    Text.Font = GameFont.Tiny;
+                    GUI.color = Color.gray;
+                    Widgets.Label(listing.GetRect(18f), $"      只显示好感度 ≥ {MinGoodwillToShow} 的派系");
+                    GUI.color = Color.white;
+                    Text.Font = GameFont.Small;
+                }
+            }
+
+            listing.Gap();
+            listing.GapLine();
+            listing.Gap();
+
+            Text.Font = GameFont.Tiny;
+            Widgets.Label(listing.GetRect(80f), 
+                "说明：\n" +
+                "1. 此功能只显示当前地图上实际存在的派系（有成员在场）。\n" +
+                "2. 派系关系分类：盟友(≥75)、友好(25-74)、中立(-25-24)、不友好(-74--26)、敌对(≤-75)。\n" +
+                "3. 信息会自动注入到 AI 的上下文中，让 AI 了解当前的外交状况。\n" +
+                "4. 当地图上没有其他派系时，不会显示任何信息。");
             Text.Font = GameFont.Small;
 
             listing.End();

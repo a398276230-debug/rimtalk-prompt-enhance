@@ -25,7 +25,14 @@ namespace RimTalkHealthEnhance
             
             List<string> parts = new List<string>();
             
-            // === 1. 自由文本概况 ===
+            // === 1. 派系关系 ===
+            string factionContext = FactionInfoBuilder.BuildFactionContext();
+            if (!string.IsNullOrEmpty(factionContext))
+            {
+                parts.Add(factionContext);
+            }
+
+            // === 2. 自由文本概况 ===
             if (settings.ShowColonyOverview && !string.IsNullOrWhiteSpace(manager.Data.ColonyOverview))
             {
                 string overview = manager.Data.ColonyOverview;
@@ -36,7 +43,7 @@ namespace RimTalkHealthEnhance
                 parts.Add($"Colony Overview:\n{overview}");
             }
 
-            // === 1.5 AI 史官总结 ===
+            // === 3. AI 史官总结 ===
             if (settings.EnableAISynthesis && settings.InjectSnapshotToContext && manager.Data.DailySnapshots.Count > 0)
             {
                 // 获取最近 N 天的快照
@@ -60,7 +67,7 @@ namespace RimTalkHealthEnhance
                 }
             }
             
-            // === 2. 结构化公告 ===
+            // === 4. 结构化公告 ===
             if (settings.ShowStructuredTasks)
             {
                 var activeAnnouncements = manager.Data.Announcements
