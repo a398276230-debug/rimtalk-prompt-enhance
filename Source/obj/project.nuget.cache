@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "3A0yfNXeHtw=",
+  "dgSpecHash": "+pGJZR/D8Dk=",
   "success": true,
-  "projectFilePath": "D:\\steam\\steamapps\\common\\RimWorld\\Mods\\rimtalk prompt enhance\\Source\\RimTalkHealthEnhance.csproj",
+  "projectFilePath": "D:\\steam\\steamapps\\common\\RimWorld\\Mods\\rimtalk-prompt-enhance\\Source\\RimTalkHealthEnhance.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\39827\\.nuget\\packages\\krafs.rimworld.ref\\1.5.4104\\krafs.rimworld.ref.1.5.4104.nupkg.sha512",
     "C:\\Users\\39827\\.nuget\\packages\\lib.harmony\\2.3.3\\lib.harmony.2.3.3.nupkg.sha512"

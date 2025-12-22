@@ -12,13 +12,28 @@ namespace RimTalkHealthEnhance
         // === 结构化公告列表 ===
         public List<ColonyAnnouncement> Announcements = new List<ColonyAnnouncement>();
         
+        // === 每日快照历史 ===
+        public List<DailySnapshot> DailySnapshots = new List<DailySnapshot>();
+        public int MaxSnapshotDays = 7;  // 保留最近 7 天
+        
+        // === 临时缓存（当日） ===
+        public List<string> TodayActionLogs = new List<string>();
+        public ColonySnapshot LastSnapshot;  // 昨日快照
+        public int LastSynthesisDay = -1;    // 上次总结的天数
+        
         public void ExposeData()
         {
             Scribe_Values.Look(ref ColonyOverview, "colonyOverview", "");
             Scribe_Collections.Look(ref Announcements, "announcements", LookMode.Deep);
+            Scribe_Collections.Look(ref DailySnapshots, "dailySnapshots", LookMode.Deep);
+            Scribe_Values.Look(ref MaxSnapshotDays, "maxSnapshotDays", 7);
+            Scribe_Collections.Look(ref TodayActionLogs, "todayActions", LookMode.Value);
+            Scribe_Deep.Look(ref LastSnapshot, "lastSnapshot");
+            Scribe_Values.Look(ref LastSynthesisDay, "lastSynthesisDay", -1);
             
-            if (Announcements == null)
-                Announcements = new List<ColonyAnnouncement>();
+            if (Announcements == null) Announcements = new List<ColonyAnnouncement>();
+            if (DailySnapshots == null) DailySnapshots = new List<DailySnapshot>();
+            if (TodayActionLogs == null) TodayActionLogs = new List<string>();
         }
     }
 

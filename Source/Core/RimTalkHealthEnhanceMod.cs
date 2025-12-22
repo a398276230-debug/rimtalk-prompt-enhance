@@ -53,7 +53,8 @@ namespace RimTalkHealthEnhance
                 new TabRecord("健康信息", () => _tabIndex = 0, _tabIndex == 0),
                 new TabRecord("物品描述", () => _tabIndex = 1, _tabIndex == 1),
                 new TabRecord("通告系统", () => _tabIndex = 2, _tabIndex == 2),
-                new TabRecord("自动捕获", () => _tabIndex = 3, _tabIndex == 3)
+                new TabRecord("自动捕获", () => _tabIndex = 3, _tabIndex == 3),
+                new TabRecord("AI 史官", () => _tabIndex = 4, _tabIndex == 4)
             };
             
             TabDrawer.DrawTabs(tabRect, tabs);
@@ -70,9 +71,13 @@ namespace RimTalkHealthEnhance
             {
                 Settings.DoAnnouncementSettingsWindowContents(contentRect);
             }
-            else
+            else if (_tabIndex == 3)
             {
                 Settings.DoEventSettingsWindowContents(contentRect);
+            }
+            else
+            {
+                Settings.DoAISettingsWindowContents(contentRect);
             }
             
             base.DoSettingsWindowContents(inRect);

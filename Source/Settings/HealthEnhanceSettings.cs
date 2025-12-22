@@ -7,6 +7,14 @@ using RimWorld;
 
 namespace RimTalkHealthEnhance
 {
+    public enum AIProvider
+    {
+        OpenAI,
+        Google, // Gemini
+        DeepSeek,
+        Custom // OpenAI Compatible
+    }
+
     /// <summary>
     /// Settings for RimTalk Enhancement (Health & Items)
     /// </summary>
@@ -56,6 +64,19 @@ namespace RimTalkHealthEnhance
         public bool MergeDuplicateEvents = true;      // 合并重复事件
         public bool AutoArchiveCompleted = false;     // 自动归档已完成的事件
         
+        // === AI Synthesis Settings ===
+        public bool EnableAISynthesis = false;
+        public bool InjectSnapshotToContext = true;      // 是否将快照注入到 AI context
+        public float SnapshotInjectDays = 1.0f;          // 注入多少天的快照（0.5-7天）
+        public AIProvider SynthesisProvider = AIProvider.OpenAI;
+        public string CustomApiKey = "";
+        public string CustomApiUrl = "";
+        public string CustomModelName = "gpt-4o-mini";
+        
+        // 自定义提示词
+        public string CustomOverviewSummaryPrompt = "";  // 概况总结提示词
+        public string CustomDailySynthesisPrompt = "";   // 每日快照提示词
+        
         // 存储每种事件类型的启用状态 (TypeName -> Enabled)
         public Dictionary<string, bool> EnabledEventTypes = new Dictionary<string, bool>();
         
@@ -67,6 +88,7 @@ namespace RimTalkHealthEnhance
         private Vector2 _itemScrollPosition = Vector2.zero;
         private Vector2 _announcementScrollPosition = Vector2.zero;
         private Vector2 _eventScrollPosition = Vector2.zero;
+        private Vector2 _aiScrollPosition = Vector2.zero;
 
         public override void ExposeData()
         {
@@ -114,6 +136,16 @@ namespace RimTalkHealthEnhance
             Scribe_Values.Look(ref EventExpireDays, "eventExpireDays", 1f);
             Scribe_Values.Look(ref MergeDuplicateEvents, "mergeDuplicateEvents", true);
             Scribe_Values.Look(ref AutoArchiveCompleted, "autoArchiveCompleted", false);
+            
+            Scribe_Values.Look(ref EnableAISynthesis, "enableAISynthesis", false);
+            Scribe_Values.Look(ref InjectSnapshotToContext, "injectSnapshotToContext", true);
+            Scribe_Values.Look(ref SnapshotInjectDays, "snapshotInjectDays", 1.0f);
+            Scribe_Values.Look(ref SynthesisProvider, "synthesisProvider", AIProvider.OpenAI);
+            Scribe_Values.Look(ref CustomApiKey, "customApiKey", "");
+            Scribe_Values.Look(ref CustomApiUrl, "customApiUrl", "");
+            Scribe_Values.Look(ref CustomModelName, "customModelName", "gpt-4o-mini");
+            Scribe_Values.Look(ref CustomOverviewSummaryPrompt, "customOverviewSummaryPrompt", "");
+            Scribe_Values.Look(ref CustomDailySynthesisPrompt, "customDailySynthesisPrompt", "");
             
             Scribe_Collections.Look(ref EnabledEventTypes, "enabledEventTypes", LookMode.Value, LookMode.Value);
             if (EnabledEventTypes == null)
@@ -322,6 +354,128 @@ namespace RimTalkHealthEnhance
 
             listing.End();
             Widgets.EndScrollView();
+        }
+
+        public void DoAISettingsWindowContents(Rect inRect)
+        {
+            Rect viewRect = new Rect(0f, 0f, inRect.width - 16f, 600f);
+            Widgets.BeginScrollView(inRect, ref _aiScrollPosition, viewRect);
+
+            Listing_Standard listing = new Listing_Standard();
+            listing.Begin(viewRect);
+
+            Text.Font = GameFont.Medium;
+            Widgets.Label(listing.GetRect(30f), "AI 史官设置");
+            Text.Font = GameFont.Small;
+            listing.Gap();
+
+            listing.CheckboxLabeled("启用 AI 每日总结", ref EnableAISynthesis, "每日 0 点自动生成殖民地发展快照和总结");
+            
+            if (EnableAISynthesis)
+            {
+                listing.Gap();
+                
+                // Provider Selection
+                Rect providerRect = listing.GetRect(30f);
+                Widgets.Label(providerRect.LeftHalf(), "AI 提供商:");
+                if (Widgets.ButtonText(providerRect.RightHalf(), SynthesisProvider.ToString()))
+                {
+                    List<FloatMenuOption> options = new List<FloatMenuOption>
+                    {
+                        new FloatMenuOption("OpenAI", () => { SynthesisProvider = AIProvider.OpenAI; CustomModelName = "gpt-4o-mini"; }),
+                        new FloatMenuOption("Google (Gemini)", () => { SynthesisProvider = AIProvider.Google; CustomModelName = "gemini-pro"; }),
+                        new FloatMenuOption("DeepSeek", () => { SynthesisProvider = AIProvider.DeepSeek; CustomModelName = "deepseek-chat"; }),
+                        new FloatMenuOption("Custom (OpenAI Compatible)", () => SynthesisProvider = AIProvider.Custom)
+                    };
+                    Find.WindowStack.Add(new FloatMenu(options));
+                }
+                listing.Gap();
+                
+                Widgets.Label(listing.GetRect(24f), "API 配置");
+                
+                Widgets.Label(listing.GetRect(22f), "API Key:");
+                CustomApiKey = listing.TextEntry(CustomApiKey);
+                
+                string defaultUrl = GetDefaultUrl(SynthesisProvider);
+                
+                Widgets.Label(listing.GetRect(22f), $"API URL (可选，默认 {SynthesisProvider}):");
+                CustomApiUrl = listing.TextEntry(CustomApiUrl);
+                if (string.IsNullOrEmpty(CustomApiUrl) && !string.IsNullOrEmpty(defaultUrl))
+                {
+                    Text.Font = GameFont.Tiny;
+                    GUI.color = Color.gray;
+                    Widgets.Label(listing.GetRect(18f), $"默认: {defaultUrl}");
+                    GUI.color = Color.white;
+                    Text.Font = GameFont.Small;
+                }
+                
+                Widgets.Label(listing.GetRect(22f), "模型名称:");
+                CustomModelName = listing.TextEntry(CustomModelName);
+                
+                listing.Gap();
+                
+                if (listing.ButtonText("测试连接"))
+                {
+                    // 简单的测试调用
+                    System.Threading.Tasks.Task.Run(async () => 
+                    {
+                        string result = await SimpleAIClient.CallAI("Hello, are you there?");
+                        if (!string.IsNullOrEmpty(result))
+                            Messages.Message("连接成功！AI 回复: " + result, MessageTypeDefOf.PositiveEvent, false);
+                        else
+                            Messages.Message("连接失败，请检查日志。", MessageTypeDefOf.NegativeEvent, false);
+                    });
+                }
+                
+                listing.Gap();
+                listing.GapLine();
+                listing.Gap();
+                
+                // Context Injection Settings
+                Widgets.Label(listing.GetRect(24f), "上下文注入设置");
+                
+                listing.CheckboxLabeled("自动注入快照到 AI 对话", ref InjectSnapshotToContext, 
+                    "启用后，AI 在对话时会自动看到最近的历史快照总结");
+                
+                if (InjectSnapshotToContext)
+                {
+                    Widgets.Label(listing.GetRect(22f), $"  └─ 注入天数: {SnapshotInjectDays:F1} 天");
+                    SnapshotInjectDays = listing.Slider(SnapshotInjectDays, 0.5f, 7f);
+                    
+                    Text.Font = GameFont.Tiny;
+                    GUI.color = Color.gray;
+                    Widgets.Label(listing.GetRect(18f), $"      当前将注入最近 {SnapshotInjectDays:F1} 天的快照总结");
+                    GUI.color = Color.white;
+                    Text.Font = GameFont.Small;
+                }
+                
+                listing.Gap();
+                listing.GapLine();
+                listing.Gap();
+                
+                Text.Font = GameFont.Tiny;
+                Widgets.Label(listing.GetRect(80f), 
+                    "说明：\n" +
+                    "1. 每日 0 点系统会自动拍摄殖民地快照（建筑、房间、蓝图）。\n" +
+                    "2. AI 将对比昨日快照，结合玩家操作日志和事件，生成一段简短的总结。\n" +
+                    "3. 总结结果将显示在'每日快照'标签页中，不会直接修改概况。\n" +
+                    "4. 如果启用'自动注入'，AI 在对话时会自动看到最近的历史记录（含日期）。");
+                Text.Font = GameFont.Small;
+            }
+
+            listing.End();
+            Widgets.EndScrollView();
+        }
+
+        private string GetDefaultUrl(AIProvider provider)
+        {
+            switch (provider)
+            {
+                case AIProvider.OpenAI: return "https://api.openai.com/v1/chat/completions";
+                case AIProvider.Google: return "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent";
+                case AIProvider.DeepSeek: return "https://api.deepseek.com/v1/chat/completions";
+                default: return "";
+            }
         }
 
         public void DoEventSettingsWindowContents(Rect inRect)

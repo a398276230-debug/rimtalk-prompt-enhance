@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 using Verse;
+using RimWorld;
 
 namespace RimTalkHealthEnhance
 {
@@ -25,6 +27,30 @@ namespace RimTalkHealthEnhance
                     overview = overview.Substring(0, settings.MaxOverviewLength) + "...";
                 }
                 parts.Add($"Colony Overview:\n{overview}");
+            }
+
+            // === 1.5 AI 史官总结 ===
+            if (settings.EnableAISynthesis && settings.InjectSnapshotToContext && manager.Data.DailySnapshots.Count > 0)
+            {
+                // 获取最近 N 天的快照
+                int currentDay = GenDate.DaysPassed;
+                float daysToInject = settings.SnapshotInjectDays;
+                
+                var recentSnapshots = manager.Data.DailySnapshots
+                    .Where(s => currentDay - s.Day <= daysToInject)
+                    .OrderByDescending(s => s.Day)
+                    .ToList();
+                
+                foreach (var snapshot in recentSnapshots)
+                {
+                    if (!string.IsNullOrEmpty(snapshot.AISummary))
+                    {
+                        // 使用 GenDate 获取正确的日期字符串（与 UI 一致）
+                        string dateStr = GenDate.DateFullStringAt(snapshot.Tick, Vector2.zero);
+                        
+                        parts.Add($"History Record ({dateStr}):\n{snapshot.AISummary}");
+                    }
+                }
             }
             
             // === 2. 结构化公告 ===

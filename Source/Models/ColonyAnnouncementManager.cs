@@ -13,6 +13,8 @@ namespace RimTalkHealthEnhance
         
         // 用于UI缓存刷新的版本号
         public int DataVersion { get; private set; } = 0;
+        
+        private bool initialized = false;
 
         public ColonyAnnouncementManager(Game game)
         {
@@ -22,10 +24,44 @@ namespace RimTalkHealthEnhance
         {
             base.GameComponentTick();
             
+            if (!initialized)
+            {
+                initialized = true;
+                // 如果是首次加载（无历史快照），拍摄基准快照
+                if (Data.LastSnapshot == null)
+                {
+                    Data.LastSnapshot = SnapshotService.TakeSnapshot();
+                    // 设置上次总结时间为当前，避免立即触发（除非跨天）
+                    // 如果是新游戏，DaysPassed 为 0，LastSynthesisDay 为 0，明天触发。
+                    // 如果是旧存档，DaysPassed 为 N，LastSynthesisDay 为 N，明天触发。
+                    Data.LastSynthesisDay = GenDate.DaysPassed;
+                    Log.Message($"[RimTalk Enhance] Initialized baseline snapshot. Day: {Data.LastSynthesisDay}");
+                }
+            }
+            
+            int currentTick = Find.TickManager.TicksGame;
+            
             // 每2000 ticks (约30秒) 检查一次
-            if (Find.TickManager.TicksGame % 2000 == 0)
+            if (currentTick % 2000 == 0)
             {
                 CheckAutoCompletion();
+            }
+            
+            // 每日 0 点触发 AI 总结
+            // 使用天数判断，避免跳过时间导致错过触发
+            int currentDay = GenDate.DaysPassed;
+            
+            // Debug log every hour to check status
+            if (currentTick % 2500 == 0)
+            {
+                // Log.Message($"[RimTalk Debug] Tick: {currentTick}, Day: {currentDay}, LastSynthesisDay: {Data.LastSynthesisDay}");
+            }
+
+            if (currentDay > Data.LastSynthesisDay)
+            {
+                Log.Message($"[RimTalk Enhance] Triggering daily synthesis. Day: {currentDay}, Last: {Data.LastSynthesisDay}");
+                Data.LastSynthesisDay = currentDay;
+                _ = MidnightSynthesisService.PerformSynthesis();
             }
         }
 

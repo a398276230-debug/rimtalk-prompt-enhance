@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "D:\\steam\\steamapps\\common\\RimWorld\\Mods\\rimtalk prompt enhance\\Source\\RimTalkHealthEnhance.csproj": {}
+    "D:\\steam\\steamapps\\common\\RimWorld\\Mods\\rimtalk-prompt-enhance\\Source\\RimTalkHealthEnhance.csproj": {}
   },
   "projects": {
-    "D:\\steam\\steamapps\\common\\RimWorld\\Mods\\rimtalk prompt enhance\\Source\\RimTalkHealthEnhance.csproj": {
+    "D:\\steam\\steamapps\\common\\RimWorld\\Mods\\rimtalk-prompt-enhance\\Source\\RimTalkHealthEnhance.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\steam\\steamapps\\common\\RimWorld\\Mods\\rimtalk prompt enhance\\Source\\RimTalkHealthEnhance.csproj",
+        "projectUniqueName": "D:\\steam\\steamapps\\common\\RimWorld\\Mods\\rimtalk-prompt-enhance\\Source\\RimTalkHealthEnhance.csproj",
         "projectName": "RimTalkHealthEnhance",
-        "projectPath": "D:\\steam\\steamapps\\common\\RimWorld\\Mods\\rimtalk prompt enhance\\Source\\RimTalkHealthEnhance.csproj",
+        "projectPath": "D:\\steam\\steamapps\\common\\RimWorld\\Mods\\rimtalk-prompt-enhance\\Source\\RimTalkHealthEnhance.csproj",
         "packagesPath": "C:\\Users\\39827\\.nuget\\packages\\",
-        "outputPath": "D:\\steam\\steamapps\\common\\RimWorld\\Mods\\rimtalk prompt enhance\\Source\\obj\\",
+        "outputPath": "D:\\steam\\steamapps\\common\\RimWorld\\Mods\\rimtalk-prompt-enhance\\Source\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\39827\\AppData\\Roaming\\NuGet\\NuGet.Config",
