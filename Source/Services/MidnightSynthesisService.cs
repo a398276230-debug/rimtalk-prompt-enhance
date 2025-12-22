@@ -30,11 +30,11 @@ namespace RimTalkHealthEnhance
             var yesterdaySnapshot = manager.Data.LastSnapshot ?? new ColonySnapshot();
             string diffReport = DiffAnalyzer.GenerateDiffReport(yesterdaySnapshot, todaySnapshot);
             
-            // 3. 收集当日事件
+            // 3. 收集当日事件（包含标题和描述）
             var todayEvents = manager.Data.Announcements
                 .Where(a => a.Category == AnnouncementCategory.Event && 
                             a.CreatedTick > Find.TickManager.TicksGame - 60000)
-                .Select(a => a.Title)
+                .Select(a => string.IsNullOrEmpty(a.Description) ? a.Title : $"{a.Title}: {a.Description}")
                 .ToList();
             
             // 4. 创建快照记录
