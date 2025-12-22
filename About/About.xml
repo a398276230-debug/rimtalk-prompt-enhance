@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ModMetaData>
-  <name>RimTalk - Enhanced Prompt</name>
+  <name>RimTalk - Enhanced Prompt and Announcement</name>
   <author>ruaji</author>
   <packageId>ruaji.rimtalkpromptenhance</packageId>
   <description>Enhances RimTalk's health information display with severity levels, detailed descriptions, and pain indicators.
