@@ -17,7 +17,8 @@ namespace RimTalkHealthEnhance
         public PromptEditorDialog(string title, string currentPrompt, string defaultPrompt, System.Action<string> onSave)
         {
             this.title = title;
-            this.promptText = currentPrompt;
+            // 如果当前提示词为空，则预填充默认提示词，方便玩家修改
+            this.promptText = string.IsNullOrEmpty(currentPrompt) ? defaultPrompt : currentPrompt;
             this.defaultPrompt = defaultPrompt;
             this.onSave = onSave;
             this.doCloseX = true;
