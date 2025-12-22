@@ -112,14 +112,25 @@ namespace RimTalkHealthEnhance
                 }
 
                 // 检查自动归档（删除）
-                if (settings.AutoArchiveCompleted && 
-                    announcement.Status == AnnouncementStatus.Completed)
+                if (announcement.Status == AnnouncementStatus.Completed && 
+                    announcement.CompletedTick > 0)
                 {
-                    // 如果完成超过1天，则删除
-                    if (announcement.CompletedTick > 0 && 
-                        currentTick > announcement.CompletedTick + 60000)
+                    // 自动捕获的事件：使用可配置的删除时间（0-3天）
+                    if (announcement.IsAutoCaptured)
                     {
-                        toRemove.Add(announcement);
+                        int deleteTicks = (int)(settings.AutoCapturedDeleteDays * 60000);
+                        if (deleteTicks == 0 || currentTick > announcement.CompletedTick + deleteTicks)
+                        {
+                            toRemove.Add(announcement);
+                        }
+                    }
+                    // 手动创建的事件：使用原有的归档设置（1天）
+                    else if (settings.AutoArchiveCompleted)
+                    {
+                        if (currentTick > announcement.CompletedTick + 60000)
+                        {
+                            toRemove.Add(announcement);
+                        }
                     }
                 }
             }

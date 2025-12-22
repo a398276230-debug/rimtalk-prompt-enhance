@@ -51,6 +51,7 @@ namespace RimTalkHealthEnhance
         public string AssignedPawnName;        // 负责人姓名
         public int DeadlineTicks = -1;         // 截止时间 (-1表示无)
         public int RelatedQuestId = -1;        // 关联的任务ID (用于自动追踪状态)
+        public bool IsAutoCaptured = false;    // 是否为自动捕获的事件
         
         public int CreatedTick;
         public int CompletedTick;
@@ -73,6 +74,7 @@ namespace RimTalkHealthEnhance
             Scribe_Values.Look(ref AssignedPawnName, "assignedPawnName");
             Scribe_Values.Look(ref DeadlineTicks, "deadlineTicks", -1);
             Scribe_Values.Look(ref RelatedQuestId, "relatedQuestId", -1);
+            Scribe_Values.Look(ref IsAutoCaptured, "isAutoCaptured", false);
             
             Scribe_Values.Look(ref CreatedTick, "createdTick");
             Scribe_Values.Look(ref CompletedTick, "completedTick");

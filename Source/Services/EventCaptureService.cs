@@ -43,7 +43,8 @@ namespace RimTalkHealthEnhance
                 Priority = priority,
                 Status = AnnouncementStatus.Active,
                 CreatedTick = Find.TickManager.TicksGame,
-                Progress = 0f
+                Progress = 0f,
+                IsAutoCaptured = true  // 标记为自动捕获
             };
 
             // 关联任务ID

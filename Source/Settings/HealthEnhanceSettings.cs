@@ -62,7 +62,8 @@ namespace RimTalkHealthEnhance
         public int AutoCompleteDays = 7;              // 任务自动完成时间
         public float EventExpireDays = 1f;            // 普通事件自动完成时间
         public bool MergeDuplicateEvents = true;      // 合并重复事件
-        public bool AutoArchiveCompleted = false;     // 自动归档已完成的事件
+        public bool AutoArchiveCompleted = false;     // 自动归档已完成的事件（手动创建的）
+        public float AutoCapturedDeleteDays = 0.5f;   // 自动捕获事件完成后删除时间（0-3天，0表示立即）
         
         // === AI Synthesis Settings ===
         public bool EnableAISynthesis = false;
@@ -136,6 +137,7 @@ namespace RimTalkHealthEnhance
             Scribe_Values.Look(ref EventExpireDays, "eventExpireDays", 1f);
             Scribe_Values.Look(ref MergeDuplicateEvents, "mergeDuplicateEvents", true);
             Scribe_Values.Look(ref AutoArchiveCompleted, "autoArchiveCompleted", false);
+            Scribe_Values.Look(ref AutoCapturedDeleteDays, "autoCapturedDeleteDays", 0.5f);
             
             Scribe_Values.Look(ref EnableAISynthesis, "enableAISynthesis", false);
             Scribe_Values.Look(ref InjectSnapshotToContext, "injectSnapshotToContext", true);
@@ -511,8 +513,28 @@ namespace RimTalkHealthEnhance
                 Widgets.Label(listing.GetRect(22f), $"普通事件过期: {EventExpireDays:F1} 天");
                 EventExpireDays = listing.Slider(EventExpireDays, 0.1f, 7f);
                 
+                listing.Gap();
+                
+                Widgets.Label(listing.GetRect(22f), $"自动捕获事件完成后删除: {AutoCapturedDeleteDays:F1} 天");
+                AutoCapturedDeleteDays = listing.Slider(AutoCapturedDeleteDays, 0f, 3f);
+                
+                Text.Font = GameFont.Tiny;
+                GUI.color = Color.gray;
+                if (AutoCapturedDeleteDays == 0f)
+                {
+                    Widgets.Label(listing.GetRect(18f), "    设为 0 天表示立即删除已完成的自动捕获事件");
+                }
+                else
+                {
+                    Widgets.Label(listing.GetRect(18f), $"    自动捕获的事件完成后将在 {AutoCapturedDeleteDays:F1} 天后自动删除");
+                }
+                GUI.color = Color.white;
+                Text.Font = GameFont.Small;
+                
+                listing.Gap();
+                
                 listing.CheckboxLabeled("合并重复事件", ref MergeDuplicateEvents, "如果标题相同，合并为一条并增加计数");
-                listing.CheckboxLabeled("自动归档已完成项", ref AutoArchiveCompleted, "定期清理已完成的自动捕获条目");
+                listing.CheckboxLabeled("自动归档手动创建的已完成项", ref AutoArchiveCompleted, "定期清理手动创建的已完成条目（1天后）");
 
                 listing.Gap();
                 listing.GapLine();
