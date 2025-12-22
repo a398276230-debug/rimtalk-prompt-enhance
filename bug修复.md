@@ -1,5 +1,47 @@
 # Bug 修复记录
 
+## 2025/12/22 - 修复自动捕获任务完成后仍挂在 Context 的问题
+
+### 问题描述
+自动捕获的任务（如袭击、信件等事件）在点击"完成"按钮后，仍然会被注入到 AI 的对话上下文中，导致 AI 继续询问已处理完的事件。
+
+### 根本原因
+在 `AnnouncementBuilder.cs` 的过滤逻辑中，所有已完成的任务（无论是手动创建还是自动捕获）都会在 `CompletedTaskShowDays`（默认1天）内继续注入到 Context。这对于手动创建的工程类任务是合理的（让 AI 知道项目已完成），但对于自动捕获的瞬时事件（如袭击、信件）来说，用户点击"完成"通常意味着"我知道了，不要再告诉 AI 了"。
+
+### 解决方案
+在 `AnnouncementBuilder.cs` 中区分手动任务和自动捕获任务的处理逻辑：
+- **自动捕获任务**：完成后立即从 Context 中移除
+- **手动任务**：保持原有逻辑（保留 `CompletedTaskShowDays` 天）
+
+### 修改文件
+
+#### `Source/Services/AnnouncementBuilder.cs`
+在已完成任务的过滤逻辑中添加 `IsAutoCaptured` 判断：
+```csharp
+if (settings.OnlyShowActiveTasks && t.Status == AnnouncementStatus.Completed && t.CompletedTick > 0)
+{
+    // 自动捕获的事件完成后立即不再注入到 Context
+    if (t.IsAutoCaptured)
+    {
+        return false;
+    }
+    
+    // 手动创建的任务保持原有逻辑（保留指定天数）
+    int ticksSinceCompleted = Find.TickManager.TicksGame - t.CompletedTick;
+    return ticksSinceCompleted <= (int)(settings.CompletedTaskShowDays * 60000);
+}
+```
+
+### 效果
+- ✅ 自动捕获的事件（袭击、信件等）点击"完成"后立即从 AI 上下文中消失
+- ✅ 手动创建的任务（工程、人员安排等）完成后仍会保留指定天数，让 AI 知道任务已完成
+- ✅ 不影响 UI 显示和数据删除逻辑（仍由 `AutoCapturedDeleteDays` 控制）
+
+### 编译状态
+✅ 编译成功，无错误
+
+---
+
 ## 2025/12/22 - 修复通告功能在非主殖民地地图通用的问题
 
 ### 问题描述

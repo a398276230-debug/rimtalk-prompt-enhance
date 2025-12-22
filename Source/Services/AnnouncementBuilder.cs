@@ -71,6 +71,13 @@ namespace RimTalkHealthEnhance
                         // 如果是最近完成的，也包含进来
                         if (settings.OnlyShowActiveTasks && t.Status == AnnouncementStatus.Completed && t.CompletedTick > 0)
                         {
+                            // 自动捕获的事件完成后立即不再注入到 Context
+                            if (t.IsAutoCaptured)
+                            {
+                                return false;
+                            }
+                            
+                            // 手动创建的任务保持原有逻辑（保留指定天数）
                             int ticksSinceCompleted = Find.TickManager.TicksGame - t.CompletedTick;
                             return ticksSinceCompleted <= (int)(settings.CompletedTaskShowDays * 60000);
                         }
