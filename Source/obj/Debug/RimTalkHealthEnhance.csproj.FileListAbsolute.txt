@@ -21,4 +21,3 @@ D:\steam\steamapps\common\rimtalk-prompt-enhance\Source\obj\Debug\RimTalkHealthE
 D:\steam\steamapps\common\rimtalk-prompt-enhance\Source\obj\Debug\RimTalkHealthEnhance.csproj.CoreCompileInputs.cache
 D:\steam\steamapps\common\rimtalk-prompt-enhance\Source\obj\Debug\RimTalkHealthEnhance.dll
 D:\steam\steamapps\common\rimtalk-prompt-enhance\1.6\Assemblies\RimTalkHealthEnhance.dll
-D:\steam\steamapps\common\rimtalk-prompt-enhance\Source\obj\Debug\RimTalkH.4467BE25.Up2Date
