@@ -53,8 +53,9 @@ namespace RimTalkHealthEnhance
                                        project.Status == AnnouncementStatus.Paused ? "[暂停]" : "[进行中]";
                     string progressText = project.Progress > 0 ? $" ({project.Progress:P0})" : "";
                     string assignedText = !string.IsNullOrEmpty(project.AssignedPawnName) ? $" - 负责人: {project.AssignedPawnName}" : "";
+                    string descText = !string.IsNullOrEmpty(project.Description) ? $" - {project.Description}" : "";
                     
-                    string projectLine = $"{statusText} {project.Title}{progressText}{assignedText}";
+                    string projectLine = $"{statusText} {project.Title}{progressText}{assignedText}{descText}";
                     projectInfo.Add(projectLine);
                     Log.Message($"[RimTalk Enhance] Project: {projectLine}");
                 }
