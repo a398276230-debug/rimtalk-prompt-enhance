@@ -95,6 +95,7 @@ namespace RimTalkHealthEnhance
         // 自定义提示词
         public string CustomOverviewSummaryPrompt = "";  // 概况总结提示词
         public string CustomDailySynthesisPrompt = "";   // 每日快照提示词
+        public string CustomProjectSummaryPrompt = "";   // 工程AI总结提示词
         
         // 存储每种事件类型的启用状态 (TypeName -> Enabled)
         public Dictionary<string, bool> EnabledEventTypes = new Dictionary<string, bool>();
@@ -186,6 +187,7 @@ namespace RimTalkHealthEnhance
             Scribe_Values.Look(ref CustomModelName, "customModelName", "gpt-4o-mini");
             Scribe_Values.Look(ref CustomOverviewSummaryPrompt, "customOverviewSummaryPrompt", "");
             Scribe_Values.Look(ref CustomDailySynthesisPrompt, "customDailySynthesisPrompt", "");
+            Scribe_Values.Look(ref CustomProjectSummaryPrompt, "customProjectSummaryPrompt", "");
             
             Scribe_Collections.Look(ref EnabledEventTypes, "enabledEventTypes", LookMode.Value, LookMode.Value);
             if (EnabledEventTypes == null)

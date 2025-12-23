@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("RimTalkHealthEnhance")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a779a146c3281dc3e6f1404f9975b331225169db")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+d2947caa7cf38fa270e2d988a12f06e1619a9cea")]
 [assembly: System.Reflection.AssemblyProductAttribute("RimTalkHealthEnhance")]
 [assembly: System.Reflection.AssemblyTitleAttribute("RimTalkHealthEnhance")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

@@ -15,6 +15,7 @@ namespace RimTalkHealthEnhance.Models
         public BoolGrid Cells;
         public Color Color = Color.white;
         public bool IsActive = true;
+        public bool IsConstructionArea = false;  // 是否为施工区域（用于位置显示后缀）
         
         private Map map;
         
@@ -122,6 +123,7 @@ namespace RimTalkHealthEnhance.Models
             Scribe_Values.Look(ref Label, "label");
             Scribe_Values.Look(ref Color, "color", Color.white);
             Scribe_Values.Look(ref IsActive, "isActive", true);
+            Scribe_Values.Look(ref IsConstructionArea, "isConstructionArea", false);
             Scribe_Deep.Look(ref Cells, "cells");
         }
         

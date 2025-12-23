@@ -183,7 +183,13 @@ namespace RimTalkHealthEnhance
             {
                 var customArea = manager.GetCustomAreaAt(position);
                 if (customArea != null)
-                    return $"in {customArea.Label}";
+                {
+                    // 施工区域添加后缀
+                    if (customArea.IsConstructionArea)
+                        return $"in {customArea.Label} (施工区域)";
+                    else
+                        return $"in {customArea.Label}";
+                }
             }
 
             // 2. 检测原版功能性区域

@@ -85,6 +85,11 @@ namespace RimTalkHealthEnhance
                 {
                     Log.Message($"[RimTalk Enhance] Triggering daily synthesis. Day: {currentDay}, Last: {Data.LastSynthesisDay}");
                     Data.LastSynthesisDay = currentDay;
+                    
+                    // 更新所有工程的自动进度
+                    BlueprintProgressService.UpdateAllAutoProjects();
+                    
+                    // 执行AI总结
                     _ = MidnightSynthesisService.PerformSynthesis();
                 }
                 else
@@ -221,6 +226,12 @@ namespace RimTalkHealthEnhance
             var item = Data.Announcements.FirstOrDefault(t => t.Id == id);
             if (item != null)
             {
+                // 如果工程关联了施工区域，同步删除区域
+                if (!string.IsNullOrEmpty(item.BlueprintAreaId))
+                {
+                    DeleteCustomArea(item.BlueprintAreaId);
+                }
+                
                 Data.Announcements.Remove(item);
                 DataVersion++;
             }
