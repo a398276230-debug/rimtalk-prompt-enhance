@@ -354,12 +354,40 @@ namespace RimTalkHealthEnhance
                         // 使用 Task.Run 避免阻塞
                         System.Threading.Tasks.Task.Run(async () => 
                         {
-                            string prompt = MidnightSynthesisService.BuildSynthesisPrompt(snapshot.DiffReport, snapshot);
+                            var settings = RimTalkHealthEnhanceMod.Settings;
+                            var manager = ColonyAnnouncementManager.Instance;
+                            
+                            // 重新收集工程和科技信息
+                            List<string> projectInfo = new List<string>();
+                            if (settings.IncludeProjectsInSnapshot)
+                            {
+                                var activeProjects = manager.Data.Announcements
+                                    .Where(a => a.Category == AnnouncementCategory.Project)
+                                    .ToList();
+                                
+                                foreach (var project in activeProjects)
+                                {
+                                    string statusText = project.Status == AnnouncementStatus.Completed ? "[已完成]" : 
+                                                       project.Status == AnnouncementStatus.Paused ? "[暂停]" : "[进行中]";
+                                    string progressText = project.Progress > 0 ? $" ({project.Progress:P0})" : "";
+                                    string assignedText = !string.IsNullOrEmpty(project.AssignedPawnName) ? $" - 负责人: {project.AssignedPawnName}" : "";
+                                    
+                                    projectInfo.Add($"{statusText} {project.Title}{progressText}{assignedText}");
+                                }
+                            }
+                            
+                            string researchInfo = null;
+                            if (settings.IncludeResearchInSnapshot)
+                            {
+                                researchInfo = ResearchInfoBuilder.BuildResearchContext();
+                            }
+                            
+                            string prompt = MidnightSynthesisService.BuildSynthesisPrompt(snapshot.DiffReport, snapshot, projectInfo, researchInfo);
                             string result = await SimpleAIClient.CallAI(prompt);
                             if (!string.IsNullOrEmpty(result))
                             {
                                 snapshot.AISummary = result;
-                                ColonyAnnouncementManager.Instance.NotifyDataChanged();
+                                manager.NotifyDataChanged();
                                 Messages.Message("AI 总结已更新", MessageTypeDefOf.PositiveEvent, false);
                             }
                             else

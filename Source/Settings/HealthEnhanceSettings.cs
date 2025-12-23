@@ -84,6 +84,9 @@ namespace RimTalkHealthEnhance
         public bool EnableAISynthesis = false;
         public bool InjectSnapshotToContext = true;      // 是否将快照注入到 AI context
         public float SnapshotInjectDays = 1.0f;          // 注入多少天的快照（0.5-7天）
+        public bool IncludeProjectsInSnapshot = true;    // 将状况板工程信息发给史官
+        public bool IncludeResearchInSnapshot = false;   // 将科技状态发给史官（默认关闭）
+        public bool IncludeUnfinishedResearch = false;   // 包含未完成的科技列表
         public AIProvider SynthesisProvider = AIProvider.OpenAI;
         public string CustomApiKey = "";
         public string CustomApiUrl = "";
@@ -174,6 +177,9 @@ namespace RimTalkHealthEnhance
             Scribe_Values.Look(ref EnableAISynthesis, "enableAISynthesis", false);
             Scribe_Values.Look(ref InjectSnapshotToContext, "injectSnapshotToContext", true);
             Scribe_Values.Look(ref SnapshotInjectDays, "snapshotInjectDays", 1.0f);
+            Scribe_Values.Look(ref IncludeProjectsInSnapshot, "includeProjectsInSnapshot", true);
+            Scribe_Values.Look(ref IncludeResearchInSnapshot, "includeResearchInSnapshot", false);
+            Scribe_Values.Look(ref IncludeUnfinishedResearch, "includeUnfinishedResearch", false);
             Scribe_Values.Look(ref SynthesisProvider, "synthesisProvider", AIProvider.OpenAI);
             Scribe_Values.Look(ref CustomApiKey, "customApiKey", "");
             Scribe_Values.Look(ref CustomApiUrl, "customApiUrl", "");
@@ -469,7 +475,7 @@ namespace RimTalkHealthEnhance
 
         public void DoAISettingsWindowContents(Rect inRect)
         {
-            Rect viewRect = new Rect(0f, 0f, inRect.width - 16f, 600f);
+            Rect viewRect = new Rect(0f, 0f, inRect.width - 16f, 800f);
             Widgets.BeginScrollView(inRect, ref _aiScrollPosition, viewRect);
 
             Listing_Standard listing = new Listing_Standard();
@@ -542,6 +548,25 @@ namespace RimTalkHealthEnhance
                 listing.GapLine();
                 listing.Gap();
                 
+                // Snapshot Content Settings
+                Widgets.Label(listing.GetRect(24f), "快照内容设置");
+                
+                listing.CheckboxLabeled("包含状况板工程信息", ref IncludeProjectsInSnapshot,
+                    "将状况板中的进行中和已完成工程发送给史官");
+                
+                listing.CheckboxLabeled("包含科技研究状态", ref IncludeResearchInSnapshot,
+                    "将所有科技的完成状态发送给史官（约1000字以内）");
+                
+                if (IncludeResearchInSnapshot)
+                {
+                    listing.CheckboxLabeled("  └─ 包含未完成科技列表", ref IncludeUnfinishedResearch,
+                        "同时发送未完成的科技列表（会增加token消耗）");
+                }
+                
+                listing.Gap();
+                listing.GapLine();
+                listing.Gap();
+                
                 // Context Injection Settings
                 Widgets.Label(listing.GetRect(24f), "上下文注入设置");
                 
@@ -565,12 +590,14 @@ namespace RimTalkHealthEnhance
                 listing.Gap();
                 
                 Text.Font = GameFont.Tiny;
-                Widgets.Label(listing.GetRect(80f), 
+                Widgets.Label(listing.GetRect(120f), 
                     "说明：\n" +
                     "1. 每日 0 点系统会自动拍摄殖民地快照（建筑、房间、蓝图）。\n" +
-                    "2. AI 将对比昨日快照，结合玩家操作日志和事件，生成一段简短的总结。\n" +
+                    "2. AI 将对比昨日快照，结合玩家操作日志、工程进度、科技状态和事件，生成一段简短的总结。\n" +
                     "3. 总结结果将显示在'每日快照'标签页中，不会直接修改概况。\n" +
-                    "4. 如果启用'自动注入'，AI 在对话时会自动看到最近的历史记录（含日期）。");
+                    "4. 如果启用'自动注入'，AI 在对话时会自动看到最近的历史记录（含日期）。\n" +
+                    "5. 工程信息：从状况板读取进行中和已完成的工程项目。\n" +
+                    "6. 科技状态：包含当前研究、已完成科技，可选包含未完成科技（默认关闭以节省token）。");
                 Text.Font = GameFont.Small;
             }
 
