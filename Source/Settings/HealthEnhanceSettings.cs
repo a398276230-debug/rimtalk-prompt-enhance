@@ -61,6 +61,7 @@ namespace RimTalkHealthEnhance
         public bool ShowNeutralFactions = true;
         public bool FilterByGoodwill = false;
         public int MinGoodwillToShow = -100;
+        public float FactionCacheUpdateInterval = 5f;  // 派系信息缓存更新间隔（秒）
 
         // === Auto Event Capture Settings ===
         public bool EnableAutoEventCapture = true;
@@ -136,6 +137,7 @@ namespace RimTalkHealthEnhance
             Scribe_Values.Look(ref ShowNeutralFactions, "showNeutralFactions", true);
             Scribe_Values.Look(ref FilterByGoodwill, "filterByGoodwill", false);
             Scribe_Values.Look(ref MinGoodwillToShow, "minGoodwillToShow", -100);
+            Scribe_Values.Look(ref FactionCacheUpdateInterval, "factionCacheUpdateInterval", 5f);
 
             // Announcements
             Scribe_Values.Look(ref ShowColonyAnnouncements, "showColonyAnnouncements", true);
@@ -353,10 +355,21 @@ namespace RimTalkHealthEnhance
                     "包含中立派系（好感度在 -75 到 75 之间）");
                 
                 listing.Gap();
+                
+                Widgets.Label(listing.GetRect(22f), $"缓存更新间隔: {FactionCacheUpdateInterval:F1} 秒");
+                FactionCacheUpdateInterval = listing.Slider(FactionCacheUpdateInterval, 1f, 30f);
+                
+                Text.Font = GameFont.Tiny;
+                GUI.color = Color.gray;
+                Widgets.Label(listing.GetRect(18f), "    派系信息每隔指定时间更新一次（避免线程冲突）");
+                GUI.color = Color.white;
+                Text.Font = GameFont.Small;
+                
+                listing.Gap();
                 listing.GapLine();
                 listing.Gap();
                 
-                listing.CheckboxLabeled("按好感度过滤", ref FilterByGoodwill, 
+                listing.CheckboxLabeled("按好感度过滤", ref FilterByGoodwill,
                     "只显示好感度高于指定阈值的派系");
                 
                 if (FilterByGoodwill)

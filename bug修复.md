@@ -42,6 +42,137 @@ if (settings.OnlyShowActiveTasks && t.Status == AnnouncementStatus.Completed && 
 
 ---
 
+## 2025/12/23 - 修复派系信息构建器的线程安全问题
+
+### 问题描述
+在异步调用 `AIService.UpdateContext()` 时报错：
+```
+[Director] Generation failed: Accessing map pawns off main thread - this is never allowed due to list pooling and will result in modification exceptions elsewhere in code.
+```
+
+### 根本原因
+调用链路：
+1. `AIService.UpdateContext()` 在后台线程异步调用
+2. `AnnouncementContextPatch.Prefix()` 拦截并调用 `AnnouncementBuilder.BuildAnnouncementContext()`
+3. `AnnouncementBuilder` 调用 `FactionInfoBuilder.BuildFactionContext()`
+4. `FactionInfoBuilder.GetFactionsOnMap()` 访问 `map.mapPawns.AllPawns` ❌ **线程冲突**
+
+RimWorld 的 `map.mapPawns` 使用了对象池（list pooling），严格禁止在非主线程访问，否则会导致修改异常。
+
+### 解决方案
+采用**定时缓存策略**，在主线程定期更新派系信息，异步调用时直接读取缓存：
+
+1. **主线程更新**：`ColonyAnnouncementManager.GameComponentTick()` 每 N 秒调用 `UpdateFactionCache()`
+2. **缓存存储**：调用 `FactionInfoBuilder.BuildFactionContextUnsafe()` 访问 `map.mapPawns` 并缓存结果
+3. **异步读取**：`FactionInfoBuilder.BuildFactionContext()` 直接返回缓存的字符串
+4. **用户可配置**：更新间隔可在设置中调整（1-30秒，默认5秒）
+
+### 修改文件
+
+#### 1. `Source/Settings/HealthEnhanceSettings.cs`
+添加缓存更新间隔设置：
+```csharp
+// === Faction Relations Settings ===
+public float FactionCacheUpdateInterval = 5f;  // 派系信息缓存更新间隔（秒）
+```
+
+在 `ExposeData()` 中保存：
+```csharp
+Scribe_Values.Look(ref FactionCacheUpdateInterval, "factionCacheUpdateInterval", 5f);
+```
+
+在 `DoFactionSettingsWindowContents()` 中添加UI控件：
+```csharp
+Widgets.Label(listing.GetRect(22f), $"缓存更新间隔: {FactionCacheUpdateInterval:F1} 秒");
+FactionCacheUpdateInterval = listing.Slider(FactionCacheUpdateInterval, 1f, 30f);
+```
+
+#### 2. `Source/Models/ColonyAnnouncementManager.cs`
+添加缓存字段和更新逻辑：
+```csharp
+// 派系信息缓存（线程安全）
+private string _cachedFactionInfo = null;
+private int _lastFactionUpdateTick = 0;
+
+public override void GameComponentTick()
+{
+    // ... 现有代码 ...
+    
+    // 定期更新派系信息缓存（线程安全）
+    var settings = RimTalkHealthEnhanceMod.Settings;
+    if (settings != null && settings.ShowFactionRelations)
+    {
+        int updateInterval = (int)(settings.FactionCacheUpdateInterval * 60); // 转换为 ticks
+        if (currentTick - _lastFactionUpdateTick >= updateInterval)
+        {
+            UpdateFactionCache();
+            _lastFactionUpdateTick = currentTick;
+        }
+    }
+}
+
+/// <summary>
+/// 更新派系信息缓存（在主线程调用）
+/// </summary>
+public void UpdateFactionCache()
+{
+    _cachedFactionInfo = FactionInfoBuilder.BuildFactionContextUnsafe();
+}
+
+/// <summary>
+/// 获取缓存的派系信息（线程安全）
+/// </summary>
+public string GetCachedFactionInfo()
+{
+    return _cachedFactionInfo;
+}
+```
+
+#### 3. `Source/Services/FactionInfoBuilder.cs`
+重构为两个方法：
+```csharp
+/// <summary>
+/// 线程安全的公共方法 - 从缓存读取
+/// </summary>
+public static string BuildFactionContext()
+{
+    var manager = ColonyAnnouncementManager.Instance;
+    if (manager == null) return null;
+    
+    return manager.GetCachedFactionInfo();
+}
+
+/// <summary>
+/// 不安全的方法 - 仅在主线程调用（由 Manager 定期更新缓存）
+/// </summary>
+public static string BuildFactionContextUnsafe()
+{
+    // 原有的 BuildFactionContext() 代码
+    // 访问 map.mapPawns.AllPawns 等游戏对象
+}
+```
+
+#### 4. `Source/Services/AnnouncementBuilder.cs`
+无需修改，继续调用 `FactionInfoBuilder.BuildFactionContext()`（现在是线程安全的）
+
+### 技术细节
+- **性能开销**：派系信息构建只遍历地图 Pawn（通常几十到几百个），性能消耗极小
+- **更新频率**：默认5秒更新一次，即使1秒一次也完全没问题
+- **数据实时性**：派系关系不会秒级变化，5秒延迟完全可接受
+- **线程安全**：异步调用时只读取字符串，不访问游戏对象
+
+### 效果
+- ✅ 完全线程安全，不会再出现 "Accessing map pawns off main thread" 错误
+- ✅ 性能开销极小（5秒更新一次）
+- ✅ 用户可自定义更新频率（1-30秒）
+- ✅ 数据实时性足够（派系关系变化不频繁）
+- ✅ 无需修改调用方代码
+
+### 编译状态
+✅ 编译成功，无错误
+
+---
+
 ## 2025/12/22 - 修复通告功能在非主殖民地地图通用的问题
 
 ### 问题描述

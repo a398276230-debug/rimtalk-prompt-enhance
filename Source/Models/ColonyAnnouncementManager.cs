@@ -15,6 +15,10 @@ namespace RimTalkHealthEnhance
         public int DataVersion { get; private set; } = 0;
         
         private bool initialized = false;
+        
+        // 派系信息缓存（线程安全）
+        private string _cachedFactionInfo = null;
+        private int _lastFactionUpdateTick = 0;
 
         public ColonyAnnouncementManager(Game game)
         {
@@ -40,6 +44,18 @@ namespace RimTalkHealthEnhance
             }
             
             int currentTick = Find.TickManager.TicksGame;
+            
+            // 定期更新派系信息缓存（线程安全）
+            var settings = RimTalkHealthEnhanceMod.Settings;
+            if (settings != null && settings.ShowFactionRelations)
+            {
+                int updateInterval = (int)(settings.FactionCacheUpdateInterval * 60); // 转换为 ticks
+                if (currentTick - _lastFactionUpdateTick >= updateInterval)
+                {
+                    UpdateFactionCache();
+                    _lastFactionUpdateTick = currentTick;
+                }
+            }
             
             // 每2000 ticks (约30秒) 检查一次
             if (currentTick % 2000 == 0)
@@ -198,6 +214,22 @@ namespace RimTalkHealthEnhance
         {
             if (Data.Announcements == null) return new List<ColonyAnnouncement>();
             return Data.Announcements.Where(t => t.Status == AnnouncementStatus.Active).ToList();
+        }
+        
+        /// <summary>
+        /// 更新派系信息缓存（在主线程调用）
+        /// </summary>
+        public void UpdateFactionCache()
+        {
+            _cachedFactionInfo = FactionInfoBuilder.BuildFactionContextUnsafe();
+        }
+        
+        /// <summary>
+        /// 获取缓存的派系信息（线程安全）
+        /// </summary>
+        public string GetCachedFactionInfo()
+        {
+            return _cachedFactionInfo;
         }
     }
 }

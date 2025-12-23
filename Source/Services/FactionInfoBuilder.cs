@@ -11,7 +11,21 @@ namespace RimTalkHealthEnhance
     /// </summary>
     public static class FactionInfoBuilder
     {
+        /// <summary>
+        /// 线程安全的公共方法 - 从缓存读取
+        /// </summary>
         public static string BuildFactionContext()
+        {
+            var manager = ColonyAnnouncementManager.Instance;
+            if (manager == null) return null;
+            
+            return manager.GetCachedFactionInfo();
+        }
+        
+        /// <summary>
+        /// 不安全的方法 - 仅在主线程调用（由 Manager 定期更新缓存）
+        /// </summary>
+        public static string BuildFactionContextUnsafe()
         {
             var settings = RimTalkHealthEnhanceMod.Settings;
             if (!settings.ShowFactionRelations) return null;
