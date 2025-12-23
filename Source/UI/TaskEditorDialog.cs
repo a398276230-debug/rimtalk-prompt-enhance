@@ -63,12 +63,24 @@ namespace RimTalkHealthEnhance
             closeOnClickedOutside = true;
         }
         
-        public override Vector2 InitialSize => new Vector2(500f, 600f);
+        public override Vector2 InitialSize => new Vector2(500f, 650f);
         
         public override void DoWindowContents(Rect inRect)
         {
+            // 检测回车键
+            if (Event.current.type == EventType.KeyDown && Event.current.keyCode == KeyCode.Return)
+            {
+                Event.current.Use();
+                SaveAndClose();
+                return;
+            }
+            
+            // 为底部按钮预留空间
+            Rect contentRect = inRect.TopPartPixels(inRect.height - 50f);
+            Rect buttonRect = new Rect(inRect.x, inRect.yMax - 45f, inRect.width, 40f);
+            
             Listing_Standard listing = new Listing_Standard();
-            listing.Begin(inRect);
+            listing.Begin(contentRect);
             
             Text.Font = GameFont.Medium;
             Widgets.Label(listing.GetRect(30f), isNew ? "新建状况" : "编辑状况");
@@ -185,35 +197,36 @@ namespace RimTalkHealthEnhance
                 listing.Gap();
             }
             
-            listing.GapLine();
-            listing.Gap();
-            
-            // 保存/取消按钮
-            Rect buttonRow = listing.GetRect(40f);
-            if (Widgets.ButtonText(buttonRow.LeftHalf().ContractedBy(5f), "保存"))
-            {
-                announcement.Title = editTitle;
-                announcement.Description = editDescription;
-                announcement.Category = editCategory;
-                announcement.Priority = editPriority;
-                announcement.Status = editStatus;
-                announcement.Progress = editProgress;
-                announcement.AssignedPawnName = editAssignedPawn;
-                
-                if (isNew)
-                {
-                    manager.AddAnnouncement(announcement);
-                }
-                
-                Close();
-            }
-            
-            if (Widgets.ButtonText(buttonRow.RightHalf().ContractedBy(5f), "取消"))
-            {
-                Close();
-            }
-            
             listing.End();
+            
+            // 保存/取消按钮（固定在底部）
+            if (Widgets.ButtonText(buttonRect.LeftHalf().ContractedBy(5f), "保存 (Enter)"))
+            {
+                SaveAndClose();
+            }
+            
+            if (Widgets.ButtonText(buttonRect.RightHalf().ContractedBy(5f), "取消 (Esc)"))
+            {
+                Close();
+            }
+        }
+        
+        private void SaveAndClose()
+        {
+            announcement.Title = editTitle;
+            announcement.Description = editDescription;
+            announcement.Category = editCategory;
+            announcement.Priority = editPriority;
+            announcement.Status = editStatus;
+            announcement.Progress = editProgress;
+            announcement.AssignedPawnName = editAssignedPawn;
+            
+            if (isNew)
+            {
+                manager.AddAnnouncement(announcement);
+            }
+            
+            Close();
         }
     }
 }

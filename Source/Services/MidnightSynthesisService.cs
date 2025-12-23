@@ -45,6 +45,8 @@ namespace RimTalkHealthEnhance
                     .Where(a => a.Category == AnnouncementCategory.Project)
                     .ToList();
                 
+                Log.Message($"[RimTalk Enhance] Found {activeProjects.Count} projects in status board");
+                
                 foreach (var project in activeProjects)
                 {
                     string statusText = project.Status == AnnouncementStatus.Completed ? "[已完成]" : 
@@ -52,8 +54,14 @@ namespace RimTalkHealthEnhance
                     string progressText = project.Progress > 0 ? $" ({project.Progress:P0})" : "";
                     string assignedText = !string.IsNullOrEmpty(project.AssignedPawnName) ? $" - 负责人: {project.AssignedPawnName}" : "";
                     
-                    projectInfo.Add($"{statusText} {project.Title}{progressText}{assignedText}");
+                    string projectLine = $"{statusText} {project.Title}{progressText}{assignedText}";
+                    projectInfo.Add(projectLine);
+                    Log.Message($"[RimTalk Enhance] Project: {projectLine}");
                 }
+            }
+            else
+            {
+                Log.Message("[RimTalk Enhance] Project tracking is disabled in settings");
             }
             
             // 5. 收集科技信息（如果启用）
@@ -61,6 +69,14 @@ namespace RimTalkHealthEnhance
             if (settings.IncludeResearchInSnapshot)
             {
                 researchInfo = ResearchInfoBuilder.BuildResearchContext();
+                if (!string.IsNullOrEmpty(researchInfo))
+                {
+                    Log.Message($"[RimTalk Enhance] Research info collected: {researchInfo.Length} chars");
+                }
+            }
+            else
+            {
+                Log.Message("[RimTalk Enhance] Research tracking is disabled in settings");
             }
             
             // 6. 创建快照记录
@@ -85,6 +101,8 @@ namespace RimTalkHealthEnhance
                               manager.Data.TodayActionLogs.Count > 0 ||
                               projectInfo.Count > 0;
 
+            Log.Message($"[RimTalk Enhance] Changes detected - Diff: {!string.IsNullOrWhiteSpace(diffReport)}, Events: {todayEvents.Count}, Actions: {manager.Data.TodayActionLogs.Count}, Projects: {projectInfo.Count}");
+
             if (!string.IsNullOrEmpty(settings.CustomApiKey))
             {
                 if (hasChanges)
@@ -92,7 +110,9 @@ namespace RimTalkHealthEnhance
                     try
                     {
                         string prompt = BuildSynthesisPrompt(diffReport, dailySnapshot, projectInfo, researchInfo);
+                        Log.Message($"[RimTalk Enhance] Sending prompt to AI ({prompt.Length} chars)...");
                         dailySnapshot.AISummary = await SimpleAIClient.CallAI(prompt);
+                        Log.Message($"[RimTalk Enhance] AI response received ({dailySnapshot.AISummary?.Length ?? 0} chars)");
                     }
                     catch (Exception ex)
                     {
@@ -149,7 +169,13 @@ namespace RimTalkHealthEnhance
 2. 规划与决策记录（底层日志）：
 {actions}
 
-3. 发生事件：
+3. 工程项目状态：
+{projects}
+
+4. 科技研究状态：
+{research}
+
+5. 发生事件：
 {events}
 
 ---
@@ -158,8 +184,11 @@ namespace RimTalkHealthEnhance
 2. **禁词**：绝对**禁止**出现""玩家""、""用户""、""系统""、""指令""等打破第四面墙的词汇。
    - 将""玩家部署蓝图""描述为""殖民地规划了...""、""大家决定建设...""或""新的蓝图被绘制出来""。
    - 将""建筑任务执行完毕""描述为""...终于建成了""、""...完工了""。
+   - 将工程项目描述为殖民地的建设计划和进展。
+   - 将科技研究描述为殖民地的知识积累和技术突破。
 3. **内容融合**：
-   - 结合【规划】与【建筑变化】，描述殖民地的建设进程。
+   - 结合【规划】、【建筑变化】和【工程项目】，描述殖民地的建设进程。
+   - 结合【科技研究】，描述殖民地的技术发展。
    - 结合【事件】，描述殖民地遭遇的挑战或机遇。
 4. **篇幅**：控制在100-200字左右，精炼概括今日重点。
 5. **风格一致性**：如果【参考风格】是第一人称（我/我们），请保持；如果是第三人称，请保持。如果风格幽默，请保持幽默；如果严肃，请保持严肃。
