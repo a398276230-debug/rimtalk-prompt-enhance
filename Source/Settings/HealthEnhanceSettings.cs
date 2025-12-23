@@ -74,6 +74,12 @@ namespace RimTalkHealthEnhance
         public bool AutoArchiveCompleted = false;     // 自动归档已完成的事件（手动创建的）
         public float AutoCapturedDeleteDays = 0.5f;   // 自动捕获事件完成后删除时间（0-3天，0表示立即）
         
+        // === Location Context Settings ===
+        public bool ShowRelativeLocation = true;         // 启用相对位置显示
+        public bool ShowAreaInfo = true;                 // 显示 Area 信息
+        public bool EnableTownCenterDetection = false;   // 启用城镇核心检测
+        public int TownCenterRadius = 20;                // 城镇核心半径
+        
         // === AI Synthesis Settings ===
         public bool EnableAISynthesis = false;
         public bool InjectSnapshotToContext = true;      // 是否将快照注入到 AI context
@@ -100,6 +106,7 @@ namespace RimTalkHealthEnhance
         private Vector2 _announcementScrollPosition = Vector2.zero;
         private Vector2 _eventScrollPosition = Vector2.zero;
         private Vector2 _aiScrollPosition = Vector2.zero;
+        private Vector2 _locationScrollPosition = Vector2.zero;
 
         public override void ExposeData()
         {
@@ -157,6 +164,12 @@ namespace RimTalkHealthEnhance
             Scribe_Values.Look(ref MergeDuplicateEvents, "mergeDuplicateEvents", true);
             Scribe_Values.Look(ref AutoArchiveCompleted, "autoArchiveCompleted", false);
             Scribe_Values.Look(ref AutoCapturedDeleteDays, "autoCapturedDeleteDays", 0.5f);
+            
+            // Location Context
+            Scribe_Values.Look(ref ShowRelativeLocation, "showRelativeLocation", true);
+            Scribe_Values.Look(ref ShowAreaInfo, "showAreaInfo", true);
+            Scribe_Values.Look(ref EnableTownCenterDetection, "enableTownCenterDetection", false);
+            Scribe_Values.Look(ref TownCenterRadius, "townCenterRadius", 20);
             
             Scribe_Values.Look(ref EnableAISynthesis, "enableAISynthesis", false);
             Scribe_Values.Look(ref InjectSnapshotToContext, "injectSnapshotToContext", true);
@@ -709,6 +722,82 @@ namespace RimTalkHealthEnhance
                     }
                 }
             }
+
+            listing.End();
+            Widgets.EndScrollView();
+        }
+
+        public void DoLocationSettingsWindowContents(Rect inRect)
+        {
+            Rect viewRect = new Rect(0f, 0f, inRect.width - 16f, 500f);
+            Widgets.BeginScrollView(inRect, ref _locationScrollPosition, viewRect);
+
+            Listing_Standard listing = new Listing_Standard();
+            listing.Begin(viewRect);
+
+            Text.Font = GameFont.Medium;
+            Widgets.Label(listing.GetRect(30f), "地图位置信息设置");
+            Text.Font = GameFont.Small;
+            listing.Gap();
+
+            listing.CheckboxLabeled("启用相对位置显示", ref ShowRelativeLocation, 
+                "显示 Pawn 相对于殖民地中心的位置和方位");
+
+            if (ShowRelativeLocation)
+            {
+                listing.Gap();
+                
+                listing.CheckboxLabeled("  └─ 显示 Area 信息", ref ShowAreaInfo,
+                    "显示 Pawn 所在的种植区、储存区等区域信息");
+                
+                listing.Gap();
+                
+                listing.CheckboxLabeled("  └─ 启用城镇核心检测", ref EnableTownCenterDetection,
+                    "区分城镇核心和普通城镇区域（可选功能）");
+                
+                if (EnableTownCenterDetection)
+                {
+                    Widgets.Label(listing.GetRect(22f), $"    └─ 核心区半径: {TownCenterRadius} 格");
+                    TownCenterRadius = (int)listing.Slider(TownCenterRadius, 10, 50);
+                    
+                    Text.Font = GameFont.Tiny;
+                    GUI.color = Color.gray;
+                    Widgets.Label(listing.GetRect(18f), $"      距离殖民地中心 {TownCenterRadius} 格内视为核心区");
+                    GUI.color = Color.white;
+                    Text.Font = GameFont.Small;
+                }
+            }
+
+            listing.Gap();
+            listing.GapLine();
+            listing.Gap();
+
+            Text.Font = GameFont.Tiny;
+            Widgets.Label(listing.GetRect(100f), 
+                "说明：\n" +
+                "1. 系统会自动计算殖民地中心（基于居住区）。\n" +
+                "2. 提供8方位判断（东、南、西、北及四个斜向）。\n" +
+                "3. 区域类型：Town Center（核心）、Town（城镇）、Town Edge（边缘）、Wilderness（野外）。\n" +
+                "4. 自动检测种植区、储存区等游戏原生区域。\n" +
+                "5. 信息会自动注入到 AI 的上下文中，让 AI 了解 Pawn 的位置。");
+            Text.Font = GameFont.Small;
+
+            listing.Gap();
+            listing.GapLine();
+            listing.Gap();
+
+            Text.Font = GameFont.Medium;
+            Widgets.Label(listing.GetRect(30f), "输出示例");
+            Text.Font = GameFont.Small;
+            listing.Gap();
+
+            Text.Font = GameFont.Tiny;
+            GUI.color = new Color(0.8f, 1f, 0.8f);
+            Widgets.Label(listing.GetRect(20f), "• In Bedroom, Northeast of colony (Town)");
+            Widgets.Label(listing.GetRect(20f), "• Outdoors in Growing Zone, South of colony (Town Edge)");
+            Widgets.Label(listing.GetRect(20f), "• Outdoors, North of colony (Wilderness)");
+            GUI.color = Color.white;
+            Text.Font = GameFont.Small;
 
             listing.End();
             Widgets.EndScrollView();

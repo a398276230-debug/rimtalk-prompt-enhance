@@ -10,11 +10,12 @@ namespace RimTalkHealthEnhance
 {
     public class MainTabWindow_Announcement : MainTabWindow
     {
-        private enum Tab { Current, History }
+        private enum Tab { Current, History, CustomAreas }
         private Tab currentTab = Tab.Current;
         
         private Vector2 taskScrollPosition;
         private Vector2 snapshotScrollPos;
+        private Vector2 areaScrollPos;
         private string editingOverview;
         private bool isEditingOverview = false;
         
@@ -48,6 +49,9 @@ namespace RimTalkHealthEnhance
                 case Tab.History:
                     DrawSnapshotsTab(contentRect, manager);
                     break;
+                case Tab.CustomAreas:
+                    DrawCustomAreasTab(contentRect, manager);
+                    break;
             }
         }
         
@@ -56,7 +60,8 @@ namespace RimTalkHealthEnhance
             List<TabRecord> tabs = new List<TabRecord>
             {
                 new TabRecord("当前状态", () => currentTab = Tab.Current, currentTab == Tab.Current),
-                new TabRecord("历史快照", () => currentTab = Tab.History, currentTab == Tab.History)
+                new TabRecord("历史快照", () => currentTab = Tab.History, currentTab == Tab.History),
+                new TabRecord("自定义区域", () => currentTab = Tab.CustomAreas, currentTab == Tab.CustomAreas)
             };
             
             TabDrawer.DrawTabs(rect, tabs);
@@ -606,6 +611,127 @@ namespace RimTalkHealthEnhance
             if (Widgets.ButtonText(delBtn, "删除"))
             {
                 manager.DeleteAnnouncement(item.Id);
+            }
+        }
+        
+        private void DrawCustomAreasTab(Rect rect, ColonyAnnouncementManager manager)
+        {
+            Widgets.DrawMenuSection(rect);
+            Rect innerRect = rect.ContractedBy(10f);
+            
+            // 顶部工具栏
+            Rect toolbarRect = innerRect.TopPartPixels(30f);
+            if (Widgets.ButtonText(toolbarRect.RightPartPixels(120f), "+ 新建区域"))
+            {
+                var map = Find.CurrentMap;
+                if (map != null)
+                {
+                    var newArea = new RimTalkHealthEnhance.Models.CustomNamedArea(map, "新区域");
+                    manager.AddCustomArea(newArea);
+                    Find.WindowStack.Add(new RimTalkHealthEnhance.UI.AreaEditorDialog(newArea, true));
+                }
+                else
+                {
+                    Messages.Message("请先进入地图", MessageTypeDefOf.RejectInput, false);
+                }
+            }
+            
+            // 列表区域
+            Rect listRect = new Rect(innerRect.x, toolbarRect.yMax + 10f, innerRect.width, innerRect.height - 40f);
+            
+            if (manager.CustomAreas == null || !manager.CustomAreas.Any())
+            {
+                Widgets.Label(listRect, "暂无自定义区域。点击右上角\"新建区域\"按钮创建。");
+                return;
+            }
+            
+            // 计算总高度
+            float itemHeight = 60f;
+            float gap = 5f;
+            float totalHeight = manager.CustomAreas.Count * (itemHeight + gap);
+            
+            Rect viewRect = new Rect(0, 0, listRect.width - 16f, totalHeight);
+            Widgets.BeginScrollView(listRect, ref areaScrollPos, viewRect);
+            
+            float curY = 0f;
+            var areasToRemove = new List<string>();
+            
+            foreach (var area in manager.CustomAreas)
+            {
+                Rect itemRect = new Rect(0, curY, viewRect.width, itemHeight);
+                DrawCustomAreaItem(itemRect, area, manager, areasToRemove);
+                curY += itemHeight + gap;
+            }
+            
+            Widgets.EndScrollView();
+            
+            // 处理删除
+            foreach (var id in areasToRemove)
+            {
+                manager.DeleteCustomArea(id);
+            }
+        }
+        
+        private void DrawCustomAreaItem(Rect rect, RimTalkHealthEnhance.Models.CustomNamedArea area, ColonyAnnouncementManager manager, List<string> areasToRemove)
+        {
+            Widgets.DrawOptionBackground(rect, false);
+            if (Mouse.IsOver(rect)) Widgets.DrawHighlight(rect);
+            
+            Rect contentRect = rect.ContractedBy(6f);
+            
+            // 颜色指示器
+            Widgets.DrawBoxSolid(new Rect(contentRect.x, contentRect.y, 4f, contentRect.height), area.Color);
+            contentRect.xMin += 10f;
+            
+            // 信息区域
+            Rect infoRect = contentRect.LeftPartPixels(contentRect.width - 300f);
+            Rect btnRect = contentRect.RightPartPixels(290f);
+            
+            // 区域名称
+            Text.Font = GameFont.Small;
+            Text.Anchor = TextAnchor.MiddleLeft;
+            Widgets.Label(infoRect.TopHalf(), area.Label);
+            
+            // 统计信息
+            Text.Font = GameFont.Tiny;
+            GUI.color = Color.gray;
+            Widgets.Label(infoRect.BottomHalf(), $"格子数: {area.CellCount}  |  状态: {(area.IsActive ? "启用" : "禁用")}");
+            GUI.color = Color.white;
+            Text.Font = GameFont.Small;
+            Text.Anchor = TextAnchor.UpperLeft;
+            
+            // 按钮区域
+            float btnY = btnRect.y + (btnRect.height - 24f) / 2f;
+            float btnW = 70f;
+            float gap = 4f;
+            
+            // 绘制按钮
+            if (Widgets.ButtonText(new Rect(btnRect.x, btnY, btnW, 24f), "绘制"))
+            {
+                var designator = new RimTalkHealthEnhance.UI.AreaDrawingDesignator();
+                designator.StartDrawing(area, true);
+            }
+            
+            // 移除按钮
+            if (Widgets.ButtonText(new Rect(btnRect.x + btnW + gap, btnY, btnW, 24f), "移除格子"))
+            {
+                var designator = new RimTalkHealthEnhance.UI.AreaDrawingDesignator();
+                designator.StartDrawing(area, false);
+            }
+            
+            // 编辑按钮
+            if (Widgets.ButtonText(new Rect(btnRect.x + (btnW + gap) * 2, btnY, btnW, 24f), "编辑"))
+            {
+                Find.WindowStack.Add(new RimTalkHealthEnhance.UI.AreaEditorDialog(area));
+            }
+            
+            // 删除按钮
+            if (Widgets.ButtonText(new Rect(btnRect.x + (btnW + gap) * 3, btnY, btnW, 24f), "删除"))
+            {
+                Find.WindowStack.Add(Dialog_MessageBox.CreateConfirmation(
+                    $"确定要删除区域 \"{area.Label}\" 吗？",
+                    () => areasToRemove.Add(area.Id)
+                ));
             }
         }
     }

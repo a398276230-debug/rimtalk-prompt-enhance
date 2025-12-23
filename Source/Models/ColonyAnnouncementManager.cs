@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Verse;
 using RimWorld;
+using RimTalkHealthEnhance.Models;
 
 namespace RimTalkHealthEnhance
 {
@@ -10,6 +11,9 @@ namespace RimTalkHealthEnhance
         public static ColonyAnnouncementManager Instance => Current.Game?.GetComponent<ColonyAnnouncementManager>();
         
         public ColonyAnnouncementData Data = new ColonyAnnouncementData();
+        
+        // 自定义命名区域列表
+        public List<CustomNamedArea> CustomAreas = new List<CustomNamedArea>();
         
         // 用于UI缓存刷新的版本号
         public int DataVersion { get; private set; } = 0;
@@ -179,9 +183,26 @@ namespace RimTalkHealthEnhance
         {
             base.ExposeData();
             Scribe_Deep.Look(ref Data, "colonyAnnouncementData");
+            Scribe_Collections.Look(ref CustomAreas, "customAreas", LookMode.Deep);
             
             if (Data == null)
                 Data = new ColonyAnnouncementData();
+            
+            if (CustomAreas == null)
+                CustomAreas = new List<CustomNamedArea>();
+            
+            // 加载后重新关联地图
+            if (Scribe.mode == LoadSaveMode.PostLoadInit)
+            {
+                var map = Find.CurrentMap;
+                if (map != null)
+                {
+                    foreach (var area in CustomAreas)
+                    {
+                        area.ReassignMap(map);
+                    }
+                }
+            }
         }
 
         public void AddAnnouncement(ColonyAnnouncement announcement)
@@ -230,6 +251,53 @@ namespace RimTalkHealthEnhance
         public string GetCachedFactionInfo()
         {
             return _cachedFactionInfo;
+        }
+        
+        /// <summary>
+        /// 添加自定义区域
+        /// </summary>
+        public void AddCustomArea(CustomNamedArea area)
+        {
+            if (CustomAreas == null)
+                CustomAreas = new List<CustomNamedArea>();
+            
+            CustomAreas.Add(area);
+            DataVersion++;
+        }
+        
+        /// <summary>
+        /// 删除自定义区域
+        /// </summary>
+        public void DeleteCustomArea(string id)
+        {
+            if (CustomAreas == null) return;
+            
+            var area = CustomAreas.FirstOrDefault(a => a.Id == id);
+            if (area != null)
+            {
+                CustomAreas.Remove(area);
+                DataVersion++;
+            }
+        }
+        
+        /// <summary>
+        /// 获取指定位置的自定义区域（优先级：最后创建的优先）
+        /// </summary>
+        public CustomNamedArea GetCustomAreaAt(IntVec3 position)
+        {
+            if (CustomAreas == null) return null;
+            
+            for (int i = CustomAreas.Count - 1; i >= 0; i--)
+            {
+                var area = CustomAreas[i];
+                if (!area.IsActive) continue;
+                if (area.Cells == null) continue;
+                
+                if (area[position])
+                    return area;
+            }
+            
+            return null;
         }
     }
 }
