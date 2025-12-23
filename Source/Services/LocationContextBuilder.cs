@@ -45,48 +45,129 @@ namespace RimTalkHealthEnhance
                 areaInfo = GetAreaInfo(pawn, position);
             }
 
+            // 检测附近房间（仅室外）
+            string nearbyRoom = null;
+            if (room == null || room.PsychologicallyOutdoors)
+            {
+                nearbyRoom = GetNearbyRoomInfo(pawn, position);
+            }
+
             // 构建位置字符串
-            return BuildLocationString(room, direction, zone, areaInfo);
+            return BuildLocationString(nearbyRoom, direction, zone, areaInfo);
         }
 
         /// <summary>
         /// 构建位置描述字符串
         /// </summary>
-        private static string BuildLocationString(Room room, string direction, string zone, string areaInfo)
+        private static string BuildLocationString(string nearbyRoom, string direction, string zone, string areaInfo)
         {
             string result = "";
 
-            // 室内场景
-            if (room != null && !room.PsychologicallyOutdoors)
+            // 添加附近房间信息（仅室外）
+            if (!string.IsNullOrEmpty(nearbyRoom))
             {
-                string roomName = room.Role?.label ?? "Room";
-                result = $"In {roomName}";
-            }
-            // 室外场景
-            else
-            {
-                result = "Outdoors";
+                result = nearbyRoom;
             }
 
             // 添加 Area 信息
             if (!string.IsNullOrEmpty(areaInfo))
             {
-                result += $" {areaInfo}";
+                if (!string.IsNullOrEmpty(result))
+                    result += ", ";
+                result += areaInfo;
             }
 
             // 添加方位
             if (!string.IsNullOrEmpty(direction))
             {
-                result += $", {direction} of colony";
+                if (!string.IsNullOrEmpty(result))
+                    result += ", ";
+                result += $"{direction} of colony";
             }
 
             // 添加区域类型
             if (!string.IsNullOrEmpty(zone))
             {
-                result += $" ({zone})";
+                if (!string.IsNullOrEmpty(result))
+                    result += " ";
+                result += $"({zone})";
             }
 
             return result;
+        }
+
+        /// <summary>
+        /// 获取附近房间信息（仅室外使用，扫描周围3格）
+        /// </summary>
+        private static string GetNearbyRoomInfo(Pawn pawn, IntVec3 position)
+        {
+            var map = pawn.Map;
+
+            // 优化：先扫描相邻8格（最可能找到房间）
+            foreach (var offset in GenAdj.AdjacentCells)
+            {
+                IntVec3 cell = position + offset;
+                if (!cell.InBounds(map)) continue;
+
+                var room = cell.GetRoom(map);
+                if (room != null && !room.PsychologicallyOutdoors && room.Role != null)
+                {
+                    string roomName = GetRoomName(room);
+                    return $"near {roomName}";
+                }
+            }
+
+            // 如果相邻格没找到，再扫描外围（距离2-3格）
+            const int RADIUS = 3;
+            for (int dx = -RADIUS; dx <= RADIUS; dx++)
+            {
+                for (int dz = -RADIUS; dz <= RADIUS; dz++)
+                {
+                    // 跳过已经扫描过的相邻8格和中心点
+                    if (Math.Abs(dx) <= 1 && Math.Abs(dz) <= 1) continue;
+
+                    IntVec3 cell = position + new IntVec3(dx, 0, dz);
+                    if (!cell.InBounds(map)) continue;
+
+                    var room = cell.GetRoom(map);
+                    if (room != null && !room.PsychologicallyOutdoors && room.Role != null)
+                    {
+                        string roomName = GetRoomName(room);
+                        return $"near {roomName}";
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// 获取房间名称（优先自定义名称）
+        /// </summary>
+        private static string GetRoomName(Room room)
+        {
+            if (room == null) return "Room";
+
+            // 尝试获取自定义标签
+            try
+            {
+                var labelCapProp = room.GetType().GetProperty("LabelCap");
+                if (labelCapProp != null)
+                {
+                    string labelCap = labelCapProp.GetValue(room) as string;
+                    if (!string.IsNullOrEmpty(labelCap) && labelCap != room.Role?.label)
+                    {
+                        return labelCap;
+                    }
+                }
+            }
+            catch
+            {
+                // 忽略反射错误
+            }
+
+            // 回退到角色标签
+            return room.Role?.label ?? "Room";
         }
 
         /// <summary>
