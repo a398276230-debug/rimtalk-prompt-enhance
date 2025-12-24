@@ -1,5 +1,58 @@
 # Bug 修复记录
 
+## 2025/12/24 - 修复设置界面数字参数不显示的问题
+
+### 问题描述
+在设置界面中，所有带有数字参数的选项（如"普通事件过期: 1.0 天"、"最小疼痛显示阈值: 0.01"等）都无法正确显示数字，只显示文本部分（如"普通事件过期: 天"）。
+
+### 根本原因
+RimWorld 的 `Translate` 方法在处理带有格式化说明符（如 `{0:F1}`）的占位符时存在兼容性问题：
+1. 如果 XML 翻译文件中使用了 `{0:F1}` 这样的格式化占位符。
+2. 而代码中传入的是字符串参数（例如 `.ToString("F1")` 后的结果）。
+3. 或者代码中传入的是数字参数，但 RimWorld 的翻译系统未能正确解析 XML 中的格式化说明符。
+导致参数被忽略或替换为空字符串。
+
+### 解决方案
+采用最稳妥的方式：**在代码中手动格式化，在 XML 中只使用简单占位符**。
+
+1. **修改 XML 翻译文件**：
+   - 移除所有格式化说明符（如 `:F1`, `:F2`, `:P0`）
+   - 将 `{0:F1}` 改为 `{0}`
+
+2. **修改 C# 代码**：
+   - 在调用 `Translate` 之前，手动将数字参数格式化为字符串
+   - 例如：`"Key".Translate(value.ToString("F1"))`
+
+### 修改文件
+
+#### `Languages/ChineseSimplified/Keyed/RimTalkEnhance_Keys.xml` & `Languages/English/Keyed/RimTalkEnhance_Keys.xml`
+```xml
+<!-- 修改前 -->
+<RTE_Settings_AutoCapture_EventExpire>普通事件过期: {0:F1} 天</RTE_Settings_AutoCapture_EventExpire>
+
+<!-- 修改后 -->
+<RTE_Settings_AutoCapture_EventExpire>普通事件过期: {0} 天</RTE_Settings_AutoCapture_EventExpire>
+```
+
+#### `Source/Settings/HealthEnhanceSettings.cs`
+```csharp
+// 修改前
+Widgets.Label(rect, "RTE_Settings_AutoCapture_EventExpire".Translate(EventExpireDays));
+
+// 修改后
+Widgets.Label(rect, "RTE_Settings_AutoCapture_EventExpire".Translate(EventExpireDays.ToString("F1")));
+```
+
+### 效果
+- ✅ 所有带有数字参数的设置项都能正确显示数值
+- ✅ 格式化（如保留1位小数、百分比）由代码控制，更加灵活可靠
+- ✅ 兼容中英文语言环境
+
+### 编译状态
+✅ 编译成功，无错误
+
+---
+
 ## 2025/12/24 - 修复 AI 连接时的字符编码错误
 
 ### 问题描述

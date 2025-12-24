@@ -132,8 +132,8 @@
   <RTE_Settings_Health_ShowLethalMarker_Desc>标记可能致命的健康状况</RTE_Settings_Health_ShowLethalMarker_Desc>
   <RTE_Settings_Health_ShowDescription>显示详细描述（仅完整模式）</RTE_Settings_Health_ShowDescription>
   <RTE_Settings_Health_ShowDescription_Desc>在完整信息级别下包含详细描述</RTE_Settings_Health_ShowDescription_Desc>
-  <RTE_Settings_Health_MinPainThreshold>最小疼痛显示阈值: {0:F2}</RTE_Settings_Health_MinPainThreshold>
-  <RTE_Settings_Health_LethalThreshold>致命标记阈值: {0:P0}</RTE_Settings_Health_LethalThreshold>
+  <RTE_Settings_Health_MinPainThreshold>最小疼痛显示阈值: {0}</RTE_Settings_Health_MinPainThreshold>
+  <RTE_Settings_Health_LethalThreshold>致命标记阈值: {0}</RTE_Settings_Health_LethalThreshold>
   <RTE_Settings_Health_MaxDescLength>描述最大长度: {0} 字符</RTE_Settings_Health_MaxDescLength>
   <RTE_Settings_Health_Note1>注意：需要在RimTalk设置中启用包含健康信息选项。</RTE_Settings_Health_Note1>
   <RTE_Settings_Health_Note2>此mod增强RimTalk发送给AI的健康上下文信息。</RTE_Settings_Health_Note2>
@@ -178,7 +178,7 @@
   <RTE_Settings_Factions_ShowSummary_Desc>在派系列表前显示整体态势摘要（威胁/囚犯/访客统计）</RTE_Settings_Factions_ShowSummary_Desc>
   <RTE_Settings_Factions_ShowNeutral>显示中立派系</RTE_Settings_Factions_ShowNeutral>
   <RTE_Settings_Factions_ShowNeutral_Desc>包含中立派系（好感度在 -75 到 75 之间）</RTE_Settings_Factions_ShowNeutral_Desc>
-  <RTE_Settings_Factions_CacheInterval>缓存更新间隔: {0:F1} 秒</RTE_Settings_Factions_CacheInterval>
+  <RTE_Settings_Factions_CacheInterval>缓存更新间隔: {0} 秒</RTE_Settings_Factions_CacheInterval>
   <RTE_Settings_Factions_CacheInterval_Desc>    派系信息每隔指定时间更新一次（避免线程冲突）</RTE_Settings_Factions_CacheInterval_Desc>
   <RTE_Settings_Factions_FilterByGoodwill>按好感度过滤</RTE_Settings_Factions_FilterByGoodwill>
   <RTE_Settings_Factions_FilterByGoodwill_Desc>只显示好感度高于指定阈值的派系</RTE_Settings_Factions_FilterByGoodwill_Desc>
@@ -217,7 +217,7 @@
   <RTE_Settings_Announcement_ShowTasks_Desc>包含任务列表中的任务</RTE_Settings_Announcement_ShowTasks_Desc>
   <RTE_Settings_Announcement_OnlyActive>  └─ 仅显示进行中的任务</RTE_Settings_Announcement_OnlyActive>
   <RTE_Settings_Announcement_OnlyActive_Desc>忽略已完成或暂停的任务</RTE_Settings_Announcement_OnlyActive_Desc>
-  <RTE_Settings_Announcement_CompletedDays>    └─ 已完成保留时间: {0:F1} 天</RTE_Settings_Announcement_CompletedDays>
+  <RTE_Settings_Announcement_CompletedDays>    └─ 已完成保留时间: {0} 天</RTE_Settings_Announcement_CompletedDays>
   <RTE_Settings_Announcement_Tip>提示：通告板可以通过游戏底部的'通告'标签页打开。\n在这里你可以向AI传达任何关于殖民地的信息。</RTE_Settings_Announcement_Tip>
   
   <!-- 设置界面 - 自动捕获 -->
@@ -229,10 +229,10 @@
   <RTE_Settings_AutoCapture_Events>捕获事件 (Events)</RTE_Settings_AutoCapture_Events>
   <RTE_Settings_AutoCapture_Resources>捕获资源发现 (Resources)</RTE_Settings_AutoCapture_Resources>
   <RTE_Settings_AutoCapture_QuestExpire>任务自动过期: {0} 天</RTE_Settings_AutoCapture_QuestExpire>
-  <RTE_Settings_AutoCapture_EventExpire>普通事件过期: {0:F1} 天</RTE_Settings_AutoCapture_EventExpire>
-  <RTE_Settings_AutoCapture_DeleteDays>自动捕获事件完成后删除: {0:F1} 天</RTE_Settings_AutoCapture_DeleteDays>
+  <RTE_Settings_AutoCapture_EventExpire>普通事件过期: {0} 天</RTE_Settings_AutoCapture_EventExpire>
+  <RTE_Settings_AutoCapture_DeleteDays>自动捕获事件完成后删除: {0} 天</RTE_Settings_AutoCapture_DeleteDays>
   <RTE_Settings_AutoCapture_DeleteDays_Zero>    设为 0 天表示立即删除已完成的自动捕获事件</RTE_Settings_AutoCapture_DeleteDays_Zero>
-  <RTE_Settings_AutoCapture_DeleteDays_Desc>    自动捕获的事件完成后将在 {0:F1} 天后自动删除</RTE_Settings_AutoCapture_DeleteDays_Desc>
+  <RTE_Settings_AutoCapture_DeleteDays_Desc>    自动捕获的事件完成后将在 {0} 天后自动删除</RTE_Settings_AutoCapture_DeleteDays_Desc>
   <RTE_Settings_AutoCapture_MergeDuplicates>合并重复事件</RTE_Settings_AutoCapture_MergeDuplicates>
   <RTE_Settings_AutoCapture_MergeDuplicates_Desc>如果标题相同，合并为一条并增加计数</RTE_Settings_AutoCapture_MergeDuplicates_Desc>
   <RTE_Settings_AutoCapture_AutoArchive>自动归档手动创建的已完成项</RTE_Settings_AutoCapture_AutoArchive>
@@ -269,8 +269,8 @@
   <RTE_Settings_AI_InjectionMode_Prompt>Prompt（对话提示词）</RTE_Settings_AI_InjectionMode_Prompt>
   <RTE_Settings_AI_InjectionMode_Context_Desc>      Context模式：快照会注入到系统上下文中，所有小人都能看到。适合让小人讨论殖民地的发展历史。</RTE_Settings_AI_InjectionMode_Context_Desc>
   <RTE_Settings_AI_InjectionMode_Prompt_Desc>      Prompt模式：快照会注入到对话提示词中，只影响当前对话。适合让AI了解背景，但不让小人直接讨论。</RTE_Settings_AI_InjectionMode_Prompt_Desc>
-  <RTE_Settings_AI_InjectDays>  └─ 注入天数: {0:F1} 天</RTE_Settings_AI_InjectDays>
-  <RTE_Settings_AI_InjectDays_Desc>      当前将注入最近 {0:F1} 天的快照总结</RTE_Settings_AI_InjectDays_Desc>
+  <RTE_Settings_AI_InjectDays>  └─ 注入天数: {0} 天</RTE_Settings_AI_InjectDays>
+  <RTE_Settings_AI_InjectDays_Desc>      当前将注入最近 {0} 天的快照总结</RTE_Settings_AI_InjectDays_Desc>
   <RTE_Settings_AI_Note>说明：\n1. 每日 0 点系统会自动拍摄殖民地快照（建筑、房间、蓝图）。\n2. AI 将对比昨日快照，结合玩家操作日志、工程进度、科技状态和事件，生成一段简短的总结。\n3. 总结结果将显示在'每日快照'标签页中，不会直接修改概况。\n4. 如果启用'自动注入'，AI 在对话时会自动看到最近的历史记录（含日期）。\n5. 工程信息：从状况板读取进行中和已完成的工程项目。\n6. 科技状态：包含当前研究、已完成科技，可选包含未完成科技（默认关闭以节省token）。</RTE_Settings_AI_Note>
   
   <!-- 提示词编辑器 -->

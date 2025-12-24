@@ -132,8 +132,8 @@
   <RTE_Settings_Health_ShowLethalMarker_Desc>Mark potentially lethal health conditions</RTE_Settings_Health_ShowLethalMarker_Desc>
   <RTE_Settings_Health_ShowDescription>Show detailed description (full mode only)</RTE_Settings_Health_ShowDescription>
   <RTE_Settings_Health_ShowDescription_Desc>Include detailed descriptions at full information level</RTE_Settings_Health_ShowDescription_Desc>
-  <RTE_Settings_Health_MinPainThreshold>Minimum pain threshold: {0:F2}</RTE_Settings_Health_MinPainThreshold>
-  <RTE_Settings_Health_LethalThreshold>Lethal marker threshold: {0:P0}</RTE_Settings_Health_LethalThreshold>
+  <RTE_Settings_Health_MinPainThreshold>Minimum pain threshold: {0}</RTE_Settings_Health_MinPainThreshold>
+  <RTE_Settings_Health_LethalThreshold>Lethal marker threshold: {0}</RTE_Settings_Health_LethalThreshold>
   <RTE_Settings_Health_MaxDescLength>Max description length: {0} chars</RTE_Settings_Health_MaxDescLength>
   <RTE_Settings_Health_Note1>Note: You need to enable health info in RimTalk settings.</RTE_Settings_Health_Note1>
   <RTE_Settings_Health_Note2>This mod enhances the health context sent to AI by RimTalk.</RTE_Settings_Health_Note2>
@@ -178,7 +178,7 @@
   <RTE_Settings_Factions_ShowSummary_Desc>Display overall situation summary before faction list (threats/prisoners/visitors stats)</RTE_Settings_Factions_ShowSummary_Desc>
   <RTE_Settings_Factions_ShowNeutral>Show neutral factions</RTE_Settings_Factions_ShowNeutral>
   <RTE_Settings_Factions_ShowNeutral_Desc>Include neutral factions (goodwill between -75 and 75)</RTE_Settings_Factions_ShowNeutral_Desc>
-  <RTE_Settings_Factions_CacheInterval>Cache update interval: {0:F1} seconds</RTE_Settings_Factions_CacheInterval>
+  <RTE_Settings_Factions_CacheInterval>Cache update interval: {0} seconds</RTE_Settings_Factions_CacheInterval>
   <RTE_Settings_Factions_CacheInterval_Desc>    Faction info updates at specified intervals (avoid thread conflicts)</RTE_Settings_Factions_CacheInterval_Desc>
   <RTE_Settings_Factions_FilterByGoodwill>Filter by goodwill</RTE_Settings_Factions_FilterByGoodwill>
   <RTE_Settings_Factions_FilterByGoodwill_Desc>Only show factions with goodwill above specified threshold</RTE_Settings_Factions_FilterByGoodwill_Desc>
@@ -217,7 +217,7 @@
   <RTE_Settings_Announcement_ShowTasks_Desc>Include tasks from task list</RTE_Settings_Announcement_ShowTasks_Desc>
   <RTE_Settings_Announcement_OnlyActive>  └─ Only show active tasks</RTE_Settings_Announcement_OnlyActive>
   <RTE_Settings_Announcement_OnlyActive_Desc>Ignore completed or paused tasks</RTE_Settings_Announcement_OnlyActive_Desc>
-  <RTE_Settings_Announcement_CompletedDays>    └─ Completed retention time: {0:F1} days</RTE_Settings_Announcement_CompletedDays>
+  <RTE_Settings_Announcement_CompletedDays>    └─ Completed retention time: {0} days</RTE_Settings_Announcement_CompletedDays>
   <RTE_Settings_Announcement_Tip>Tip: Announcement board can be opened via the 'Announcement' tab at bottom of game.\nHere you can communicate any colony information to AI.</RTE_Settings_Announcement_Tip>
   
   <!-- Settings - Auto Capture -->
@@ -229,10 +229,10 @@
   <RTE_Settings_AutoCapture_Events>Capture events</RTE_Settings_AutoCapture_Events>
   <RTE_Settings_AutoCapture_Resources>Capture resource discoveries</RTE_Settings_AutoCapture_Resources>
   <RTE_Settings_AutoCapture_QuestExpire>Quest auto-expire: {0} days</RTE_Settings_AutoCapture_QuestExpire>
-  <RTE_Settings_AutoCapture_EventExpire>Event expire: {0:F1} days</RTE_Settings_AutoCapture_EventExpire>
-  <RTE_Settings_AutoCapture_DeleteDays>Auto-captured event delete after completion: {0:F1} days</RTE_Settings_AutoCapture_DeleteDays>
+  <RTE_Settings_AutoCapture_EventExpire>Event expire: {0} days</RTE_Settings_AutoCapture_EventExpire>
+  <RTE_Settings_AutoCapture_DeleteDays>Auto-captured event delete after completion: {0} days</RTE_Settings_AutoCapture_DeleteDays>
   <RTE_Settings_AutoCapture_DeleteDays_Zero>    Setting to 0 days means immediately delete completed auto-captured events</RTE_Settings_AutoCapture_DeleteDays_Zero>
-  <RTE_Settings_AutoCapture_DeleteDays_Desc>    Auto-captured events will be deleted {0:F1} days after completion</RTE_Settings_AutoCapture_DeleteDays_Desc>
+  <RTE_Settings_AutoCapture_DeleteDays_Desc>    Auto-captured events will be deleted {0} days after completion</RTE_Settings_AutoCapture_DeleteDays_Desc>
   <RTE_Settings_AutoCapture_MergeDuplicates>Merge duplicate events</RTE_Settings_AutoCapture_MergeDuplicates>
   <RTE_Settings_AutoCapture_MergeDuplicates_Desc>If titles match, merge into one entry and increase count</RTE_Settings_AutoCapture_MergeDuplicates_Desc>
   <RTE_Settings_AutoCapture_AutoArchive>Auto-archive manually created completed items</RTE_Settings_AutoCapture_AutoArchive>
@@ -269,8 +269,8 @@
   <RTE_Settings_AI_InjectionMode_Prompt>Prompt (Dialogue Prompt)</RTE_Settings_AI_InjectionMode_Prompt>
   <RTE_Settings_AI_InjectionMode_Context_Desc>      Context Mode: Snapshots are injected into system context, visible to all pawns. Suitable for pawns discussing colony history.</RTE_Settings_AI_InjectionMode_Context_Desc>
   <RTE_Settings_AI_InjectionMode_Prompt_Desc>      Prompt Mode: Snapshots are injected into dialogue prompt, only affecting current conversation. Suitable for giving AI background info without pawns discussing it directly.</RTE_Settings_AI_InjectionMode_Prompt_Desc>
-  <RTE_Settings_AI_InjectDays>  └─ Injection days: {0:F1} days</RTE_Settings_AI_InjectDays>
-  <RTE_Settings_AI_InjectDays_Desc>      Currently will inject snapshot summaries from last {0:F1} days</RTE_Settings_AI_InjectDays_Desc>
+  <RTE_Settings_AI_InjectDays>  └─ Injection days: {0} days</RTE_Settings_AI_InjectDays>
+  <RTE_Settings_AI_InjectDays_Desc>      Currently will inject snapshot summaries from last {0} days</RTE_Settings_AI_InjectDays_Desc>
   <RTE_Settings_AI_Note>Note:\n1. System automatically takes colony snapshots at midnight (buildings, rooms, blueprints).\n2. AI compares with yesterday's snapshot, combines player action logs, project progress, research status, and events to generate brief summary.\n3. Summary results display in 'History Snapshots' tab, won't directly modify overview.\n4. If 'Auto-inject' is enabled, AI will automatically see recent history (with dates) during dialogue.\n5. Project info: Reads in-progress and completed projects from status board.\n6. Research status: Includes current research, completed research, optionally includes unfinished research (default off to save tokens).</RTE_Settings_AI_Note>
   
   <!-- Prompt Editor -->

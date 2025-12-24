@@ -401,11 +401,11 @@ namespace RimTalkHealthEnhance
             listing.GapLine();
             listing.Gap();
 
-            Widgets.Label(listing.GetRect(22f), "RTE_Settings_Health_MinPainThreshold".Translate(MinPainToShow));
+            Widgets.Label(listing.GetRect(22f), "RTE_Settings_Health_MinPainThreshold".Translate(MinPainToShow.ToString("F2")));
             MinPainToShow = listing.Slider(MinPainToShow, 0f, 0.5f);
             listing.Gap(4f);
 
-            Widgets.Label(listing.GetRect(22f), "RTE_Settings_Health_LethalThreshold".Translate(LethalThreshold));
+            Widgets.Label(listing.GetRect(22f), "RTE_Settings_Health_LethalThreshold".Translate(LethalThreshold.ToStringPercent()));
             LethalThreshold = listing.Slider(LethalThreshold, 0.5f, 1f);
             listing.Gap(4f);
 
@@ -526,7 +526,7 @@ namespace RimTalkHealthEnhance
                 
                 listing.Gap();
                 
-                Widgets.Label(listing.GetRect(22f), "RTE_Settings_Factions_CacheInterval".Translate(FactionCacheUpdateInterval));
+                Widgets.Label(listing.GetRect(22f), "RTE_Settings_Factions_CacheInterval".Translate(FactionCacheUpdateInterval.ToString("F1")));
                 FactionCacheUpdateInterval = listing.Slider(FactionCacheUpdateInterval, 1f, 30f);
                 
                 Text.Font = GameFont.Tiny;
@@ -675,7 +675,7 @@ namespace RimTalkHealthEnhance
                     listing.CheckboxLabeled("RTE_Settings_Announcement_OnlyActive".Translate(), ref OnlyShowActiveTasks, "RTE_Settings_Announcement_OnlyActive_Desc".Translate());
                     if (OnlyShowActiveTasks)
                     {
-                        Widgets.Label(listing.GetRect(22f), "RTE_Settings_Announcement_CompletedDays".Translate(CompletedTaskShowDays));
+                        Widgets.Label(listing.GetRect(22f), "RTE_Settings_Announcement_CompletedDays".Translate(CompletedTaskShowDays.ToString("F1")));
                         CompletedTaskShowDays = listing.Slider(CompletedTaskShowDays, 0f, 7f);
                     }
                 }
@@ -708,12 +708,12 @@ namespace RimTalkHealthEnhance
                 Widgets.Label(listing.GetRect(22f), "RTE_Settings_AutoCapture_QuestExpire".Translate(AutoCompleteDays));
                 AutoCompleteDays = (int)listing.Slider(AutoCompleteDays, 1, 30);
                 
-                Widgets.Label(listing.GetRect(22f), "RTE_Settings_AutoCapture_EventExpire".Translate(EventExpireDays));
+                Widgets.Label(listing.GetRect(22f), "RTE_Settings_AutoCapture_EventExpire".Translate(EventExpireDays.ToString("F1")));
                 EventExpireDays = listing.Slider(EventExpireDays, 0.1f, 7f);
                 
                 listing.Gap();
                 
-                Widgets.Label(listing.GetRect(22f), "RTE_Settings_AutoCapture_DeleteDays".Translate(AutoCapturedDeleteDays));
+                Widgets.Label(listing.GetRect(22f), "RTE_Settings_AutoCapture_DeleteDays".Translate(AutoCapturedDeleteDays.ToString("F1")));
                 AutoCapturedDeleteDays = listing.Slider(AutoCapturedDeleteDays, 0f, 3f);
                 
                 Text.Font = GameFont.Tiny;
@@ -923,12 +923,12 @@ namespace RimTalkHealthEnhance
                     GUI.color = Color.white;
                     Text.Font = GameFont.Small;
 
-                    Widgets.Label(listing.GetRect(22f), "RTE_Settings_AI_InjectDays".Translate(SnapshotInjectDays));
+                    Widgets.Label(listing.GetRect(22f), "RTE_Settings_AI_InjectDays".Translate(SnapshotInjectDays.ToString("F1")));
                     SnapshotInjectDays = listing.Slider(SnapshotInjectDays, 0.5f, 7f);
                     
                     Text.Font = GameFont.Tiny;
                     GUI.color = Color.gray;
-                    Widgets.Label(listing.GetRect(18f), "RTE_Settings_AI_InjectDays_Desc".Translate(SnapshotInjectDays));
+                    Widgets.Label(listing.GetRect(18f), "RTE_Settings_AI_InjectDays_Desc".Translate(SnapshotInjectDays.ToString("F1")));
                     GUI.color = Color.white;
                     Text.Font = GameFont.Small;
                 }
