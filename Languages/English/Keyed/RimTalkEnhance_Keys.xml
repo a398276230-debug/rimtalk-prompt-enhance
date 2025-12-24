@@ -197,6 +197,19 @@
   <RTE_Settings_Location_CenterRadius>    └─ Center radius: {0} cells</RTE_Settings_Location_CenterRadius>
   <RTE_Settings_Location_CenterRadius_Desc>      Within {0} cells of colony center is considered center area</RTE_Settings_Location_CenterRadius_Desc>
   <RTE_Settings_Location_Note>Note:\n1. System automatically calculates colony center (based on home area).\n2. Provides 8-direction judgment (E, S, W, N and four diagonals).\n3. Area types: Town Center, Town, Town Edge, Wilderness.\n4. Automatically detects growing zones, storage zones, and other native game areas.\n5. Info is automatically injected into AI context, letting AI know pawn's location.</RTE_Settings_Location_Note>
+  
+  <RTE_Settings_Location_EnableGlobalLayout>Enable Global Layout Info</RTE_Settings_Location_EnableGlobalLayout>
+  <RTE_Settings_Location_EnableGlobalLayout_Desc>Generate spatial layout description for the entire colony (rooms, areas, directions)</RTE_Settings_Location_EnableGlobalLayout_Desc>
+  <RTE_Settings_Location_MinRoomSize>  └─ Min Room Size: {0} cells</RTE_Settings_Location_MinRoomSize>
+  <RTE_Settings_Location_MaxDistance>  └─ Max Distance: {0} cells</RTE_Settings_Location_MaxDistance>
+  <RTE_Settings_Location_OnlyNamedRooms>  └─ Only Show Named Rooms</RTE_Settings_Location_OnlyNamedRooms>
+  <RTE_Settings_Location_OnlyNamedRooms_Desc>      Ignore unnamed rooms (like "Room")</RTE_Settings_Location_OnlyNamedRooms_Desc>
+  <RTE_Settings_Location_IncludeCustomAreas>  └─ Include Custom Areas</RTE_Settings_Location_IncludeCustomAreas>
+  <RTE_Settings_Location_IncludeCustomAreas_Desc>      Include custom drawn areas in the layout</RTE_Settings_Location_IncludeCustomAreas_Desc>
+  <RTE_Settings_Location_GroupByDirection>  └─ Group By Direction</RTE_Settings_Location_GroupByDirection>
+  <RTE_Settings_Location_GroupByDirection_Desc>      Group by North/South/East/West (otherwise group by room/area type)</RTE_Settings_Location_GroupByDirection_Desc>
+  <RTE_Settings_Location_GlobalLayout_Warning>⚠️ Warning: Enabling this feature will significantly increase Token consumption (~500-1500 chars). Enable as needed.</RTE_Settings_Location_GlobalLayout_Warning>
+  
   <RTE_Settings_Location_ExampleTitle>Output Examples</RTE_Settings_Location_ExampleTitle>
   
   <!-- Settings - Misc -->

@@ -91,6 +91,13 @@ namespace RimTalkHealthEnhance
         public bool EnableTownCenterDetection = false;   // 启用城镇核心检测
         public int TownCenterRadius = 20;                // 城镇核心半径
         
+        public bool EnableGlobalLayout = false;          // 启用全局布局信息
+        public int MinRoomSize = 9;                      // 最小房间面积
+        public int MaxLayoutDistance = 100;              // 最大距离
+        public bool IncludeCustomAreas = true;           // 包含自定义区域
+        public bool GroupByDirection = true;             // 按方位分组
+        public bool OnlyShowNamedRooms = true;           // 只显示有名称的房间
+
         // === Misc Settings ===
         public bool UnlimitedRelations = false;          // 解除关系数量限制
         public bool UnlimitedTraits = false;             // 解除配角特质限制
@@ -200,6 +207,13 @@ namespace RimTalkHealthEnhance
             Scribe_Values.Look(ref EnableTownCenterDetection, "enableTownCenterDetection", false);
             Scribe_Values.Look(ref TownCenterRadius, "townCenterRadius", 20);
             
+            Scribe_Values.Look(ref EnableGlobalLayout, "enableGlobalLayout", false);
+            Scribe_Values.Look(ref MinRoomSize, "minRoomSize", 9);
+            Scribe_Values.Look(ref MaxLayoutDistance, "maxLayoutDistance", 100);
+            Scribe_Values.Look(ref IncludeCustomAreas, "includeCustomAreas", true);
+            Scribe_Values.Look(ref GroupByDirection, "groupByDirection", true);
+            Scribe_Values.Look(ref OnlyShowNamedRooms, "onlyShowNamedRooms", true);
+
             Scribe_Values.Look(ref UnlimitedRelations, "unlimitedRelations", false);
             Scribe_Values.Look(ref UnlimitedTraits, "unlimitedTraits", false);
 
@@ -637,6 +651,43 @@ namespace RimTalkHealthEnhance
                 "4. 自动检测种植区、储存区等游戏原生区域。\n" +
                 "5. 信息会自动注入到 AI 的上下文中，让 AI 了解 Pawn 的位置。");
             Text.Font = GameFont.Small;
+
+            listing.Gap();
+            listing.GapLine();
+            listing.Gap();
+
+            listing.Gap();
+            listing.GapLine();
+            listing.Gap();
+
+            listing.CheckboxLabeled("RTE_Settings_Location_EnableGlobalLayout".Translate(), ref EnableGlobalLayout,
+                "RTE_Settings_Location_EnableGlobalLayout_Desc".Translate());
+
+            if (EnableGlobalLayout)
+            {
+                listing.Gap();
+                
+                Widgets.Label(listing.GetRect(22f), "RTE_Settings_Location_MinRoomSize".Translate(MinRoomSize));
+                MinRoomSize = (int)listing.Slider(MinRoomSize, 4, 50);
+                
+                Widgets.Label(listing.GetRect(22f), "RTE_Settings_Location_MaxDistance".Translate(MaxLayoutDistance));
+                MaxLayoutDistance = (int)listing.Slider(MaxLayoutDistance, 0, 300);
+                
+                listing.CheckboxLabeled("RTE_Settings_Location_OnlyNamedRooms".Translate(), ref OnlyShowNamedRooms,
+                    "RTE_Settings_Location_OnlyNamedRooms_Desc".Translate());
+                
+                listing.CheckboxLabeled("RTE_Settings_Location_IncludeCustomAreas".Translate(), ref IncludeCustomAreas,
+                    "RTE_Settings_Location_IncludeCustomAreas_Desc".Translate());
+                
+                listing.CheckboxLabeled("RTE_Settings_Location_GroupByDirection".Translate(), ref GroupByDirection,
+                    "RTE_Settings_Location_GroupByDirection_Desc".Translate());
+                
+                Text.Font = GameFont.Tiny;
+                GUI.color = new Color(1f, 0.8f, 0.6f);
+                Widgets.Label(listing.GetRect(40f), "RTE_Settings_Location_GlobalLayout_Warning".Translate());
+                GUI.color = Color.white;
+                Text.Font = GameFont.Small;
+            }
 
             listing.Gap();
             listing.GapLine();

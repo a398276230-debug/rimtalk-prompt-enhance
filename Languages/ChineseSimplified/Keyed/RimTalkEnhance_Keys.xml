@@ -197,6 +197,19 @@
   <RTE_Settings_Location_CenterRadius>    └─ 核心区半径: {0} 格</RTE_Settings_Location_CenterRadius>
   <RTE_Settings_Location_CenterRadius_Desc>      距离殖民地中心 {0} 格内视为核心区</RTE_Settings_Location_CenterRadius_Desc>
   <RTE_Settings_Location_Note>说明：\n1. 系统会自动计算殖民地中心（基于居住区）。\n2. 提供8方位判断（东、南、西、北及四个斜向）。\n3. 区域类型：Town Center（核心）、Town（城镇）、Town Edge（边缘）、Wilderness（野外）。\n4. 自动检测种植区、储存区等游戏原生区域。\n5. 信息会自动注入到 AI 的上下文中，让 AI 了解 Pawn 的位置。</RTE_Settings_Location_Note>
+  
+  <RTE_Settings_Location_EnableGlobalLayout>启用全局布局信息</RTE_Settings_Location_EnableGlobalLayout>
+  <RTE_Settings_Location_EnableGlobalLayout_Desc>生成整个殖民地的空间布局描述（房间、区域、方位）</RTE_Settings_Location_EnableGlobalLayout_Desc>
+  <RTE_Settings_Location_MinRoomSize>  └─ 最小房间面积: {0} 格</RTE_Settings_Location_MinRoomSize>
+  <RTE_Settings_Location_MaxDistance>  └─ 最大距离: {0} 格</RTE_Settings_Location_MaxDistance>
+  <RTE_Settings_Location_OnlyNamedRooms>  └─ 只显示有名称的房间</RTE_Settings_Location_OnlyNamedRooms>
+  <RTE_Settings_Location_OnlyNamedRooms_Desc>      忽略未命名的房间（如 "Room"）</RTE_Settings_Location_OnlyNamedRooms_Desc>
+  <RTE_Settings_Location_IncludeCustomAreas>  └─ 包含自定义区域</RTE_Settings_Location_IncludeCustomAreas>
+  <RTE_Settings_Location_IncludeCustomAreas_Desc>      将自定义绘制的区域也包含在布局中</RTE_Settings_Location_IncludeCustomAreas_Desc>
+  <RTE_Settings_Location_GroupByDirection>  └─ 按方位分组</RTE_Settings_Location_GroupByDirection>
+  <RTE_Settings_Location_GroupByDirection_Desc>      按北/南/东/西分组显示（否则按房间/区域类型分组）</RTE_Settings_Location_GroupByDirection_Desc>
+  <RTE_Settings_Location_GlobalLayout_Warning>⚠️ 警告：启用此功能会显著增加 Token 消耗（约 500-1500 字符），请根据需要开启。</RTE_Settings_Location_GlobalLayout_Warning>
+  
   <RTE_Settings_Location_ExampleTitle>输出示例</RTE_Settings_Location_ExampleTitle>
   
   <!-- 设置界面 - 杂项 -->

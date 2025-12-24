@@ -19,6 +19,34 @@ namespace RimTalkHealthEnhance.Models
         
         private Map map;
         
+        public Map Map => map;
+        public int MapID => map?.uniqueID ?? -1;
+        public bool IsEnabled => IsActive;
+        
+        /// <summary>
+        /// 计算区域中心点
+        /// </summary>
+        public IntVec3 Center
+        {
+            get
+            {
+                if (Cells == null || map == null) return IntVec3.Invalid;
+                
+                long sumX = 0, sumZ = 0;
+                int count = 0;
+                
+                foreach (var cell in ActiveCells)
+                {
+                    sumX += cell.x;
+                    sumZ += cell.z;
+                    count++;
+                }
+                
+                if (count == 0) return IntVec3.Invalid;
+                return new IntVec3((int)(sumX / count), 0, (int)(sumZ / count));
+            }
+        }
+        
         // 无参构造函数（用于序列化）
         public CustomNamedArea()
         {

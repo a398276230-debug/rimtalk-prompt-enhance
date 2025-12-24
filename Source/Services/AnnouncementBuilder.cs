@@ -32,6 +32,16 @@ namespace RimTalkHealthEnhance
                 parts.Add(factionContext);
             }
 
+            // === 1.5 全局地图布局 ===
+            if (settings.EnableGlobalLayout)
+            {
+                string layoutInfo = ColonyLayoutBuilder.GetColonyLayout(map);
+                if (!string.IsNullOrEmpty(layoutInfo))
+                {
+                    parts.Add(layoutInfo);
+                }
+            }
+
             // === 2. 自由文本概况 ===
             if (settings.ShowColonyOverview && !string.IsNullOrWhiteSpace(manager.Data.ColonyOverview))
             {

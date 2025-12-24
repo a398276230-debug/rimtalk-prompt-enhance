@@ -9,6 +9,10 @@ namespace RimTalkHealthEnhance
     {
         static void Prefix(ref string context)
         {
+            // 防止重复注入
+            if (context != null && context.Contains("=== Colony Status ==="))
+                return;
+
             string announcement = AnnouncementBuilder.BuildAnnouncementContext();
             if (!string.IsNullOrEmpty(announcement))
             {

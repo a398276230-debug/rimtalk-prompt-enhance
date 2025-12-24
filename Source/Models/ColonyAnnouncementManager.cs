@@ -285,6 +285,10 @@ namespace RimTalkHealthEnhance
             
             CustomAreas.Add(area);
             DataVersion++;
+            
+            // 刷新布局缓存
+            if (area.Map != null)
+                ColonyLayoutBuilder.InvalidateCache(area.Map);
         }
         
         /// <summary>
@@ -307,9 +311,24 @@ namespace RimTalkHealthEnhance
                     }
                 }
 
+                var map = area.Map;
                 CustomAreas.Remove(area);
                 DataVersion++;
+                
+                // 刷新布局缓存
+                if (map != null)
+                    ColonyLayoutBuilder.InvalidateCache(map);
             }
+        }
+        
+        /// <summary>
+        /// 通知区域已修改（用于重命名、修改格子等）
+        /// </summary>
+        public void NotifyAreaModified(CustomNamedArea area)
+        {
+            DataVersion++;
+            if (area?.Map != null)
+                ColonyLayoutBuilder.InvalidateCache(area.Map);
         }
         
         /// <summary>

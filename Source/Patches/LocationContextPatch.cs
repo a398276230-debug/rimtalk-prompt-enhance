@@ -29,6 +29,7 @@ namespace RimTalkHealthEnhance
                     
                     sb.Append($"\n{prefix}: {relativeLocation}");
                 }
+
             }
             catch (System.Exception ex)
             {
