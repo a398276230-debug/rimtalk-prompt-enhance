@@ -50,44 +50,19 @@ namespace RimTalkHealthEnhance
 
             List<TabRecord> tabs = new List<TabRecord>
             {
-                new TabRecord("RTE_Settings_Tab_Health".Translate(), () => _tabIndex = 0, _tabIndex == 0),
-                new TabRecord("RTE_Settings_Tab_Items".Translate(), () => _tabIndex = 1, _tabIndex == 1),
-                new TabRecord("RTE_Settings_Tab_Factions".Translate(), () => _tabIndex = 2, _tabIndex == 2),
-                new TabRecord("RTE_Settings_Tab_Location".Translate(), () => _tabIndex = 3, _tabIndex == 3),
-                new TabRecord("RTE_Settings_Tab_Announcement".Translate(), () => _tabIndex = 4, _tabIndex == 4),
-                new TabRecord("RTE_Settings_Tab_AutoCapture".Translate(), () => _tabIndex = 5, _tabIndex == 5),
-                new TabRecord("RTE_Settings_Tab_AIHistorian".Translate(), () => _tabIndex = 6, _tabIndex == 6)
+                new TabRecord("RTE_Settings_Tab_ContextEnhancement".Translate(), () => _tabIndex = 0, _tabIndex == 0),
+                new TabRecord("RTE_Settings_Tab_ColonyStatus".Translate(), () => _tabIndex = 1, _tabIndex == 1)
             };
             
             TabDrawer.DrawTabs(tabRect, tabs);
 
             if (_tabIndex == 0)
             {
-                Settings.DoHealthSettingsWindowContents(contentRect);
-            }
-            else if (_tabIndex == 1)
-            {
-                Settings.DoItemSettingsWindowContents(contentRect);
-            }
-            else if (_tabIndex == 2)
-            {
-                Settings.DoFactionSettingsWindowContents(contentRect);
-            }
-            else if (_tabIndex == 3)
-            {
-                Settings.DoLocationSettingsWindowContents(contentRect);
-            }
-            else if (_tabIndex == 4)
-            {
-                Settings.DoAnnouncementSettingsWindowContents(contentRect);
-            }
-            else if (_tabIndex == 5)
-            {
-                Settings.DoEventSettingsWindowContents(contentRect);
+                Settings.DoContextEnhancementWindowContents(contentRect);
             }
             else
             {
-                Settings.DoAISettingsWindowContents(contentRect);
+                Settings.DoColonyStatusWindowContents(contentRect);
             }
             
             base.DoSettingsWindowContents(inRect);

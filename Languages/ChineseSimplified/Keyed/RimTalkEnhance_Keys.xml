@@ -114,6 +114,14 @@
   <RTE_Settings_Tab_AutoCapture>自动捕获</RTE_Settings_Tab_AutoCapture>
   <RTE_Settings_Tab_AIHistorian>AI 史官</RTE_Settings_Tab_AIHistorian>
   
+  <!-- 设置界面 - 新标签页 -->
+  <RTE_Settings_Tab_ContextEnhancement>信息增强</RTE_Settings_Tab_ContextEnhancement>
+  <RTE_Settings_Tab_ColonyStatus>殖民地状况板</RTE_Settings_Tab_ColonyStatus>
+  
+  <!-- 设置界面 - 页面标题 -->
+  <RTE_Settings_ContextEnhancement_PageTitle>信息增强设置</RTE_Settings_ContextEnhancement_PageTitle>
+  <RTE_Settings_ColonyStatus_PageTitle>殖民地状况板设置</RTE_Settings_ColonyStatus_PageTitle>
+  
   <!-- 设置界面 - 健康信息 -->
   <RTE_Settings_Health_Title>RimTalk 增强健康信息设置</RTE_Settings_Health_Title>
   <RTE_Settings_Health_ShowSeverity>显示严重度百分比</RTE_Settings_Health_ShowSeverity>

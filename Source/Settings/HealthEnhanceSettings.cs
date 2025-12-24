@@ -107,13 +107,17 @@ namespace RimTalkHealthEnhance
         public static List<string> DiscoveredEventTypes = new List<string>();
 
         // === Scroll Positions ===
-        private Vector2 _healthScrollPosition = Vector2.zero;
-        private Vector2 _itemScrollPosition = Vector2.zero;
-        private Vector2 _factionScrollPosition = Vector2.zero;
-        private Vector2 _announcementScrollPosition = Vector2.zero;
-        private Vector2 _eventScrollPosition = Vector2.zero;
-        private Vector2 _aiScrollPosition = Vector2.zero;
-        private Vector2 _locationScrollPosition = Vector2.zero;
+        private Vector2 _contextEnhancementScrollPosition = Vector2.zero;
+        private Vector2 _colonyStatusScrollPosition = Vector2.zero;
+        
+        // === Collapsible Section States ===
+        private static bool _healthSectionExpanded = true;
+        private static bool _itemsSectionExpanded = true;
+        private static bool _factionsSectionExpanded = true;
+        private static bool _locationSectionExpanded = true;
+        private static bool _announcementSectionExpanded = true;
+        private static bool _autoCaptureSectionExpanded = true;
+        private static bool _aiHistorianSectionExpanded = true;
 
         public override void ExposeData()
         {
@@ -199,21 +203,166 @@ namespace RimTalkHealthEnhance
                 EnabledEventTypes = new Dictionary<string, bool>();
         }
 
-        public void DoHealthSettingsWindowContents(Rect inRect)
+        private string GetDefaultUrl(AIProvider provider)
         {
-            Rect viewRect = new Rect(0f, 0f, inRect.width - 16f, 600f);
-            Widgets.BeginScrollView(inRect, ref _healthScrollPosition, viewRect);
+            switch (provider)
+            {
+                case AIProvider.OpenAI: return "https://api.openai.com/v1/chat/completions";
+                case AIProvider.Google: return "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent";
+                case AIProvider.DeepSeek: return "https://api.deepseek.com/v1/chat/completions";
+                case AIProvider.Player2: return "https://api.player2.game/v1/chat/completions";
+                default: return "";
+            }
+        }
+
+        // ========================================
+        // NEW: Reorganized Settings Pages
+        // ========================================
+
+        /// <summary>
+        /// Helper method to draw a collapsible section header
+        /// </summary>
+        private bool DrawCollapsibleSection(Listing_Standard listing, string title, bool isExpanded, string icon = "▶")
+        {
+            Rect headerRect = listing.GetRect(40f);  // 增加高度从32到40
+            
+            // Background - 使用更浅的颜色
+            Widgets.DrawBoxSolid(headerRect, new Color(0.3f, 0.35f, 0.4f, 0.8f));
+            
+            // Icon and title
+            Text.Font = GameFont.Medium;
+            string displayIcon = isExpanded ? "▼" : "▶";
+            Widgets.Label(headerRect.LeftPart(0.95f).ContractedBy(6f), $"{displayIcon} {title}");
+            Text.Font = GameFont.Small;
+            
+            // Click to toggle
+            bool clicked = Widgets.ButtonInvisible(headerRect);
+            if (Mouse.IsOver(headerRect))
+            {
+                Widgets.DrawHighlight(headerRect);
+            }
+            
+            listing.Gap(6f);  // 增加间距
+            return clicked ? !isExpanded : isExpanded;
+        }
+
+        /// <summary>
+        /// Page 1: Context Enhancement (信息增强)
+        /// Combines: Health, Items, Factions, Location
+        /// </summary>
+        public void DoContextEnhancementWindowContents(Rect inRect)
+        {
+            Rect viewRect = new Rect(0f, 0f, inRect.width - 16f, 2500f);
+            Widgets.BeginScrollView(inRect, ref _contextEnhancementScrollPosition, viewRect);
 
             Listing_Standard listing = new Listing_Standard();
             listing.Begin(viewRect);
 
-            // Header
+            // Page Title
             Text.Font = GameFont.Medium;
-            Widgets.Label(listing.GetRect(30f), "RTE_Settings_Health_Title".Translate());
+            GUI.color = new Color(0.8f, 1f, 0.8f);
+            Widgets.Label(listing.GetRect(35f), "RTE_Settings_ContextEnhancement_PageTitle".Translate());
+            GUI.color = Color.white;
             Text.Font = GameFont.Small;
-            listing.Gap();
+            listing.Gap(8f);
 
-            // Display Options
+            // ========== 1. Health Section ==========
+            _healthSectionExpanded = DrawCollapsibleSection(listing, "🏥 " + "RTE_Settings_Health_Title".Translate(), _healthSectionExpanded);
+            if (_healthSectionExpanded)
+            {
+                listing.Gap(4f);
+                DrawHealthSection(listing);
+                listing.Gap(8f);
+            }
+
+            // ========== 2. Items Section ==========
+            _itemsSectionExpanded = DrawCollapsibleSection(listing, "⚔️ " + "RTE_Settings_Items_Title".Translate(), _itemsSectionExpanded);
+            if (_itemsSectionExpanded)
+            {
+                listing.Gap(4f);
+                DrawItemsSection(listing);
+                listing.Gap(8f);
+            }
+
+            // ========== 3. Factions Section ==========
+            _factionsSectionExpanded = DrawCollapsibleSection(listing, "🤝 " + "RTE_Settings_Factions_Title".Translate(), _factionsSectionExpanded);
+            if (_factionsSectionExpanded)
+            {
+                listing.Gap(4f);
+                DrawFactionsSection(listing);
+                listing.Gap(8f);
+            }
+
+            // ========== 4. Location Section ==========
+            _locationSectionExpanded = DrawCollapsibleSection(listing, "🎯 " + "RTE_Settings_Location_Title".Translate(), _locationSectionExpanded);
+            if (_locationSectionExpanded)
+            {
+                listing.Gap(4f);
+                DrawLocationSection(listing);
+                listing.Gap(8f);
+            }
+
+            listing.End();
+            Widgets.EndScrollView();
+        }
+
+        /// <summary>
+        /// Page 2: Colony Status (殖民地状况板)
+        /// Combines: Announcement, AutoCapture, AIHistorian
+        /// </summary>
+        public void DoColonyStatusWindowContents(Rect inRect)
+        {
+            Rect viewRect = new Rect(0f, 0f, inRect.width - 16f, 2000f);
+            Widgets.BeginScrollView(inRect, ref _colonyStatusScrollPosition, viewRect);
+
+            Listing_Standard listing = new Listing_Standard();
+            listing.Begin(viewRect);
+
+            // Page Title
+            Text.Font = GameFont.Medium;
+            GUI.color = new Color(1f, 0.9f, 0.6f);
+            Widgets.Label(listing.GetRect(35f), "RTE_Settings_ColonyStatus_PageTitle".Translate());
+            GUI.color = Color.white;
+            Text.Font = GameFont.Small;
+            listing.Gap(8f);
+
+            // ========== 1. Announcement Section ==========
+            _announcementSectionExpanded = DrawCollapsibleSection(listing, "📋 " + "RTE_Settings_Announcement_Title".Translate(), _announcementSectionExpanded);
+            if (_announcementSectionExpanded)
+            {
+                listing.Gap(4f);
+                DrawAnnouncementSection(listing);
+                listing.Gap(8f);
+            }
+
+            // ========== 2. Auto Capture Section ==========
+            _autoCaptureSectionExpanded = DrawCollapsibleSection(listing, "⚡ " + "RTE_Settings_AutoCapture_Title".Translate(), _autoCaptureSectionExpanded);
+            if (_autoCaptureSectionExpanded)
+            {
+                listing.Gap(4f);
+                DrawAutoCaptureSection(listing);
+                listing.Gap(8f);
+            }
+
+            // ========== 3. AI Historian Section ==========
+            _aiHistorianSectionExpanded = DrawCollapsibleSection(listing, "🤖 " + "RTE_Settings_AI_Title".Translate(), _aiHistorianSectionExpanded);
+            if (_aiHistorianSectionExpanded)
+            {
+                listing.Gap(4f);
+                DrawAIHistorianSection(listing);
+                listing.Gap(8f);
+            }
+
+            listing.End();
+            Widgets.EndScrollView();
+        }
+
+        // ========================================
+        // Section Drawing Methods
+        // ========================================
+
+        private void DrawHealthSection(Listing_Standard listing)
+        {
             listing.CheckboxLabeled("RTE_Settings_Health_ShowSeverity".Translate(), ref ShowSeverity, 
                 "RTE_Settings_Health_ShowSeverity_Desc".Translate());
             listing.CheckboxLabeled("RTE_Settings_Health_ShowPainLevel".Translate(), ref ShowPainLevel, 
@@ -227,7 +376,6 @@ namespace RimTalkHealthEnhance
             listing.GapLine();
             listing.Gap();
 
-            // Thresholds
             Widgets.Label(listing.GetRect(22f), "RTE_Settings_Health_MinPainThreshold".Translate(MinPainToShow));
             MinPainToShow = listing.Slider(MinPainToShow, 0f, 0.5f);
             listing.Gap(4f);
@@ -243,30 +391,14 @@ namespace RimTalkHealthEnhance
             listing.GapLine();
             listing.Gap();
 
-            // Info
             Text.Font = GameFont.Tiny;
             Widgets.Label(listing.GetRect(20f), "RTE_Settings_Health_Note1".Translate());
             Widgets.Label(listing.GetRect(20f), "RTE_Settings_Health_Note2".Translate());
             Text.Font = GameFont.Small;
-
-            listing.End();
-            Widgets.EndScrollView();
         }
 
-        public void DoItemSettingsWindowContents(Rect inRect)
+        private void DrawItemsSection(Listing_Standard listing)
         {
-            Rect viewRect = new Rect(0f, 0f, inRect.width - 16f, 1000f);
-            Widgets.BeginScrollView(inRect, ref _itemScrollPosition, viewRect);
-
-            Listing_Standard listing = new Listing_Standard();
-            listing.Begin(viewRect);
-
-            Text.Font = GameFont.Medium;
-            Widgets.Label(listing.GetRect(30f), "RTE_Settings_Items_Title".Translate());
-            Text.Font = GameFont.Small;
-            listing.Gap();
-
-            // === Display Options ===
             listing.CheckboxLabeled("RTE_Settings_Items_ShowEquipmentDesc".Translate(), ref ShowEquipmentDesc, "RTE_Settings_Items_ShowEquipmentDesc_Desc".Translate());
             listing.CheckboxLabeled("RTE_Settings_Items_ShowCarriedDesc".Translate(), ref ShowCarriedItemDesc, "RTE_Settings_Items_ShowCarriedDesc_Desc".Translate());
             listing.CheckboxLabeled("RTE_Settings_Items_ShowInventory".Translate(), ref ShowInventoryItems, "RTE_Settings_Items_ShowInventory_Desc".Translate());
@@ -279,7 +411,6 @@ namespace RimTalkHealthEnhance
             listing.GapLine();
             listing.Gap();
             
-            // === Interaction Options ===
             Text.Font = GameFont.Medium;
             Widgets.Label(listing.GetRect(30f), "RTE_Settings_Items_InteractionTitle".Translate());
             Text.Font = GameFont.Small;
@@ -298,7 +429,6 @@ namespace RimTalkHealthEnhance
             listing.GapLine();
             listing.Gap();
 
-            // === Quality Threshold ===
             Rect qualityRect = listing.GetRect(30f);
             Widgets.Label(qualityRect.LeftHalf(), "RTE_Settings_Items_MinQuality".Translate());
             if (Widgets.ButtonText(qualityRect.RightHalf(), MinQualityForDesc.GetLabel()))
@@ -315,7 +445,6 @@ namespace RimTalkHealthEnhance
             }
             listing.Gap(4f);
 
-            // === Token Control ===
             Widgets.Label(listing.GetRect(22f), "RTE_Settings_Items_MaxDescLength".Translate(ItemMaxDescriptionLength));
             ItemMaxDescriptionLength = (int)listing.Slider(ItemMaxDescriptionLength, 50, 200);
             listing.Gap(4f);
@@ -331,7 +460,6 @@ namespace RimTalkHealthEnhance
             listing.GapLine();
             listing.Gap();
 
-            // === Smart Filtering ===
             listing.CheckboxLabeled("RTE_Settings_Items_SkipCommon".Translate(), ref SkipCommonItems, "RTE_Settings_Items_SkipCommon_Desc".Translate());
             listing.CheckboxLabeled("RTE_Settings_Items_SkipArt".Translate(), ref SkipArtDescription,
                 "RTE_Settings_Items_SkipArt_Desc".Translate());
@@ -340,30 +468,15 @@ namespace RimTalkHealthEnhance
             listing.GapLine();
             listing.Gap();
 
-            // === Info ===
             Text.Font = GameFont.Tiny;
             Widgets.Label(listing.GetRect(40f), 
                 "提示：品质等级从低到高为：Awful < Poor < Normal < Good < Excellent < Masterwork < Legendary\n" +
                 "建议设置为Normal或Good以平衡信息量和token消耗");
             Text.Font = GameFont.Small;
-
-            listing.End();
-            Widgets.EndScrollView();
         }
 
-        public void DoFactionSettingsWindowContents(Rect inRect)
+        private void DrawFactionsSection(Listing_Standard listing)
         {
-            Rect viewRect = new Rect(0f, 0f, inRect.width - 16f, 600f);
-            Widgets.BeginScrollView(inRect, ref _factionScrollPosition, viewRect);
-
-            Listing_Standard listing = new Listing_Standard();
-            listing.Begin(viewRect);
-
-            Text.Font = GameFont.Medium;
-            Widgets.Label(listing.GetRect(30f), "RTE_Settings_Factions_Title".Translate());
-            Text.Font = GameFont.Small;
-            listing.Gap();
-
             listing.CheckboxLabeled("RTE_Settings_Factions_Enable".Translate(), ref ShowFactionRelations, 
                 "RTE_Settings_Factions_Enable_Desc".Translate());
             
@@ -429,359 +542,10 @@ namespace RimTalkHealthEnhance
                 "3. 信息会自动注入到 AI 的上下文中，让 AI 了解当前的外交状况。\n" +
                 "4. 当地图上没有其他派系时，不会显示任何信息。");
             Text.Font = GameFont.Small;
-
-            listing.End();
-            Widgets.EndScrollView();
         }
 
-        public void DoAnnouncementSettingsWindowContents(Rect inRect)
+        private void DrawLocationSection(Listing_Standard listing)
         {
-            Rect viewRect = new Rect(0f, 0f, inRect.width - 16f, 600f);
-            Widgets.BeginScrollView(inRect, ref _announcementScrollPosition, viewRect);
-
-            Listing_Standard listing = new Listing_Standard();
-            listing.Begin(viewRect);
-
-            Text.Font = GameFont.Medium;
-            Widgets.Label(listing.GetRect(30f), "RTE_Settings_Announcement_Title".Translate());
-            Text.Font = GameFont.Small;
-            listing.Gap();
-
-            listing.CheckboxLabeled("RTE_Settings_Announcement_Enable".Translate(), ref ShowColonyAnnouncements, "RTE_Settings_Announcement_Enable_Desc".Translate());
-            
-            if (ShowColonyAnnouncements)
-            {
-                listing.Gap();
-                
-                listing.CheckboxLabeled("RTE_Settings_Announcement_ShowOverview".Translate(), ref ShowColonyOverview, "RTE_Settings_Announcement_ShowOverview_Desc".Translate());
-                if (ShowColonyOverview)
-                {
-                    Widgets.Label(listing.GetRect(22f), "RTE_Settings_Announcement_OverviewMaxLength".Translate(MaxOverviewLength));
-                    MaxOverviewLength = (int)listing.Slider(MaxOverviewLength, 100, 2000);
-                }
-                
-                listing.Gap();
-                
-                listing.CheckboxLabeled("RTE_Settings_Announcement_ShowTasks".Translate(), ref ShowStructuredTasks, "RTE_Settings_Announcement_ShowTasks_Desc".Translate());
-                if (ShowStructuredTasks)
-                {
-                    listing.CheckboxLabeled("RTE_Settings_Announcement_OnlyActive".Translate(), ref OnlyShowActiveTasks, "RTE_Settings_Announcement_OnlyActive_Desc".Translate());
-                    if (OnlyShowActiveTasks)
-                    {
-                        Widgets.Label(listing.GetRect(22f), "RTE_Settings_Announcement_CompletedDays".Translate(CompletedTaskShowDays));
-                        CompletedTaskShowDays = listing.Slider(CompletedTaskShowDays, 0f, 7f);
-                    }
-                }
-            }
-
-            listing.Gap();
-            listing.GapLine();
-            listing.Gap();
-
-            Text.Font = GameFont.Tiny;
-            Widgets.Label(listing.GetRect(40f), "RTE_Settings_Announcement_Tip".Translate());
-            Text.Font = GameFont.Small;
-
-            listing.End();
-            Widgets.EndScrollView();
-        }
-
-        public void DoAISettingsWindowContents(Rect inRect)
-        {
-            Rect viewRect = new Rect(0f, 0f, inRect.width - 16f, 800f);
-            Widgets.BeginScrollView(inRect, ref _aiScrollPosition, viewRect);
-
-            Listing_Standard listing = new Listing_Standard();
-            listing.Begin(viewRect);
-
-            Text.Font = GameFont.Medium;
-            Widgets.Label(listing.GetRect(30f), "RTE_Settings_AI_Title".Translate());
-            Text.Font = GameFont.Small;
-            listing.Gap();
-
-            listing.CheckboxLabeled("RTE_Settings_AI_Enable".Translate(), ref EnableAISynthesis, "RTE_Settings_AI_Enable_Desc".Translate());
-            
-            if (EnableAISynthesis)
-            {
-                listing.Gap();
-                
-                // Provider Selection
-                Rect providerRect = listing.GetRect(30f);
-                Widgets.Label(providerRect.LeftHalf(), "RTE_Settings_AI_Provider".Translate());
-                if (Widgets.ButtonText(providerRect.RightHalf(), SynthesisProvider.ToString()))
-                {
-                    List<FloatMenuOption> options = new List<FloatMenuOption>
-                    {
-                        new FloatMenuOption("OpenAI", () => { SynthesisProvider = AIProvider.OpenAI; CustomModelName = "gpt-4o-mini"; }),
-                        new FloatMenuOption("Google (Gemini)", () => { SynthesisProvider = AIProvider.Google; CustomModelName = "gemini-pro"; }),
-                        new FloatMenuOption("DeepSeek", () => { SynthesisProvider = AIProvider.DeepSeek; CustomModelName = "deepseek-chat"; }),
-                        new FloatMenuOption("Player2", () => { SynthesisProvider = AIProvider.Player2; CustomModelName = ""; CustomApiKey = ""; }),
-                        new FloatMenuOption("Custom (OpenAI Compatible)", () => SynthesisProvider = AIProvider.Custom)
-                    };
-                    Find.WindowStack.Add(new FloatMenu(options));
-                }
-                listing.Gap();
-                
-                Widgets.Label(listing.GetRect(24f), "RTE_Settings_AI_APIConfig".Translate());
-                
-                Widgets.Label(listing.GetRect(22f), "RTE_Settings_AI_APIKey".Translate());
-                CustomApiKey = listing.TextEntry(CustomApiKey);
-                
-                string defaultUrl = GetDefaultUrl(SynthesisProvider);
-                
-                Widgets.Label(listing.GetRect(22f), "RTE_Settings_AI_APIURL".Translate(SynthesisProvider));
-                CustomApiUrl = listing.TextEntry(CustomApiUrl);
-                if (string.IsNullOrEmpty(CustomApiUrl) && !string.IsNullOrEmpty(defaultUrl))
-                {
-                    Text.Font = GameFont.Tiny;
-                    GUI.color = Color.gray;
-                    Widgets.Label(listing.GetRect(18f), "RTE_Settings_AI_DefaultURL".Translate(defaultUrl));
-                    GUI.color = Color.white;
-                    Text.Font = GameFont.Small;
-                }
-                
-                Widgets.Label(listing.GetRect(22f), "RTE_Settings_AI_ModelName".Translate());
-                CustomModelName = listing.TextEntry(CustomModelName);
-                
-                listing.Gap();
-                
-                if (listing.ButtonText("RTE_Settings_AI_TestConnection".Translate()))
-                {
-                    // 简单的测试调用
-                    System.Threading.Tasks.Task.Run(async () => 
-                    {
-                        string result = await SimpleAIClient.CallAI("Hello, are you there?");
-                        if (!string.IsNullOrEmpty(result))
-                            Messages.Message("RTE_Settings_AI_TestSuccess".Translate(result), MessageTypeDefOf.PositiveEvent, false);
-                        else
-                            Messages.Message("RTE_Settings_AI_TestFailed".Translate(), MessageTypeDefOf.NegativeEvent, false);
-                    });
-                }
-                
-                listing.Gap();
-                listing.GapLine();
-                listing.Gap();
-                
-                // Snapshot Content Settings
-                Widgets.Label(listing.GetRect(24f), "RTE_Settings_AI_SnapshotContent".Translate());
-                
-                listing.CheckboxLabeled("RTE_Settings_AI_IncludeProjects".Translate(), ref IncludeProjectsInSnapshot,
-                    "RTE_Settings_AI_IncludeProjects_Desc".Translate());
-                
-                listing.CheckboxLabeled("RTE_Settings_AI_IncludeResearch".Translate(), ref IncludeResearchInSnapshot,
-                    "RTE_Settings_AI_IncludeResearch_Desc".Translate());
-                
-                if (IncludeResearchInSnapshot)
-                {
-                    listing.CheckboxLabeled("RTE_Settings_AI_IncludeUnfinished".Translate(), ref IncludeUnfinishedResearch,
-                        "RTE_Settings_AI_IncludeUnfinished_Desc".Translate());
-                }
-                
-                listing.Gap();
-                listing.GapLine();
-                listing.Gap();
-                
-                // Context Injection Settings
-                Widgets.Label(listing.GetRect(24f), "RTE_Settings_AI_ContextInjection".Translate());
-                
-                listing.CheckboxLabeled("RTE_Settings_AI_InjectSnapshot".Translate(), ref InjectSnapshotToContext, 
-                    "RTE_Settings_AI_InjectSnapshot_Desc".Translate());
-                
-                if (InjectSnapshotToContext)
-                {
-                    Widgets.Label(listing.GetRect(22f), "RTE_Settings_AI_InjectDays".Translate(SnapshotInjectDays));
-                    SnapshotInjectDays = listing.Slider(SnapshotInjectDays, 0.5f, 7f);
-                    
-                    Text.Font = GameFont.Tiny;
-                    GUI.color = Color.gray;
-                    Widgets.Label(listing.GetRect(18f), "RTE_Settings_AI_InjectDays_Desc".Translate(SnapshotInjectDays));
-                    GUI.color = Color.white;
-                    Text.Font = GameFont.Small;
-                }
-                
-                listing.Gap();
-                listing.GapLine();
-                listing.Gap();
-                
-                Text.Font = GameFont.Tiny;
-                Widgets.Label(listing.GetRect(120f), 
-                    "说明：\n" +
-                    "1. 每日 0 点系统会自动拍摄殖民地快照（建筑、房间、蓝图）。\n" +
-                    "2. AI 将对比昨日快照，结合玩家操作日志、工程进度、科技状态和事件，生成一段简短的总结。\n" +
-                    "3. 总结结果将显示在'每日快照'标签页中，不会直接修改概况。\n" +
-                    "4. 如果启用'自动注入'，AI 在对话时会自动看到最近的历史记录（含日期）。\n" +
-                    "5. 工程信息：从状况板读取进行中和已完成的工程项目。\n" +
-                    "6. 科技状态：包含当前研究、已完成科技，可选包含未完成科技（默认关闭以节省token）。");
-                Text.Font = GameFont.Small;
-            }
-
-            listing.End();
-            Widgets.EndScrollView();
-        }
-
-        private string GetDefaultUrl(AIProvider provider)
-        {
-            switch (provider)
-            {
-                case AIProvider.OpenAI: return "https://api.openai.com/v1/chat/completions";
-                case AIProvider.Google: return "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent";
-                case AIProvider.DeepSeek: return "https://api.deepseek.com/v1/chat/completions";
-                case AIProvider.Player2: return "https://api.player2.game/v1/chat/completions";
-                default: return "";
-            }
-        }
-
-        public void DoEventSettingsWindowContents(Rect inRect)
-        {
-            Rect viewRect = new Rect(0f, 0f, inRect.width - 16f, 1000f);
-            Widgets.BeginScrollView(inRect, ref _eventScrollPosition, viewRect);
-
-            Listing_Standard listing = new Listing_Standard();
-            listing.Begin(viewRect);
-
-            Text.Font = GameFont.Medium;
-            Widgets.Label(listing.GetRect(30f), "RTE_Settings_AutoCapture_Title".Translate());
-            Text.Font = GameFont.Small;
-            listing.Gap();
-
-            listing.CheckboxLabeled("RTE_Settings_AutoCapture_Enable".Translate(), ref EnableAutoEventCapture, "RTE_Settings_AutoCapture_Enable_Desc".Translate());
-
-            if (EnableAutoEventCapture)
-            {
-                listing.Gap();
-                
-                // General Options
-                Widgets.Label(listing.GetRect(24f), "RTE_Settings_AutoCapture_GeneralOptions".Translate());
-                listing.CheckboxLabeled("RTE_Settings_AutoCapture_Quests".Translate(), ref AutoCaptureQuests);
-                listing.CheckboxLabeled("RTE_Settings_AutoCapture_Events".Translate(), ref AutoCaptureEvents);
-                listing.CheckboxLabeled("RTE_Settings_AutoCapture_Resources".Translate(), ref AutoCaptureResources);
-                
-                listing.Gap();
-                
-                Widgets.Label(listing.GetRect(22f), "RTE_Settings_AutoCapture_QuestExpire".Translate(AutoCompleteDays));
-                AutoCompleteDays = (int)listing.Slider(AutoCompleteDays, 1, 30);
-                
-                Widgets.Label(listing.GetRect(22f), "RTE_Settings_AutoCapture_EventExpire".Translate(EventExpireDays));
-                EventExpireDays = listing.Slider(EventExpireDays, 0.1f, 7f);
-                
-                listing.Gap();
-                
-                Widgets.Label(listing.GetRect(22f), "RTE_Settings_AutoCapture_DeleteDays".Translate(AutoCapturedDeleteDays));
-                AutoCapturedDeleteDays = listing.Slider(AutoCapturedDeleteDays, 0f, 3f);
-                
-                Text.Font = GameFont.Tiny;
-                GUI.color = Color.gray;
-                if (AutoCapturedDeleteDays == 0f)
-                {
-                    Widgets.Label(listing.GetRect(18f), "RTE_Settings_AutoCapture_DeleteDays_Zero".Translate());
-                }
-                else
-                {
-                    Widgets.Label(listing.GetRect(18f), "RTE_Settings_AutoCapture_DeleteDays_Desc".Translate(AutoCapturedDeleteDays));
-                }
-                GUI.color = Color.white;
-                Text.Font = GameFont.Small;
-                
-                listing.Gap();
-                
-                listing.CheckboxLabeled("RTE_Settings_AutoCapture_MergeDuplicates".Translate(), ref MergeDuplicateEvents, "RTE_Settings_AutoCapture_MergeDuplicates_Desc".Translate());
-                listing.CheckboxLabeled("RTE_Settings_AutoCapture_AutoArchive".Translate(), ref AutoArchiveCompleted, "RTE_Settings_AutoCapture_AutoArchive_Desc".Translate());
-
-                listing.Gap();
-                listing.GapLine();
-                listing.Gap();
-
-                // Event Types List
-                if (DiscoveredEventTypes.Count > 0)
-                {
-                    Widgets.Label(listing.GetRect(24f), "RTE_Settings_AutoCapture_DiscoveredTypes".Translate(DiscoveredEventTypes.Count));
-                    listing.Gap(6f);
-
-                    // Group types by category
-                    var groupedTypes = DiscoveredEventTypes
-                        .GroupBy(typeName =>
-                        {
-                            string simpleName = typeName.Contains(".")
-                                ? typeName.Substring(typeName.LastIndexOf('.') + 1)
-                                : typeName;
-
-                            if (simpleName.Contains("Letter")) return "Letters (信件)";
-                            if (simpleName.Contains("Message")) return "Messages (消息)";
-                            return "Other (其他)";
-                        })
-                        .OrderBy(g => g.Key.StartsWith("Letters") ? 0 : g.Key.StartsWith("Messages") ? 1 : 2)
-                        .ToList();
-
-                    foreach (var group in groupedTypes)
-                    {
-                        // Category header
-                        Text.Font = GameFont.Small;
-                        GUI.color = Color.yellow;
-                        Widgets.Label(listing.GetRect(24f), $"━━ {group.Key} ({group.Count()}) ━━");
-                        GUI.color = Color.white;
-                        listing.Gap(4f);
-
-                        foreach (var typeName in group.OrderBy(x => x))
-                        {
-                            bool isEnabled = !EnabledEventTypes.ContainsKey(typeName) || EnabledEventTypes[typeName];
-                            bool newEnabled = isEnabled;
-                            
-                            // Simple name for display
-                            string displayName = typeName.Contains(".") ? typeName.Substring(typeName.LastIndexOf('.') + 1) : typeName;
-                            
-                            // Highlight Verse.Message in red if enabled (usually spammy)
-                            if (typeName.Equals("Verse.Message", StringComparison.OrdinalIgnoreCase) && isEnabled)
-                            {
-                                GUI.color = new Color(1f, 0.5f, 0.5f);
-                            }
-
-                            listing.CheckboxLabeled(displayName, ref newEnabled, typeName);
-                            GUI.color = Color.white;
-                            
-                            if (newEnabled != isEnabled)
-                            {
-                                EnabledEventTypes[typeName] = newEnabled;
-                            }
-                        }
-                        listing.Gap(8f);
-                    }
-                }
-                else
-                {
-                    GUI.color = Color.yellow;
-                    Widgets.Label(listing.GetRect(24f), "RTE_Settings_AutoCapture_NoTypes".Translate());
-                    GUI.color = Color.white;
-                }
-
-                listing.Gap(12f);
-                if (listing.ButtonText("RTE_Settings_AutoCapture_ResetDefaults".Translate()))
-                {
-                    foreach (var typeName in DiscoveredEventTypes)
-                    {
-                        // Enable by default for most types, but disable Verse.Message specifically
-                        bool defaultEnabled = !typeName.Equals("Verse.Message", StringComparison.OrdinalIgnoreCase);
-                        EnabledEventTypes[typeName] = defaultEnabled;
-                    }
-                }
-            }
-
-            listing.End();
-            Widgets.EndScrollView();
-        }
-
-        public void DoLocationSettingsWindowContents(Rect inRect)
-        {
-            Rect viewRect = new Rect(0f, 0f, inRect.width - 16f, 500f);
-            Widgets.BeginScrollView(inRect, ref _locationScrollPosition, viewRect);
-
-            Listing_Standard listing = new Listing_Standard();
-            listing.Begin(viewRect);
-
-            Text.Font = GameFont.Medium;
-            Widgets.Label(listing.GetRect(30f), "RTE_Settings_Location_Title".Translate());
-            Text.Font = GameFont.Small;
-            listing.Gap();
-
             listing.CheckboxLabeled("RTE_Settings_Location_Enable".Translate(), ref ShowRelativeLocation, 
                 "RTE_Settings_Location_Enable_Desc".Translate());
 
@@ -840,9 +604,276 @@ namespace RimTalkHealthEnhance
             Widgets.Label(listing.GetRect(20f), "• Outdoors, North of colony (Wilderness)");
             GUI.color = Color.white;
             Text.Font = GameFont.Small;
+        }
 
-            listing.End();
-            Widgets.EndScrollView();
+        private void DrawAnnouncementSection(Listing_Standard listing)
+        {
+            listing.CheckboxLabeled("RTE_Settings_Announcement_Enable".Translate(), ref ShowColonyAnnouncements, "RTE_Settings_Announcement_Enable_Desc".Translate());
+            
+            if (ShowColonyAnnouncements)
+            {
+                listing.Gap();
+                
+                listing.CheckboxLabeled("RTE_Settings_Announcement_ShowOverview".Translate(), ref ShowColonyOverview, "RTE_Settings_Announcement_ShowOverview_Desc".Translate());
+                if (ShowColonyOverview)
+                {
+                    Widgets.Label(listing.GetRect(22f), "RTE_Settings_Announcement_OverviewMaxLength".Translate(MaxOverviewLength));
+                    MaxOverviewLength = (int)listing.Slider(MaxOverviewLength, 100, 2000);
+                }
+                
+                listing.Gap();
+                
+                listing.CheckboxLabeled("RTE_Settings_Announcement_ShowTasks".Translate(), ref ShowStructuredTasks, "RTE_Settings_Announcement_ShowTasks_Desc".Translate());
+                if (ShowStructuredTasks)
+                {
+                    listing.CheckboxLabeled("RTE_Settings_Announcement_OnlyActive".Translate(), ref OnlyShowActiveTasks, "RTE_Settings_Announcement_OnlyActive_Desc".Translate());
+                    if (OnlyShowActiveTasks)
+                    {
+                        Widgets.Label(listing.GetRect(22f), "RTE_Settings_Announcement_CompletedDays".Translate(CompletedTaskShowDays));
+                        CompletedTaskShowDays = listing.Slider(CompletedTaskShowDays, 0f, 7f);
+                    }
+                }
+            }
+
+            listing.Gap();
+            listing.GapLine();
+            listing.Gap();
+
+            Text.Font = GameFont.Tiny;
+            Widgets.Label(listing.GetRect(40f), "RTE_Settings_Announcement_Tip".Translate());
+            Text.Font = GameFont.Small;
+        }
+
+        private void DrawAutoCaptureSection(Listing_Standard listing)
+        {
+            listing.CheckboxLabeled("RTE_Settings_AutoCapture_Enable".Translate(), ref EnableAutoEventCapture, "RTE_Settings_AutoCapture_Enable_Desc".Translate());
+
+            if (EnableAutoEventCapture)
+            {
+                listing.Gap();
+                
+                Widgets.Label(listing.GetRect(24f), "RTE_Settings_AutoCapture_GeneralOptions".Translate());
+                listing.CheckboxLabeled("RTE_Settings_AutoCapture_Quests".Translate(), ref AutoCaptureQuests);
+                listing.CheckboxLabeled("RTE_Settings_AutoCapture_Events".Translate(), ref AutoCaptureEvents);
+                listing.CheckboxLabeled("RTE_Settings_AutoCapture_Resources".Translate(), ref AutoCaptureResources);
+                
+                listing.Gap();
+                
+                Widgets.Label(listing.GetRect(22f), "RTE_Settings_AutoCapture_QuestExpire".Translate(AutoCompleteDays));
+                AutoCompleteDays = (int)listing.Slider(AutoCompleteDays, 1, 30);
+                
+                Widgets.Label(listing.GetRect(22f), "RTE_Settings_AutoCapture_EventExpire".Translate(EventExpireDays));
+                EventExpireDays = listing.Slider(EventExpireDays, 0.1f, 7f);
+                
+                listing.Gap();
+                
+                Widgets.Label(listing.GetRect(22f), "RTE_Settings_AutoCapture_DeleteDays".Translate(AutoCapturedDeleteDays));
+                AutoCapturedDeleteDays = listing.Slider(AutoCapturedDeleteDays, 0f, 3f);
+                
+                Text.Font = GameFont.Tiny;
+                GUI.color = Color.gray;
+                if (AutoCapturedDeleteDays == 0f)
+                {
+                    Widgets.Label(listing.GetRect(18f), "RTE_Settings_AutoCapture_DeleteDays_Zero".Translate());
+                }
+                else
+                {
+                    Widgets.Label(listing.GetRect(18f), "RTE_Settings_AutoCapture_DeleteDays_Desc".Translate(AutoCapturedDeleteDays));
+                }
+                GUI.color = Color.white;
+                Text.Font = GameFont.Small;
+                
+                listing.Gap();
+                
+                listing.CheckboxLabeled("RTE_Settings_AutoCapture_MergeDuplicates".Translate(), ref MergeDuplicateEvents, "RTE_Settings_AutoCapture_MergeDuplicates_Desc".Translate());
+                listing.CheckboxLabeled("RTE_Settings_AutoCapture_AutoArchive".Translate(), ref AutoArchiveCompleted, "RTE_Settings_AutoCapture_AutoArchive_Desc".Translate());
+
+                listing.Gap();
+                listing.GapLine();
+                listing.Gap();
+
+                if (DiscoveredEventTypes.Count > 0)
+                {
+                    Widgets.Label(listing.GetRect(24f), "RTE_Settings_AutoCapture_DiscoveredTypes".Translate(DiscoveredEventTypes.Count));
+                    listing.Gap(6f);
+
+                    var groupedTypes = DiscoveredEventTypes
+                        .GroupBy(typeName =>
+                        {
+                            string simpleName = typeName.Contains(".")
+                                ? typeName.Substring(typeName.LastIndexOf('.') + 1)
+                                : typeName;
+
+                            if (simpleName.Contains("Letter")) return "Letters (信件)";
+                            if (simpleName.Contains("Message")) return "Messages (消息)";
+                            return "Other (其他)";
+                        })
+                        .OrderBy(g => g.Key.StartsWith("Letters") ? 0 : g.Key.StartsWith("Messages") ? 1 : 2)
+                        .ToList();
+
+                    foreach (var group in groupedTypes)
+                    {
+                        Text.Font = GameFont.Small;
+                        GUI.color = Color.yellow;
+                        Widgets.Label(listing.GetRect(24f), $"━━ {group.Key} ({group.Count()}) ━━");
+                        GUI.color = Color.white;
+                        listing.Gap(4f);
+
+                        foreach (var typeName in group.OrderBy(x => x))
+                        {
+                            bool isEnabled = !EnabledEventTypes.ContainsKey(typeName) || EnabledEventTypes[typeName];
+                            bool newEnabled = isEnabled;
+                            
+                            string displayName = typeName.Contains(".") ? typeName.Substring(typeName.LastIndexOf('.') + 1) : typeName;
+                            
+                            if (typeName.Equals("Verse.Message", StringComparison.OrdinalIgnoreCase) && isEnabled)
+                            {
+                                GUI.color = new Color(1f, 0.5f, 0.5f);
+                            }
+
+                            listing.CheckboxLabeled(displayName, ref newEnabled, typeName);
+                            GUI.color = Color.white;
+                            
+                            if (newEnabled != isEnabled)
+                            {
+                                EnabledEventTypes[typeName] = newEnabled;
+                            }
+                        }
+                        listing.Gap(8f);
+                    }
+                }
+                else
+                {
+                    GUI.color = Color.yellow;
+                    Widgets.Label(listing.GetRect(24f), "RTE_Settings_AutoCapture_NoTypes".Translate());
+                    GUI.color = Color.white;
+                }
+
+                listing.Gap(12f);
+                if (listing.ButtonText("RTE_Settings_AutoCapture_ResetDefaults".Translate()))
+                {
+                    foreach (var typeName in DiscoveredEventTypes)
+                    {
+                        bool defaultEnabled = !typeName.Equals("Verse.Message", StringComparison.OrdinalIgnoreCase);
+                        EnabledEventTypes[typeName] = defaultEnabled;
+                    }
+                }
+            }
+        }
+
+        private void DrawAIHistorianSection(Listing_Standard listing)
+        {
+            listing.CheckboxLabeled("RTE_Settings_AI_Enable".Translate(), ref EnableAISynthesis, "RTE_Settings_AI_Enable_Desc".Translate());
+            
+            if (EnableAISynthesis)
+            {
+                listing.Gap();
+                
+                Rect providerRect = listing.GetRect(30f);
+                Widgets.Label(providerRect.LeftHalf(), "RTE_Settings_AI_Provider".Translate());
+                if (Widgets.ButtonText(providerRect.RightHalf(), SynthesisProvider.ToString()))
+                {
+                    List<FloatMenuOption> options = new List<FloatMenuOption>
+                    {
+                        new FloatMenuOption("OpenAI", () => { SynthesisProvider = AIProvider.OpenAI; CustomModelName = "gpt-4o-mini"; }),
+                        new FloatMenuOption("Google (Gemini)", () => { SynthesisProvider = AIProvider.Google; CustomModelName = "gemini-pro"; }),
+                        new FloatMenuOption("DeepSeek", () => { SynthesisProvider = AIProvider.DeepSeek; CustomModelName = "deepseek-chat"; }),
+                        new FloatMenuOption("Player2", () => { SynthesisProvider = AIProvider.Player2; CustomModelName = ""; CustomApiKey = ""; }),
+                        new FloatMenuOption("Custom (OpenAI Compatible)", () => SynthesisProvider = AIProvider.Custom)
+                    };
+                    Find.WindowStack.Add(new FloatMenu(options));
+                }
+                listing.Gap();
+                
+                Widgets.Label(listing.GetRect(24f), "RTE_Settings_AI_APIConfig".Translate());
+                
+                Widgets.Label(listing.GetRect(22f), "RTE_Settings_AI_APIKey".Translate());
+                CustomApiKey = listing.TextEntry(CustomApiKey);
+                
+                string defaultUrl = GetDefaultUrl(SynthesisProvider);
+                
+                Widgets.Label(listing.GetRect(22f), "RTE_Settings_AI_APIURL".Translate(SynthesisProvider));
+                CustomApiUrl = listing.TextEntry(CustomApiUrl);
+                if (string.IsNullOrEmpty(CustomApiUrl) && !string.IsNullOrEmpty(defaultUrl))
+                {
+                    Text.Font = GameFont.Tiny;
+                    GUI.color = Color.gray;
+                    Widgets.Label(listing.GetRect(18f), "RTE_Settings_AI_DefaultURL".Translate(defaultUrl));
+                    GUI.color = Color.white;
+                    Text.Font = GameFont.Small;
+                }
+                
+                Widgets.Label(listing.GetRect(22f), "RTE_Settings_AI_ModelName".Translate());
+                CustomModelName = listing.TextEntry(CustomModelName);
+                
+                listing.Gap();
+                
+                if (listing.ButtonText("RTE_Settings_AI_TestConnection".Translate()))
+                {
+                    System.Threading.Tasks.Task.Run(async () => 
+                    {
+                        string result = await SimpleAIClient.CallAI("Hello, are you there?");
+                        if (!string.IsNullOrEmpty(result))
+                            Messages.Message("RTE_Settings_AI_TestSuccess".Translate(result), MessageTypeDefOf.PositiveEvent, false);
+                        else
+                            Messages.Message("RTE_Settings_AI_TestFailed".Translate(), MessageTypeDefOf.NegativeEvent, false);
+                    });
+                }
+                
+                listing.Gap();
+                listing.GapLine();
+                listing.Gap();
+                
+                Widgets.Label(listing.GetRect(24f), "RTE_Settings_AI_SnapshotContent".Translate());
+                
+                listing.CheckboxLabeled("RTE_Settings_AI_IncludeProjects".Translate(), ref IncludeProjectsInSnapshot,
+                    "RTE_Settings_AI_IncludeProjects_Desc".Translate());
+                
+                listing.CheckboxLabeled("RTE_Settings_AI_IncludeResearch".Translate(), ref IncludeResearchInSnapshot,
+                    "RTE_Settings_AI_IncludeResearch_Desc".Translate());
+                
+                if (IncludeResearchInSnapshot)
+                {
+                    listing.CheckboxLabeled("RTE_Settings_AI_IncludeUnfinished".Translate(), ref IncludeUnfinishedResearch,
+                        "RTE_Settings_AI_IncludeUnfinished_Desc".Translate());
+                }
+                
+                listing.Gap();
+                listing.GapLine();
+                listing.Gap();
+                
+                Widgets.Label(listing.GetRect(24f), "RTE_Settings_AI_ContextInjection".Translate());
+                
+                listing.CheckboxLabeled("RTE_Settings_AI_InjectSnapshot".Translate(), ref InjectSnapshotToContext, 
+                    "RTE_Settings_AI_InjectSnapshot_Desc".Translate());
+                
+                if (InjectSnapshotToContext)
+                {
+                    Widgets.Label(listing.GetRect(22f), "RTE_Settings_AI_InjectDays".Translate(SnapshotInjectDays));
+                    SnapshotInjectDays = listing.Slider(SnapshotInjectDays, 0.5f, 7f);
+                    
+                    Text.Font = GameFont.Tiny;
+                    GUI.color = Color.gray;
+                    Widgets.Label(listing.GetRect(18f), "RTE_Settings_AI_InjectDays_Desc".Translate(SnapshotInjectDays));
+                    GUI.color = Color.white;
+                    Text.Font = GameFont.Small;
+                }
+                
+                listing.Gap();
+                listing.GapLine();
+                listing.Gap();
+                
+                Text.Font = GameFont.Tiny;
+                Widgets.Label(listing.GetRect(120f), 
+                    "说明：\n" +
+                    "1. 每日 0 点系统会自动拍摄殖民地快照（建筑、房间、蓝图）。\n" +
+                    "2. AI 将对比昨日快照，结合玩家操作日志、工程进度、科技状态和事件，生成一段简短的总结。\n" +
+                    "3. 总结结果将显示在'每日快照'标签页中，不会直接修改概况。\n" +
+                    "4. 如果启用'自动注入'，AI 在对话时会自动看到最近的历史记录（含日期）。\n" +
+                    "5. 工程信息：从状况板读取进行中和已完成的工程项目。\n" +
+                    "6. 科技状态：包含当前研究、已完成科技，可选包含未完成科技（默认关闭以节省token）。");
+                Text.Font = GameFont.Small;
+            }
         }
     }
 }

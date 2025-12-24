@@ -114,6 +114,14 @@
   <RTE_Settings_Tab_AutoCapture>Auto Capture</RTE_Settings_Tab_AutoCapture>
   <RTE_Settings_Tab_AIHistorian>AI Historian</RTE_Settings_Tab_AIHistorian>
   
+  <!-- Settings - New Tabs -->
+  <RTE_Settings_Tab_ContextEnhancement>📊 Context Enhancement</RTE_Settings_Tab_ContextEnhancement>
+  <RTE_Settings_Tab_ColonyStatus>📢 Colony Status</RTE_Settings_Tab_ColonyStatus>
+  
+  <!-- Settings - Page Titles -->
+  <RTE_Settings_ContextEnhancement_PageTitle>📊 Context Enhancement Settings</RTE_Settings_ContextEnhancement_PageTitle>
+  <RTE_Settings_ColonyStatus_PageTitle>📢 Colony Status Settings</RTE_Settings_ColonyStatus_PageTitle>
+  
   <!-- Settings - Health Info -->
   <RTE_Settings_Health_Title>RimTalk Enhanced Health Info Settings</RTE_Settings_Health_Title>
   <RTE_Settings_Health_ShowSeverity>Show severity percentage</RTE_Settings_Health_ShowSeverity>
