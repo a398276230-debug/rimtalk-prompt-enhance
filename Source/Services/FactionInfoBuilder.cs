@@ -39,6 +39,39 @@ namespace RimTalkHealthEnhance
             if (!factionsOnMap.Any()) return null;
             
             var sb = new StringBuilder();
+            
+            // 全局身份摘要（如果启用）
+            if (settings.ShowGlobalSummary)
+            {
+                int totalEnemies = factionsOnMap.Sum(f => f.ActiveEnemies);
+                int totalPrisoners = factionsOnMap.Sum(f => f.Prisoners);
+                int totalTraders = factionsOnMap.Sum(f => f.Traders);
+                int totalVisitors = factionsOnMap.Sum(f => f.Visitors);
+                
+                if (totalEnemies > 0 || totalPrisoners > 0 || totalTraders > 0 || totalVisitors > 0)
+                {
+                    sb.AppendLine("=== Map Population Summary ===");
+                    
+                    if (totalEnemies > 0)
+                        sb.AppendLine($"Threats: {totalEnemies} active enem{(totalEnemies > 1 ? "ies" : "y")}");
+                    
+                    if (totalPrisoners > 0)
+                        sb.AppendLine($"Detained: {totalPrisoners} prisoner{(totalPrisoners > 1 ? "s" : "")}");
+                    
+                    if (totalTraders > 0 || totalVisitors > 0)
+                    {
+                        var visitorParts = new List<string>();
+                        if (totalVisitors > 0)
+                            visitorParts.Add($"{totalVisitors} visitor{(totalVisitors > 1 ? "s" : "")}");
+                        if (totalTraders > 0)
+                            visitorParts.Add($"{totalTraders} trader{(totalTraders > 1 ? "s" : "")}");
+                        sb.AppendLine($"Visitors: {string.Join(", ", visitorParts)}");
+                    }
+                    
+                    sb.AppendLine();
+                }
+            }
+            
             sb.AppendLine("=== Factions on Map ===");
             
             // 按游戏实际关系分组
@@ -100,24 +133,53 @@ namespace RimTalkHealthEnhance
         
         private static List<FactionInfo> GetFactionsOnMap(Map map)
         {
+            var settings = RimTalkHealthEnhanceMod.Settings;
             var factionDict = new Dictionary<Faction, FactionInfo>();
             
-            // 遍历地图上所有 Pawn，统计派系
+            // 遍历地图上所有 Pawn，统计派系和身份
             foreach (var pawn in map.mapPawns.AllPawns)
             {
                 if (pawn.Faction == null || pawn.Faction.IsPlayer) continue;
                 if (pawn.Faction.def.hidden) continue; // 跳过隐藏派系
+                if (!pawn.RaceProps.Humanlike) continue; // 只统计人形生物
                 
                 if (!factionDict.ContainsKey(pawn.Faction))
                 {
                     factionDict[pawn.Faction] = new FactionInfo
                     {
                         Faction = pawn.Faction,
-                        PawnCount = 0
+                        PawnCount = 0,
+                        ActiveEnemies = 0,
+                        Prisoners = 0,
+                        Traders = 0,
+                        Visitors = 0
                     };
                 }
                 
-                factionDict[pawn.Faction].PawnCount++;
+                var info = factionDict[pawn.Faction];
+                info.PawnCount++;
+                
+                // 身份识别（仅在启用身份细分时）
+                if (settings.ShowIdentityBreakdown)
+                {
+                    if (pawn.IsPrisoner)
+                    {
+                        info.Prisoners++;
+                    }
+                    else if (pawn.HostileTo(Faction.OfPlayer) && !pawn.Downed)
+                    {
+                        info.ActiveEnemies++;
+                    }
+                    else if (pawn.trader != null)
+                    {
+                        // 是商队成员（有 trader 组件）
+                        info.Traders++;
+                    }
+                    else if (!pawn.HostileTo(Faction.OfPlayer))
+                    {
+                        info.Visitors++;
+                    }
+                }
             }
             
             return factionDict.Values.ToList();
@@ -146,6 +208,30 @@ namespace RimTalkHealthEnhance
                 sb.Append($" - {info.PawnCount} member{(info.PawnCount > 1 ? "s" : "")} present");
             }
             
+            // 身份细分（如果启用）
+            if (settings.ShowIdentityBreakdown && info.PawnCount > 0)
+            {
+                var identities = new List<string>();
+                
+                if (info.ActiveEnemies > 0)
+                    identities.Add($"{info.ActiveEnemies} active enem{(info.ActiveEnemies > 1 ? "ies" : "y")}");
+                
+                if (info.Prisoners > 0)
+                    identities.Add($"{info.Prisoners} prisoner{(info.Prisoners > 1 ? "s" : "")}");
+                
+                if (info.Traders > 0)
+                    identities.Add($"{info.Traders} trader{(info.Traders > 1 ? "s" : "")}");
+                
+                if (info.Visitors > 0)
+                    identities.Add($"{info.Visitors} visitor{(info.Visitors > 1 ? "s" : "")}");
+                
+                if (identities.Any())
+                {
+                    sb.AppendLine();
+                    sb.Append($"  └─ {string.Join(", ", identities)}");
+                }
+            }
+            
             return sb.ToString();
         }
         
@@ -167,6 +253,12 @@ namespace RimTalkHealthEnhance
         {
             public Faction Faction;
             public int PawnCount;
+            
+            // 身份细分统计
+            public int ActiveEnemies;    // 活跃敌人（未倒地、非囚犯）
+            public int Prisoners;        // 囚犯
+            public int Traders;          // 商队成员
+            public int Visitors;         // 普通访客
         }
     }
 }

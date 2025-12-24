@@ -59,6 +59,8 @@ namespace RimTalkHealthEnhance
         public bool ShowFactionRelations = true;
         public bool ShowFactionGoodwill = true;
         public bool ShowFactionMemberCount = true;
+        public bool ShowIdentityBreakdown = true;     // 显示身份细分（囚犯/敌人/访客）
+        public bool ShowGlobalSummary = false;        // 显示全局身份摘要
         public bool ShowNeutralFactions = true;
         public bool FilterByGoodwill = false;
         public int MinGoodwillToShow = -100;
@@ -146,6 +148,8 @@ namespace RimTalkHealthEnhance
             Scribe_Values.Look(ref ShowFactionRelations, "showFactionRelations", true);
             Scribe_Values.Look(ref ShowFactionGoodwill, "showFactionGoodwill", true);
             Scribe_Values.Look(ref ShowFactionMemberCount, "showFactionMemberCount", true);
+            Scribe_Values.Look(ref ShowIdentityBreakdown, "showIdentityBreakdown", true);
+            Scribe_Values.Look(ref ShowGlobalSummary, "showGlobalSummary", false);
             Scribe_Values.Look(ref ShowNeutralFactions, "showNeutralFactions", true);
             Scribe_Values.Look(ref FilterByGoodwill, "filterByGoodwill", false);
             Scribe_Values.Look(ref MinGoodwillToShow, "minGoodwillToShow", -100);
@@ -372,6 +376,12 @@ namespace RimTalkHealthEnhance
                 
                 listing.CheckboxLabeled("显示派系成员数量", ref ShowFactionMemberCount, 
                     "显示该派系在当前地图上有多少成员");
+                
+                listing.CheckboxLabeled("显示身份细分", ref ShowIdentityBreakdown,
+                    "区分囚犯、敌对分子、访客和商队等不同身份");
+                
+                listing.CheckboxLabeled("显示全局身份摘要", ref ShowGlobalSummary,
+                    "在派系列表前显示整体态势摘要（威胁/囚犯/访客统计）");
                 
                 listing.CheckboxLabeled("显示中立派系", ref ShowNeutralFactions, 
                     "包含中立派系（好感度在 -75 到 75 之间）");
