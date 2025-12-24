@@ -1,5 +1,84 @@
 # Bug 修复记录
 
+## 2025/12/24 - 修复 AI 连接时的字符编码错误
+
+### 问题描述
+部分用户在测试 AI 连接或使用 AI 功能时遇到以下错误：
+```
+[RimTalk Enhance] AI Call Exception: Illegal byte sequence encounted in the input.
+Parameter name: string
+```
+
+### 根本原因
+这是一个 .NET `HttpClient` 在处理包含非 ASCII 字符（如中文）的计算机名时的已知问题。
+1. 当计算机名包含中文字符时，系统会自动将其注入到 HTTP 请求头（如 User-Agent 或 Host）中。
+2. HTTP 协议标准要求头部字段必须是 ASCII 字符。
+3. `HttpClient` 在构建请求时尝试编码这些字符，导致 `DecoderFallbackException`。
+
+### 解决方案
+通过配置 `HttpClientHandler` 和手动管理请求头，最大限度地减少系统环境变量的自动注入：
+
+1. **配置 HttpClientHandler**：
+   - `UseDefaultCredentials = false`：防止自动使用系统凭据
+   - `PreAuthenticate = false`：禁用预认证
+   - `UseCookies = false`：禁用 Cookie
+
+2. **清理请求头**：
+   - `client.DefaultRequestHeaders.Clear()`：清除所有默认头
+   - 手动设置 `User-Agent` 和 `Accept` 头，确保请求头纯净
+
+3. **增强错误提示**：
+   - 添加了对 `DecoderFallbackException` 和特定错误消息的检测
+   - 如果检测到此类错误，输出详细的日志，明确指出可能是计算机名问题，并给出解决方案
+
+### 修改文件
+
+#### `Source/Services/SimpleAIClient.cs`
+```csharp
+// Configure HttpClientHandler to minimize system environment interference
+var handler = new HttpClientHandler
+{
+    UseDefaultCredentials = false,
+    PreAuthenticate = false,
+    UseCookies = false,
+    AutomaticDecompression = System.Net.DecompressionMethods.GZip | System.Net.DecompressionMethods.Deflate
+};
+
+using (var client = new HttpClient(handler))
+{
+    // Clear default headers to avoid auto-injection of system info
+    client.DefaultRequestHeaders.Clear();
+    client.DefaultRequestHeaders.Add("User-Agent", "RimTalk-Enhance/1.0");
+    client.DefaultRequestHeaders.Add("Accept", "application/json");
+    
+    // ...
+    
+    catch (Exception ex)
+    {
+        // Enhanced error handling for encoding issues
+        if (ex is System.Text.DecoderFallbackException || 
+            ex.Message.Contains("Illegal byte sequence") ||
+            ex.Message.Contains("encounted in the input"))
+        {
+            Log.Error("[RimTalk Enhance] Character encoding error detected.");
+            Log.Warning($"[RimTalk Enhance] This is likely caused by non-ASCII characters in your computer name: {System.Environment.MachineName}");
+            // ...
+        }
+        // ...
+    }
+}
+```
+
+### 效果
+- ✅ 尝试从技术上规避系统环境变量导致的编码问题
+- ✅ 如果问题仍然存在，提供清晰、有用的错误提示和解决方案
+- ✅ 不影响正常用户的 AI 连接功能
+
+### 编译状态
+✅ 编译成功，无错误
+
+---
+
 ## 2025/12/22 - 修复自动捕获任务完成后仍挂在 Context 的问题
 
 ### 问题描述

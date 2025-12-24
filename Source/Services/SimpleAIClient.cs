@@ -56,8 +56,22 @@ namespace RimTalkHealthEnhance
                 url += $"?key={settings.CustomApiKey}";
             }
             
-            using (var client = new HttpClient())
+            // Configure HttpClientHandler to minimize system environment interference
+            var handler = new HttpClientHandler
             {
+                UseDefaultCredentials = false,
+                PreAuthenticate = false,
+                UseCookies = false,
+                AutomaticDecompression = System.Net.DecompressionMethods.GZip | System.Net.DecompressionMethods.Deflate
+            };
+
+            using (var client = new HttpClient(handler))
+            {
+                // Clear default headers to avoid auto-injection of system info
+                client.DefaultRequestHeaders.Clear();
+                client.DefaultRequestHeaders.Add("User-Agent", "RimTalk-Enhance/1.0");
+                client.DefaultRequestHeaders.Add("Accept", "application/json");
+
                 // Set headers
                 if (settings.SynthesisProvider != AIProvider.Google)
                 {
@@ -143,6 +157,18 @@ namespace RimTalkHealthEnhance
                 }
                 catch (Exception ex)
                 {
+                    // Enhanced error handling for encoding issues
+                    if (ex is System.Text.DecoderFallbackException || 
+                        ex.Message.Contains("Illegal byte sequence") ||
+                        ex.Message.Contains("encounted in the input"))
+                    {
+                        Log.Error("[RimTalk Enhance] Character encoding error detected.");
+                        Log.Warning($"[RimTalk Enhance] This is likely caused by non-ASCII characters in your computer name: {System.Environment.MachineName}");
+                        Log.Warning("[RimTalk Enhance] Possible solutions:");
+                        Log.Warning("[RimTalk Enhance] 1. Change your computer name to English characters (Control Panel > System > Rename this PC)");
+                        Log.Warning("[RimTalk Enhance] 2. Try using a different AI provider");
+                    }
+
                     Log.Error($"[RimTalk Enhance] AI Call Exception: {ex.Message}");
                     return null;
                 }
