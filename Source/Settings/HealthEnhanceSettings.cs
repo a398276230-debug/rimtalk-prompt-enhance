@@ -82,6 +82,8 @@ namespace RimTalkHealthEnhance
         public bool MergeDuplicateEvents = true;      // 合并重复事件
         public bool AutoArchiveCompleted = false;     // 自动归档已完成的事件（手动创建的）
         public float AutoCapturedDeleteDays = 0.5f;   // 自动捕获事件完成后删除时间（0-3天，0表示立即）
+        public bool AutoCompleteRaidEvents = true;    // 自动完成袭击事件（当敌对单位被消灭时）
+        public float RaidCheckDelay = 5f;             // 袭击检测延迟时间（秒）
         
         // === Location Context Settings ===
         public bool ShowRelativeLocation = true;         // 启用相对位置显示
@@ -189,6 +191,8 @@ namespace RimTalkHealthEnhance
             Scribe_Values.Look(ref MergeDuplicateEvents, "mergeDuplicateEvents", true);
             Scribe_Values.Look(ref AutoArchiveCompleted, "autoArchiveCompleted", false);
             Scribe_Values.Look(ref AutoCapturedDeleteDays, "autoCapturedDeleteDays", 0.5f);
+            Scribe_Values.Look(ref AutoCompleteRaidEvents, "autoCompleteRaidEvents", true);
+            Scribe_Values.Look(ref RaidCheckDelay, "raidCheckDelay", 5f);
             
             // Location Context
             Scribe_Values.Look(ref ShowRelativeLocation, "showRelativeLocation", true);
@@ -733,6 +737,15 @@ namespace RimTalkHealthEnhance
                 
                 listing.CheckboxLabeled("RTE_Settings_AutoCapture_MergeDuplicates".Translate(), ref MergeDuplicateEvents, "RTE_Settings_AutoCapture_MergeDuplicates_Desc".Translate());
                 listing.CheckboxLabeled("RTE_Settings_AutoCapture_AutoArchive".Translate(), ref AutoArchiveCompleted, "RTE_Settings_AutoCapture_AutoArchive_Desc".Translate());
+
+                listing.Gap();
+                
+                listing.CheckboxLabeled("RTE_Settings_AutoCapture_AutoCompleteRaid".Translate(), ref AutoCompleteRaidEvents, "RTE_Settings_AutoCapture_AutoCompleteRaid_Desc".Translate());
+                if (AutoCompleteRaidEvents)
+                {
+                    Widgets.Label(listing.GetRect(22f), "RTE_Settings_AutoCapture_RaidDelay".Translate(RaidCheckDelay.ToString("F1")));
+                    RaidCheckDelay = listing.Slider(RaidCheckDelay, 1f, 30f);
+                }
 
                 listing.Gap();
                 listing.GapLine();

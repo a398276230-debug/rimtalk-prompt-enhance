@@ -237,6 +237,9 @@
   <RTE_Settings_AutoCapture_MergeDuplicates_Desc>如果标题相同，合并为一条并增加计数</RTE_Settings_AutoCapture_MergeDuplicates_Desc>
   <RTE_Settings_AutoCapture_AutoArchive>自动归档手动创建的已完成项</RTE_Settings_AutoCapture_AutoArchive>
   <RTE_Settings_AutoCapture_AutoArchive_Desc>定期清理手动创建的已完成条目（1天后）</RTE_Settings_AutoCapture_AutoArchive_Desc>
+  <RTE_Settings_AutoCapture_AutoCompleteRaid>自动完成袭击事件</RTE_Settings_AutoCapture_AutoCompleteRaid>
+  <RTE_Settings_AutoCapture_AutoCompleteRaid_Desc>当所有敌对单位被消灭时，自动将袭击事件标记为完成</RTE_Settings_AutoCapture_AutoCompleteRaid_Desc>
+  <RTE_Settings_AutoCapture_RaidDelay>  └─ 检测延迟: {0} 秒</RTE_Settings_AutoCapture_RaidDelay>
   <RTE_Settings_AutoCapture_DiscoveredTypes>已发现的事件类型 ({0})</RTE_Settings_AutoCapture_DiscoveredTypes>
   <RTE_Settings_AutoCapture_NoTypes>未发现事件类型。请进入游戏加载存档后刷新。</RTE_Settings_AutoCapture_NoTypes>
   <RTE_Settings_AutoCapture_ResetDefaults>重置为默认</RTE_Settings_AutoCapture_ResetDefaults>

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Verse;
@@ -23,6 +24,9 @@ namespace RimTalkHealthEnhance
         // 派系信息缓存（线程安全）
         private string _cachedFactionInfo = null;
         private int _lastFactionUpdateTick = 0;
+
+        // 袭击检测延迟标记
+        private int _pendingRaidCheckTick = -1;
 
         public ColonyAnnouncementManager(Game game)
         {
@@ -65,6 +69,13 @@ namespace RimTalkHealthEnhance
             if (currentTick % 2000 == 0)
             {
                 CheckAutoCompletion();
+            }
+
+            // 检查延迟的袭击检测
+            if (_pendingRaidCheckTick > 0 && currentTick >= _pendingRaidCheckTick)
+            {
+                CheckRaidCompletion();
+                _pendingRaidCheckTick = -1; // 重置
             }
             
             // 每日 0 点触发 AI 总结
@@ -319,6 +330,68 @@ namespace RimTalkHealthEnhance
             }
             
             return null;
+        }
+
+        /// <summary>
+        /// 调度袭击检测（由 Pawn 死亡事件触发）
+        /// </summary>
+        public void ScheduleRaidCheck()
+        {
+            var settings = RimTalkHealthEnhanceMod.Settings;
+            if (settings == null || !settings.AutoCompleteRaidEvents) return;
+
+            // 每次敌人死亡时，重置延迟时间
+            int delayTicks = (int)(settings.RaidCheckDelay * 60); // 秒转ticks
+            _pendingRaidCheckTick = Find.TickManager.TicksGame + delayTicks;
+        }
+
+        private void CheckRaidCompletion()
+        {
+            var map = Find.CurrentMap;
+            if (map == null) return;
+            
+            // 检查是否还有敌对单位
+            bool hasHostiles = map.mapPawns.AllPawns.Any(p => 
+                p.HostileTo(Faction.OfPlayer) && 
+                !p.Downed && 
+                !p.Dead &&
+                p.RaceProps.Humanlike);
+            
+            if (!hasHostiles)
+            {
+                // 自动完成所有活跃的袭击事件
+                CompleteActiveRaidEvents();
+            }
+        }
+
+        private void CompleteActiveRaidEvents()
+        {
+            if (Data.Announcements == null) return;
+            
+            int currentTick = Find.TickManager.TicksGame;
+            var settings = RimTalkHealthEnhanceMod.Settings;
+            
+            // 袭击关键词
+            string[] raidKeywords = { "raid", "attack", "siege", "infestation", "manhunter", "袭击", "进攻", "围攻", "虫害", "猎杀" };
+
+            foreach (var announcement in Data.Announcements)
+            {
+                if (announcement.Status == AnnouncementStatus.Active && 
+                    announcement.Category == AnnouncementCategory.Event)
+                {
+                    // 检查标题是否包含袭击关键词
+                    bool isRaid = raidKeywords.Any(k => announcement.Title.IndexOf(k, StringComparison.OrdinalIgnoreCase) >= 0);
+                    
+                    if (isRaid)
+                    {
+                        announcement.Status = AnnouncementStatus.Completed;
+                        announcement.CompletedTick = currentTick;
+                        Log.Message($"[RimTalk Enhance] Auto-completed raid event: {announcement.Title}");
+                    }
+                }
+            }
+            
+            DataVersion++;
         }
     }
 }
