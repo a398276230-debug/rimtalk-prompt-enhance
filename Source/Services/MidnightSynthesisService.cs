@@ -55,7 +55,30 @@ namespace RimTalkHealthEnhance
                     string assignedText = !string.IsNullOrEmpty(project.AssignedPawnName) ? $" - 负责人: {project.AssignedPawnName}" : "";
                     string descText = !string.IsNullOrEmpty(project.Description) ? $" - {project.Description}" : "";
                     
-                    string projectLine = $"{statusText} {project.Title}{progressText}{assignedText}{descText}";
+                    // 收集该工程包含的蓝图
+                    List<string> relatedBlueprints = new List<string>();
+                    if (todaySnapshot.BlueprintToProjects != null)
+                    {
+                        foreach (var kvp in todaySnapshot.BlueprintToProjects)
+                        {
+                            if (kvp.Value.Projects.Contains(project.Title))
+                            {
+                                string defName = kvp.Key;
+                                string label = DefDatabase<ThingDef>.GetNamedSilentFail(defName)?.label ?? defName;
+                                int count = todaySnapshot.BlueprintCounts.ContainsKey(defName) ? todaySnapshot.BlueprintCounts[defName] : 0;
+                                if (count > 0)
+                                {
+                                    relatedBlueprints.Add($"{label} x{count}");
+                                }
+                            }
+                        }
+                    }
+                    
+                    string blueprintsText = relatedBlueprints.Count > 0 
+                        ? $"\n  包含蓝图: {string.Join(", ", relatedBlueprints)}" 
+                        : "";
+                    
+                    string projectLine = $"{statusText} {project.Title}{progressText}{assignedText}{descText}{blueprintsText}";
                     projectInfo.Add(projectLine);
                     Log.Message($"[RimTalk Enhance] Project: {projectLine}");
                 }

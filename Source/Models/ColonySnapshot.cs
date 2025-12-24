@@ -14,6 +14,9 @@ namespace RimTalkHealthEnhance
         // 蓝图快照: DefName -> Count
         public Dictionary<string, int> BlueprintCounts = new Dictionary<string, int>();
         
+        // 蓝图与工程的关联: DefName -> ProjectListWrapper
+        public Dictionary<string, ProjectListWrapper> BlueprintToProjects = new Dictionary<string, ProjectListWrapper>();
+        
         public int SnapshotTick;
         
         public void ExposeData()
@@ -21,11 +24,24 @@ namespace RimTalkHealthEnhance
             Scribe_Collections.Look(ref BuildingCounts, "buildings", LookMode.Value, LookMode.Value);
             Scribe_Collections.Look(ref Rooms, "rooms", LookMode.Deep);
             Scribe_Collections.Look(ref BlueprintCounts, "blueprints", LookMode.Value, LookMode.Value);
+            Scribe_Collections.Look(ref BlueprintToProjects, "blueprintToProjects", LookMode.Value, LookMode.Deep);
             Scribe_Values.Look(ref SnapshotTick, "tick");
             
             if (BuildingCounts == null) BuildingCounts = new Dictionary<string, int>();
             if (Rooms == null) Rooms = new List<RoomSnapshot>();
             if (BlueprintCounts == null) BlueprintCounts = new Dictionary<string, int>();
+            if (BlueprintToProjects == null) BlueprintToProjects = new Dictionary<string, ProjectListWrapper>();
+        }
+    }
+
+    public class ProjectListWrapper : IExposable
+    {
+        public List<string> Projects = new List<string>();
+        
+        public void ExposeData()
+        {
+            Scribe_Collections.Look(ref Projects, "projects", LookMode.Value);
+            if (Projects == null) Projects = new List<string>();
         }
     }
 

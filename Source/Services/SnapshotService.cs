@@ -4,6 +4,7 @@ using System.Reflection;
 using HarmonyLib;
 using RimWorld;
 using Verse;
+using RimTalkHealthEnhance.Models;
 
 namespace RimTalkHealthEnhance
 {
@@ -75,6 +76,27 @@ namespace RimTalkHealthEnhance
                     }
                 }
                 
+                // 准备工程区域缓存
+                var manager = ColonyAnnouncementManager.Instance;
+                var projectAreas = new Dictionary<string, CustomNamedArea>();
+                
+                if (manager?.Data?.Announcements != null && manager.CustomAreas != null)
+                {
+                    foreach (var announcement in manager.Data.Announcements)
+                    {
+                        if (announcement.Category == AnnouncementCategory.Project && 
+                            announcement.Status != AnnouncementStatus.Completed &&
+                            !string.IsNullOrEmpty(announcement.BlueprintAreaId))
+                        {
+                            var area = manager.CustomAreas.FirstOrDefault(a => a.Id == announcement.BlueprintAreaId);
+                            if (area != null)
+                            {
+                                projectAreas[announcement.Title] = area;
+                            }
+                        }
+                    }
+                }
+
                 // 统计蓝图
                 foreach (var blueprint in map.listerThings.ThingsInGroup(ThingRequestGroup.Blueprint))
                 {
@@ -85,6 +107,9 @@ namespace RimTalkHealthEnhance
                             snapshot.BlueprintCounts[key]++;
                         else
                             snapshot.BlueprintCounts[key] = 1;
+                            
+                        // 检查所属工程
+                        CheckBlueprintProject(blueprint, key, projectAreas, snapshot);
                     }
                 }
                 
@@ -98,6 +123,9 @@ namespace RimTalkHealthEnhance
                             snapshot.BlueprintCounts[key]++;
                         else
                             snapshot.BlueprintCounts[key] = 1;
+                            
+                        // 检查所属工程
+                        CheckBlueprintProject(frame, key, projectAreas, snapshot);
                     }
                 }
             }
@@ -120,6 +148,30 @@ namespace RimTalkHealthEnhance
                    def.category == ThingCategory.Building &&
                    def.building.isNaturalRock == false &&
                    def.passability != Traversability.Standable; // 通常关键建筑不可通行
+        }
+
+        private static void CheckBlueprintProject(Thing thing, string defName, Dictionary<string, CustomNamedArea> projectAreas, ColonySnapshot snapshot)
+        {
+            if (projectAreas == null || projectAreas.Count == 0) return;
+            
+            foreach (var kvp in projectAreas)
+            {
+                string projectName = kvp.Key;
+                CustomNamedArea area = kvp.Value;
+                
+                if (area.ActiveCells.Contains(thing.Position))
+                {
+                    if (!snapshot.BlueprintToProjects.ContainsKey(defName))
+                    {
+                        snapshot.BlueprintToProjects[defName] = new ProjectListWrapper();
+                    }
+                    
+                    if (!snapshot.BlueprintToProjects[defName].Projects.Contains(projectName))
+                    {
+                        snapshot.BlueprintToProjects[defName].Projects.Add(projectName);
+                    }
+                }
+            }
         }
     }
 }
