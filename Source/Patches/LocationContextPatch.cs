@@ -22,7 +22,12 @@ namespace RimTalkHealthEnhance
                 string relativeLocation = LocationContextBuilder.GetRelativeLocation(mainPawn);
                 if (!string.IsNullOrEmpty(relativeLocation))
                 {
-                    sb.Append($"\nRelative Position: {relativeLocation}");
+                    // 根据是否在主基地使用不同的前缀
+                    string prefix = (mainPawn?.Map != null && mainPawn.Map.IsPlayerHome) 
+                        ? "Relative Position" 
+                        : "Current Map";
+                    
+                    sb.Append($"\n{prefix}: {relativeLocation}");
                 }
             }
             catch (System.Exception ex)

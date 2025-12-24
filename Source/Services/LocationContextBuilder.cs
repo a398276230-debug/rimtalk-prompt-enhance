@@ -75,12 +75,17 @@ namespace RimTalkHealthEnhance
             var parts = new List<string>();
 
             // 地图名称
-            parts.Add($"at {mapParent.Label}");
+            parts.Add(mapParent.Label);
 
             // 派系信息（如果有且非玩家派系）
             if (mapParent.Faction != null && !mapParent.Faction.IsPlayer)
             {
-                parts.Add($"({mapParent.Faction.Name} territory)");
+                parts.Add($"- {mapParent.Faction.Name} territory, away from colony");
+            }
+            else
+            {
+                // 无派系地图标记为中立领地
+                parts.Add("- Neutral territory, away from colony");
             }
 
             return string.Join(" ", parts);
