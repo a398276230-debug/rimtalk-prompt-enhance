@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using Verse;
@@ -26,6 +27,13 @@ namespace RimTalkHealthEnhance
             var settings = RimTalkHealthEnhanceMod.Settings;
             if (!settings.ShowRelativeLocation) return null;
 
+            // 如果不在主基地，只显示地图名称和派系信息
+            if (!pawn.Map.IsPlayerHome)
+            {
+                return GetNonHomeMapInfo(pawn.Map);
+            }
+
+            // 在主基地，显示完整的相对位置信息
             // 更新殖民地中心（定期）
             UpdateHomeAreaCenterIfNeeded(pawn.Map);
 
@@ -54,6 +62,28 @@ namespace RimTalkHealthEnhance
 
             // 构建位置字符串
             return BuildLocationString(nearbyRoom, direction, zone, areaInfo);
+        }
+
+        /// <summary>
+        /// 获取非主基地地图的基本信息（地图名称和派系）
+        /// </summary>
+        private static string GetNonHomeMapInfo(Map map)
+        {
+            var mapParent = map.Parent;
+            if (mapParent == null) return null;
+
+            var parts = new List<string>();
+
+            // 地图名称
+            parts.Add($"at {mapParent.Label}");
+
+            // 派系信息（如果有且非玩家派系）
+            if (mapParent.Faction != null && !mapParent.Faction.IsPlayer)
+            {
+                parts.Add($"({mapParent.Faction.Name} territory)");
+            }
+
+            return string.Join(" ", parts);
         }
 
         /// <summary>
