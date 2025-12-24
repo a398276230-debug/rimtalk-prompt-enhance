@@ -1,5 +1,52 @@
 # Bug 修复记录
 
+## 2025/12/24 - 修复工程进度百分比显示为小数的问题
+
+### 问题描述
+在状况板和任务编辑器中，工程进度显示为小数（如 `[进度: 0.5]`）或 0（如 `[进度: 0]`），而不是预期的百分比格式（如 `[进度: 50%]`）。
+
+### 根本原因
+在修复设置界面数字参数不显示的问题时，移除了 XML 翻译文件中的所有格式化说明符（如 `{0:P0}`）。
+然而，工程进度在代码中是以 `float` 类型（0.0 - 1.0）传入 `Translate` 方法的。
+由于 XML 中只使用了 `{0}`，没有格式化说明符，因此直接显示了浮点数值。
+
+### 解决方案
+在 C# 代码中，在调用 `Translate` 之前，使用 `.ToStringPercent()` 方法将进度数值格式化为百分比字符串。
+
+### 修改文件
+
+#### `Source/UI/MainTabWindow_Announcement.cs`
+```csharp
+// 修改前
+extra += "RTE_Announcement_Progress_Display".Translate(item.Progress);
+
+// 修改后
+extra += "RTE_Announcement_Progress_Display".Translate(item.Progress.ToStringPercent());
+```
+
+#### `Source/UI/TaskEditorDialog.cs`
+```csharp
+// 修改前
+string progressLabel = hasArea && announcement.AutoCalculateProgress 
+    ? "RTE_TaskEditor_Progress_AutoCalc".Translate(editProgress) 
+    : "RTE_TaskEditor_Progress_Manual_Display".Translate(editProgress);
+
+// 修改后
+string progressLabel = hasArea && announcement.AutoCalculateProgress 
+    ? "RTE_TaskEditor_Progress_AutoCalc".Translate(editProgress.ToStringPercent()) 
+    : "RTE_TaskEditor_Progress_Manual_Display".Translate(editProgress.ToStringPercent());
+```
+
+### 效果
+- ✅ 工程进度正确显示为百分比格式（如 `50%`）
+- ✅ 保持了 XML 翻译文件的简洁性（只使用 `{0}`）
+- ✅ 解决了用户反馈的"进度锁在0"（实际是显示为0）的问题
+
+### 编译状态
+✅ 编译成功，无错误
+
+---
+
 ## 2025/12/24 - 修复设置界面数字参数不显示的问题
 
 ### 问题描述
