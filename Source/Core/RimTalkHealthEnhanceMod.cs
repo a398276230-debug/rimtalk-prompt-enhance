@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using HarmonyLib;
 using UnityEngine;
@@ -50,13 +50,13 @@ namespace RimTalkHealthEnhance
 
             List<TabRecord> tabs = new List<TabRecord>
             {
-                new TabRecord("健康信息", () => _tabIndex = 0, _tabIndex == 0),
-                new TabRecord("物品描述", () => _tabIndex = 1, _tabIndex == 1),
-                new TabRecord("派系关系", () => _tabIndex = 2, _tabIndex == 2),
-                new TabRecord("地图位置", () => _tabIndex = 3, _tabIndex == 3),
-                new TabRecord("通告系统", () => _tabIndex = 4, _tabIndex == 4),
-                new TabRecord("自动捕获", () => _tabIndex = 5, _tabIndex == 5),
-                new TabRecord("AI 史官", () => _tabIndex = 6, _tabIndex == 6)
+                new TabRecord("RTE_Settings_Tab_Health".Translate(), () => _tabIndex = 0, _tabIndex == 0),
+                new TabRecord("RTE_Settings_Tab_Items".Translate(), () => _tabIndex = 1, _tabIndex == 1),
+                new TabRecord("RTE_Settings_Tab_Factions".Translate(), () => _tabIndex = 2, _tabIndex == 2),
+                new TabRecord("RTE_Settings_Tab_Location".Translate(), () => _tabIndex = 3, _tabIndex == 3),
+                new TabRecord("RTE_Settings_Tab_Announcement".Translate(), () => _tabIndex = 4, _tabIndex == 4),
+                new TabRecord("RTE_Settings_Tab_AutoCapture".Translate(), () => _tabIndex = 5, _tabIndex == 5),
+                new TabRecord("RTE_Settings_Tab_AIHistorian".Translate(), () => _tabIndex = 6, _tabIndex == 6)
             };
             
             TabDrawer.DrawTabs(tabRect, tabs);

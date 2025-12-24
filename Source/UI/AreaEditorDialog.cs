@@ -1,4 +1,4 @@
-using RimTalkHealthEnhance.Models;
+﻿using RimTalkHealthEnhance.Models;
 using UnityEngine;
 using Verse;
 
@@ -34,19 +34,19 @@ namespace RimTalkHealthEnhance.UI
             
             // 区域名称
             Text.Font = GameFont.Small;
-            Widgets.Label(listing.GetRect(22f), "区域名称:");
+            Widgets.Label(listing.GetRect(22f), "RTE_AreaEditor_AreaName".Translate());
             labelBuffer = listing.TextEntry(labelBuffer);
             
             listing.Gap();
             
             // 颜色选择
-            Widgets.Label(listing.GetRect(22f), "区域颜色:");
+            Widgets.Label(listing.GetRect(22f), "RTE_AreaEditor_AreaColor".Translate());
             Rect colorRect = listing.GetRect(30f);
             Rect colorBoxRect = colorRect.LeftHalf().ContractedBy(2f);
             Rect colorButtonRect = colorRect.RightHalf().ContractedBy(2f);
             
             Widgets.DrawBoxSolid(colorBoxRect, area.Color);
-            if (Widgets.ButtonText(colorButtonRect, "选择颜色"))
+            if (Widgets.ButtonText(colorButtonRect, "RTE_AreaEditor_SelectColor".Translate()))
             {
                 Find.WindowStack.Add(new Dialog_ColorPicker(area.Color, (newColor) => {
                     area.Color = newColor;
@@ -56,12 +56,12 @@ namespace RimTalkHealthEnhance.UI
             listing.Gap();
             
             // 启用/禁用
-            listing.CheckboxLabeled("启用此区域", ref area.IsActive);
+            listing.CheckboxLabeled("RTE_AreaEditor_EnableArea".Translate(), ref area.IsActive);
             
             listing.Gap();
             
             // 统计信息
-            Widgets.Label(listing.GetRect(22f), $"格子数量: {area.CellCount}");
+            Widgets.Label(listing.GetRect(22f), "RTE_AreaEditor_CellCount_Display".Translate(area.CellCount));
             
             listing.Gap();
             
@@ -73,7 +73,7 @@ namespace RimTalkHealthEnhance.UI
             Rect saveButton = buttonRow.LeftHalf().ContractedBy(2f);
             Rect clearButton = buttonRow.RightHalf().ContractedBy(2f);
             
-            if (Widgets.ButtonText(saveButton, "保存并关闭"))
+            if (Widgets.ButtonText(saveButton, "RTE_AreaEditor_SaveAndClose".Translate()))
             {
                 area.Label = labelBuffer;
                 var manager = ColonyAnnouncementManager.Instance;
@@ -82,7 +82,7 @@ namespace RimTalkHealthEnhance.UI
                 Close();
             }
             
-            if (Widgets.ButtonText(clearButton, "清空区域"))
+            if (Widgets.ButtonText(clearButton, "RTE_AreaEditor_ClearArea".Translate()))
             {
                 area.Clear();
                 var manager = ColonyAnnouncementManager.Instance;
@@ -144,7 +144,7 @@ namespace RimTalkHealthEnhance.UI
             Listing_Standard listing = new Listing_Standard();
             listing.Begin(inRect);
             
-            Widgets.Label(listing.GetRect(22f), "选择预设颜色:");
+            Widgets.Label(listing.GetRect(22f), "RTE_ColorPicker_Title".Translate());
             listing.Gap();
             
             // 绘制预设颜色网格

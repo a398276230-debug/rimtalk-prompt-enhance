@@ -1,4 +1,4 @@
-using RimTalkHealthEnhance.Models;
+﻿using RimTalkHealthEnhance.Models;
 using UnityEngine;
 using Verse;
 using RimWorld;
@@ -19,8 +19,8 @@ namespace RimTalkHealthEnhance.UI
         
         public AreaDrawingDesignator()
         {
-            defaultLabel = "绘制区域";
-            defaultDesc = "拖拽鼠标绘制或移除区域格子";
+            defaultLabel = "RTE_AreaDrawing_Label".Translate();
+            defaultDesc = "RTE_AreaDrawing_Desc".Translate();
             icon = ContentFinder<Texture2D>.Get("UI/Designators/PlanningZoneExpand", false) ?? BaseContent.WhiteTex;
             soundDragSustain = SoundDefOf.Designate_DragStandard;
             soundDragChanged = SoundDefOf.Designate_DragStandard_Changed;
@@ -48,7 +48,7 @@ namespace RimTalkHealthEnhance.UI
         public override AcceptanceReport CanDesignateCell(IntVec3 loc)
         {
             if (currentArea == null)
-                return "没有选择区域";
+                return "RTE_AreaDrawing_NoAreaSelected".Translate();
             
             if (!loc.InBounds(Map))
                 return false;
@@ -161,7 +161,7 @@ namespace RimTalkHealthEnhance.UI
         {
             if (currentArea == null)
             {
-                Messages.Message("请先选择一个区域", MessageTypeDefOf.RejectInput, false);
+                Messages.Message("RTE_AreaDrawing_SelectAreaFirst".Translate(), MessageTypeDefOf.RejectInput, false);
                 return;
             }
             

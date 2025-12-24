@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -59,9 +59,9 @@ namespace RimTalkHealthEnhance
         {
             List<TabRecord> tabs = new List<TabRecord>
             {
-                new TabRecord("当前状态", () => currentTab = Tab.Current, currentTab == Tab.Current),
-                new TabRecord("历史快照", () => currentTab = Tab.History, currentTab == Tab.History),
-                new TabRecord("自定义区域", () => currentTab = Tab.CustomAreas, currentTab == Tab.CustomAreas)
+                new TabRecord("RTE_Tab_CurrentStatus".Translate(), () => currentTab = Tab.Current, currentTab == Tab.Current),
+                new TabRecord("RTE_Tab_HistorySnapshots".Translate(), () => currentTab = Tab.History, currentTab == Tab.History),
+                new TabRecord("RTE_Tab_CustomAreas".Translate(), () => currentTab = Tab.CustomAreas, currentTab == Tab.CustomAreas)
             };
             
             TabDrawer.DrawTabs(rect, tabs);
@@ -87,7 +87,7 @@ namespace RimTalkHealthEnhance
             // 标题
             Rect titleRect = rect.TopPartPixels(24f);
             Text.Font = GameFont.Medium;
-            Widgets.Label(titleRect, "📝 殖民地概况");
+            Widgets.Label(titleRect, "RTE_ColonyOverview_Title".Translate());
             Text.Font = GameFont.Small;
             
             // 文本区域
@@ -107,24 +107,24 @@ namespace RimTalkHealthEnhance
             // 底部按钮和提示
             Rect bottomRow = new Rect(rect.x, textAreaRect.yMax + 5f, rect.width, 24f);
             
-            if (Widgets.ButtonText(bottomRow.LeftPartPixels(120f), "保存概况"))
+            if (Widgets.ButtonText(bottomRow.LeftPartPixels(120f), "RTE_ColonyOverview_Save".Translate()))
             {
                 manager.Data.ColonyOverview = editingOverview;
-                Messages.Message("殖民地概况已更新", MessageTypeDefOf.TaskCompletion, false);
+                Messages.Message("RTE_ColonyOverview_Updated".Translate(), MessageTypeDefOf.TaskCompletion, false);
             }
 
             // AI 总结按钮
-            if (Widgets.ButtonText(new Rect(bottomRow.x + 130f, bottomRow.y, 120f, bottomRow.height), "AI 总结概况"))
+            if (Widgets.ButtonText(new Rect(bottomRow.x + 130f, bottomRow.y, 120f, bottomRow.height), "RTE_ColonyOverview_AISummary".Translate()))
             {
                 if (string.IsNullOrWhiteSpace(editingOverview))
                 {
-                    Messages.Message("概况为空，无法总结", MessageTypeDefOf.RejectInput, false);
+                    Messages.Message("RTE_ColonyOverview_EmptyError".Translate(), MessageTypeDefOf.RejectInput, false);
                 }
                 else
                 {
                     Find.WindowStack.Add(Dialog_MessageBox.CreateConfirmation(
-                        "确定要让 AI 总结并精简当前的概况吗？\n这将替换当前的文本。",
-                        () => 
+                        "RTE_ColonyOverview_ConfirmSummary".Translate(),
+                        () =>
                         {
                             System.Threading.Tasks.Task.Run(async () => 
                             {
@@ -160,11 +160,11 @@ namespace RimTalkHealthEnhance
                                     // 自动保存
                                     manager.Data.ColonyOverview = result;
                                     manager.NotifyDataChanged();
-                                    Messages.Message("概况已由 AI 总结更新", MessageTypeDefOf.PositiveEvent, false);
+                                    Messages.Message("RTE_ColonyOverview_SummarySuccess".Translate(), MessageTypeDefOf.PositiveEvent, false);
                                 }
                                 else
                                 {
-                                    Messages.Message("AI 总结失败", MessageTypeDefOf.NegativeEvent, false);
+                                    Messages.Message("RTE_ColonyOverview_SummaryFailed".Translate(), MessageTypeDefOf.NegativeEvent, false);
                                 }
                             });
                         }
@@ -173,7 +173,7 @@ namespace RimTalkHealthEnhance
             }
             
             // 自定义提示词按钮
-            if (Widgets.ButtonText(new Rect(bottomRow.x + 260f, bottomRow.y, 100f, bottomRow.height), "⚙ 提示词"))
+            if (Widgets.ButtonText(new Rect(bottomRow.x + 260f, bottomRow.y, 100f, bottomRow.height), "RTE_ColonyOverview_CustomPrompt".Translate()))
             {
                 string defaultPrompt = @"请将以下RimWorld殖民地概况进行总结和精简。
 
@@ -189,7 +189,7 @@ namespace RimTalkHealthEnhance
 6. 直接输出精简后的文本，不要写""总结如下""之类的开头。";
 
                 Find.WindowStack.Add(new PromptEditorDialog(
-                    "自定义概况总结提示词",
+                    "RTE_PromptEditor_CustomPrompt".Translate("RTE_PromptEditor_OverviewSummary".Translate()),
                     RimTalkHealthEnhanceMod.Settings.CustomOverviewSummaryPrompt,
                     defaultPrompt,
                     (newPrompt) => 
@@ -204,7 +204,7 @@ namespace RimTalkHealthEnhance
             Text.Font = GameFont.Tiny;
             GUI.color = Color.gray;
             Text.Anchor = TextAnchor.MiddleLeft;
-            Widgets.Label(tipRect, "提示：用自然语言描述殖民地状态，AI会读取这些信息。");
+            Widgets.Label(tipRect, "RTE_ColonyOverview_Tip".Translate());
             Text.Anchor = TextAnchor.UpperLeft;
             GUI.color = Color.white;
             Text.Font = GameFont.Small;
@@ -221,7 +221,7 @@ namespace RimTalkHealthEnhance
             
             if (!snapshots.Any())
             {
-                Widgets.Label(innerRect, "暂无快照记录。每日 0 点将自动生成快照。");
+                Widgets.Label(innerRect, "RTE_Snapshot_NoData".Translate());
                 return;
             }
             
@@ -245,7 +245,7 @@ namespace RimTalkHealthEnhance
             // AI 总结区域
             if (!string.IsNullOrEmpty(snapshot.AISummary))
             {
-                Widgets.Label(new Rect(0, curY, width, 25f), "【AI 总结】");
+                Widgets.Label(new Rect(0, curY, width, 25f), "RTE_Snapshot_AISummary".Translate());
                 curY += 30f;
                 
                 var summaryHeight = Text.CalcHeight(snapshot.AISummary, width - 20f);
@@ -255,7 +255,7 @@ namespace RimTalkHealthEnhance
             }
             
             // 详细变化
-            Widgets.Label(new Rect(0, curY, width, 25f), "📊 详细变化");
+            Widgets.Label(new Rect(0, curY, width, 25f), "RTE_Snapshot_DetailedChanges".Translate());
             curY += 30f;
             
             var diffHeight = Text.CalcHeight(snapshot.DiffReport, width - 20f);
@@ -266,7 +266,7 @@ namespace RimTalkHealthEnhance
             // 玩家操作
             if (snapshot.PlayerActions.Any())
             {
-                Widgets.Label(new Rect(0, curY, width, 25f), "【玩家操作】");
+                Widgets.Label(new Rect(0, curY, width, 25f), "RTE_Snapshot_PlayerActions".Translate());
                 curY += 30f;
                 foreach (var action in snapshot.PlayerActions)
                 {
@@ -279,7 +279,7 @@ namespace RimTalkHealthEnhance
             // 事件记录
             if (snapshot.Events.Any())
             {
-                Widgets.Label(new Rect(0, curY, width, 25f), "【事件记录】");
+                Widgets.Label(new Rect(0, curY, width, 25f), "RTE_Snapshot_Events".Translate());
                 curY += 30f;
                 foreach (var evt in snapshot.Events)
                 {
@@ -298,7 +298,7 @@ namespace RimTalkHealthEnhance
         private void DrawSnapshotNavigation(Rect rect, DailySnapshot snapshot, int totalCount)
         {
             // 左箭头
-            if (Widgets.ButtonText(new Rect(rect.x, rect.y, 80f, rect.height), "← 前一天"))
+            if (Widgets.ButtonText(new Rect(rect.x, rect.y, 80f, rect.height), "RTE_Snapshot_PrevDay".Translate()))
             {
                 currentSnapshotIndex = Mathf.Min(currentSnapshotIndex + 1, totalCount - 1);
             }
@@ -310,7 +310,7 @@ namespace RimTalkHealthEnhance
             Text.Anchor = TextAnchor.UpperLeft;
             
             // 右箭头
-            if (Widgets.ButtonText(new Rect(rect.xMax - 80f, rect.y, 80f, rect.height), "后一天 →"))
+            if (Widgets.ButtonText(new Rect(rect.xMax - 80f, rect.y, 80f, rect.height), "RTE_Snapshot_NextDay".Translate()))
             {
                 currentSnapshotIndex = Mathf.Max(currentSnapshotIndex - 1, 0);
             }
@@ -321,7 +321,7 @@ namespace RimTalkHealthEnhance
             float buttonWidth = (rect.width - 20f) / 3f;
             
             // 复制到概况
-            if (Widgets.ButtonText(new Rect(rect.x, rect.y, buttonWidth, rect.height), "复制到概况"))
+            if (Widgets.ButtonText(new Rect(rect.x, rect.y, buttonWidth, rect.height), "RTE_Snapshot_CopyToOverview".Translate()))
             {
                 var manager = ColonyAnnouncementManager.Instance;
                 
@@ -341,14 +341,14 @@ namespace RimTalkHealthEnhance
                 isEditingOverview = false;
                 
                 manager.NotifyDataChanged();
-                Messages.Message("已追加到概况（含日期）", MessageTypeDefOf.TaskCompletion, false);
+                Messages.Message("RTE_Snapshot_CopiedWithDate".Translate(), MessageTypeDefOf.TaskCompletion, false);
             }
             
             // 重新生成
-            if (Widgets.ButtonText(new Rect(rect.x + buttonWidth + 10f, rect.y, buttonWidth, rect.height), "重新生成"))
+            if (Widgets.ButtonText(new Rect(rect.x + buttonWidth + 10f, rect.y, buttonWidth, rect.height), "RTE_Snapshot_Regenerate".Translate()))
             {
                 Find.WindowStack.Add(Dialog_MessageBox.CreateConfirmation(
-                    "确定要重新生成此快照的 AI 总结吗？",
+                    "RTE_Snapshot_ConfirmRegenerate".Translate(),
                     () => 
                     {
                         // 使用 Task.Run 避免阻塞
@@ -367,8 +367,8 @@ namespace RimTalkHealthEnhance
                                 
                                 foreach (var project in activeProjects)
                                 {
-                                    string statusText = project.Status == AnnouncementStatus.Completed ? "[已完成]" : 
-                                                       project.Status == AnnouncementStatus.Paused ? "[暂停]" : "[进行中]";
+                                    string statusText = project.Status == AnnouncementStatus.Completed ? "RTE_Announcement_Status_Completed".Translate() : 
+                                                       project.Status == AnnouncementStatus.Paused ? "RTE_Announcement_Status_Paused".Translate() : "RTE_Announcement_Status_Active".Translate();
                                     string progressText = project.Progress > 0 ? $" ({project.Progress:P0})" : "";
                                     string assignedText = !string.IsNullOrEmpty(project.AssignedPawnName) ? $" - 负责人: {project.AssignedPawnName}" : "";
                                     
@@ -388,11 +388,11 @@ namespace RimTalkHealthEnhance
                             {
                                 snapshot.AISummary = result;
                                 manager.NotifyDataChanged();
-                                Messages.Message("AI 总结已更新", MessageTypeDefOf.PositiveEvent, false);
+                                Messages.Message("RTE_Snapshot_RegenerateSuccess".Translate(), MessageTypeDefOf.PositiveEvent, false);
                             }
                             else
                             {
-                                Messages.Message("AI 总结生成失败", MessageTypeDefOf.NegativeEvent, false);
+                                Messages.Message("RTE_Snapshot_RegenerateFailed".Translate(), MessageTypeDefOf.NegativeEvent, false);
                             }
                         });
                     }
@@ -400,12 +400,12 @@ namespace RimTalkHealthEnhance
             }
             
             // 自定义提示词按钮
-            if (Widgets.ButtonText(new Rect(rect.x + buttonWidth * 2 + 20f, rect.y, buttonWidth, rect.height), "⚙ 提示词"))
+            if (Widgets.ButtonText(new Rect(rect.x + buttonWidth * 2 + 20f, rect.y, buttonWidth, rect.height), "RTE_ColonyOverview_CustomPrompt".Translate()))
             {
                 string defaultPrompt = MidnightSynthesisService.GetDefaultPromptTemplate();
                 
                 Find.WindowStack.Add(new PromptEditorDialog(
-                    "自定义每日快照提示词",
+                    "RTE_PromptEditor_CustomPrompt".Translate("RTE_PromptEditor_DailySynthesis".Translate()),
                     RimTalkHealthEnhanceMod.Settings.CustomDailySynthesisPrompt,
                     defaultPrompt,
                     (newPrompt) => 
@@ -424,7 +424,7 @@ namespace RimTalkHealthEnhance
             
             // 新建按钮 (右侧)
             Rect buttonRect = toolbarRect.RightPartPixels(120f);
-            if (Widgets.ButtonText(buttonRect, "+ 新建状况"))
+            if (Widgets.ButtonText(buttonRect, "RTE_Announcement_NewTask".Translate()))
             {
                 Find.WindowStack.Add(new TaskEditorDialog(null, manager));
             }
@@ -501,9 +501,9 @@ namespace RimTalkHealthEnhance
             string desc = item.Description;
             string extra = "";
             if (item.Category == AnnouncementCategory.Project && item.Progress > 0)
-                extra += $" [进度: {item.Progress:P0}]";
+                extra += "RTE_Announcement_Progress_Display".Translate(item.Progress);
             if (!string.IsNullOrEmpty(item.AssignedPawnName))
-                extra += $" [负责人: {item.AssignedPawnName}]";
+                extra += "RTE_Announcement_AssignedTo_Display".Translate(item.AssignedPawnName);
             
             string fullText = desc + extra;
             
@@ -516,8 +516,8 @@ namespace RimTalkHealthEnhance
         {
             List<TabRecord> tabs = new List<TabRecord>();
             
-            // "全部" 标签
-            tabs.Add(new TabRecord("全部", () => selectedCategory = null, selectedCategory == null));
+            // "RTE_Announcement_AllCategories".Translate() 标签
+            tabs.Add(new TabRecord("RTE_Announcement_AllCategories".Translate(), () => selectedCategory = null, selectedCategory == null));
             
             // 各类别标签
             foreach (AnnouncementCategory cat in Enum.GetValues(typeof(AnnouncementCategory)))
@@ -532,12 +532,12 @@ namespace RimTalkHealthEnhance
         {
             return cat switch
             {
-                AnnouncementCategory.Project => "工程",
-                AnnouncementCategory.Event => "事件",
-                AnnouncementCategory.Quest => "任务",
-                AnnouncementCategory.Resource => "资源",
-                AnnouncementCategory.Personnel => "人员",
-                AnnouncementCategory.Custom => "自定义",
+                AnnouncementCategory.Project => "RTE_Announcement_Category_Project".Translate(),
+                AnnouncementCategory.Event => "RTE_Announcement_Category_Event".Translate(),
+                AnnouncementCategory.Quest => "RTE_Announcement_Category_Quest".Translate(),
+                AnnouncementCategory.Resource => "RTE_Announcement_Category_Resource".Translate(),
+                AnnouncementCategory.Personnel => "RTE_Announcement_Category_Personnel".Translate(),
+                AnnouncementCategory.Custom => "RTE_Announcement_Category_Custom".Translate(),
                 _ => cat.ToString()
             };
         }
@@ -600,9 +600,9 @@ namespace RimTalkHealthEnhance
             
             string extra = "";
             if (item.Category == AnnouncementCategory.Project && item.Progress > 0)
-                extra += $" [进度: {item.Progress:P0}]";
+                extra += "RTE_Announcement_Progress_Display".Translate(item.Progress);
             if (!string.IsNullOrEmpty(item.AssignedPawnName))
-                extra += $" [负责人: {item.AssignedPawnName}]";
+                extra += "RTE_Announcement_AssignedTo_Display".Translate(item.AssignedPawnName);
                 
             Widgets.Label(line2, $"{desc} {extra}");
             
@@ -617,8 +617,8 @@ namespace RimTalkHealthEnhance
             
             // 状态按钮
             Rect statusBtn = new Rect(btnRect.x, btnY, btnW, 24f);
-            string statusLabel = item.Status == AnnouncementStatus.Active ? "完成" : 
-                                 item.Status == AnnouncementStatus.Paused ? "恢复" : "重开";
+            string statusLabel = item.Status == AnnouncementStatus.Active ? "RTE_Announcement_Complete".Translate() : 
+                                 item.Status == AnnouncementStatus.Paused ? "RTE_Announcement_Resume".Translate() : "RTE_Announcement_Reopen".Translate();
             if (Widgets.ButtonText(statusBtn, statusLabel))
             {
                 if (item.Status == AnnouncementStatus.Active) { item.Status = AnnouncementStatus.Completed; item.CompletedTick = Find.TickManager.TicksGame; }
@@ -629,14 +629,14 @@ namespace RimTalkHealthEnhance
             
             // 编辑按钮
             Rect editBtn = new Rect(statusBtn.xMax + gap, btnY, btnW, 24f);
-            if (Widgets.ButtonText(editBtn, "编辑"))
+            if (Widgets.ButtonText(editBtn, "RTE_Announcement_Edit".Translate()))
             {
                 Find.WindowStack.Add(new TaskEditorDialog(item, manager));
             }
             
             // 删除按钮
             Rect delBtn = new Rect(editBtn.xMax + gap, btnY, btnW, 24f);
-            if (Widgets.ButtonText(delBtn, "删除"))
+            if (Widgets.ButtonText(delBtn, "RTE_Announcement_Delete".Translate()))
             {
                 manager.DeleteAnnouncement(item.Id);
             }
@@ -649,18 +649,18 @@ namespace RimTalkHealthEnhance
             
             // 顶部工具栏
             Rect toolbarRect = innerRect.TopPartPixels(30f);
-            if (Widgets.ButtonText(toolbarRect.RightPartPixels(120f), "+ 新建区域"))
+            if (Widgets.ButtonText(toolbarRect.RightPartPixels(120f), "RTE_Area_NewArea".Translate()))
             {
                 var map = Find.CurrentMap;
                 if (map != null)
                 {
-                    var newArea = new RimTalkHealthEnhance.Models.CustomNamedArea(map, "新区域");
+                    var newArea = new RimTalkHealthEnhance.Models.CustomNamedArea(map, "RTE_Area_NewAreaName".Translate());
                     manager.AddCustomArea(newArea);
                     Find.WindowStack.Add(new RimTalkHealthEnhance.UI.AreaEditorDialog(newArea, true));
                 }
                 else
                 {
-                    Messages.Message("请先进入地图", MessageTypeDefOf.RejectInput, false);
+                    Messages.Message("RTE_Area_EnterMapFirst".Translate(), MessageTypeDefOf.RejectInput, false);
                 }
             }
             
@@ -669,7 +669,7 @@ namespace RimTalkHealthEnhance
             
             if (manager.CustomAreas == null || !manager.CustomAreas.Any())
             {
-                Widgets.Label(listRect, "暂无自定义区域。点击右上角\"新建区域\"按钮创建。");
+                Widgets.Label(listRect, "RTE_Area_NoData".Translate());
                 return;
             }
             
@@ -734,27 +734,27 @@ namespace RimTalkHealthEnhance
             float gap = 4f;
             
             // 绘制按钮
-            if (Widgets.ButtonText(new Rect(btnRect.x, btnY, btnW, 24f), "绘制"))
+            if (Widgets.ButtonText(new Rect(btnRect.x, btnY, btnW, 24f), "RTE_Area_Draw".Translate()))
             {
                 var designator = new RimTalkHealthEnhance.UI.AreaDrawingDesignator();
                 designator.StartDrawing(area, true);
             }
             
             // 移除按钮
-            if (Widgets.ButtonText(new Rect(btnRect.x + btnW + gap, btnY, btnW, 24f), "移除格子"))
+            if (Widgets.ButtonText(new Rect(btnRect.x + btnW + gap, btnY, btnW, 24f), "RTE_Area_RemoveCells".Translate()))
             {
                 var designator = new RimTalkHealthEnhance.UI.AreaDrawingDesignator();
                 designator.StartDrawing(area, false);
             }
             
             // 编辑按钮
-            if (Widgets.ButtonText(new Rect(btnRect.x + (btnW + gap) * 2, btnY, btnW, 24f), "编辑"))
+            if (Widgets.ButtonText(new Rect(btnRect.x + (btnW + gap) * 2, btnY, btnW, 24f), "RTE_Announcement_Edit".Translate()))
             {
                 Find.WindowStack.Add(new RimTalkHealthEnhance.UI.AreaEditorDialog(area));
             }
             
             // 删除按钮
-            if (Widgets.ButtonText(new Rect(btnRect.x + (btnW + gap) * 3, btnY, btnW, 24f), "删除"))
+            if (Widgets.ButtonText(new Rect(btnRect.x + (btnW + gap) * 3, btnY, btnW, 24f), "RTE_Announcement_Delete".Translate()))
             {
                 Find.WindowStack.Add(Dialog_MessageBox.CreateConfirmation(
                     $"确定要删除区域 \"{area.Label}\" 吗？",

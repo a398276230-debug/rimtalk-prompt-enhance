@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -116,14 +116,14 @@ namespace RimTalkHealthEnhance
             listing.Begin(contentRect);
             
             Text.Font = GameFont.Medium;
-            Widgets.Label(listing.GetRect(30f), isNew ? "新建状况" : "编辑状况");
+            Widgets.Label(listing.GetRect(30f), isNew ? "RTE_TaskEditor_NewTask".Translate() : "RTE_TaskEditor_EditTask".Translate());
             Text.Font = GameFont.Small;
             listing.GapLine();
             listing.Gap();
             
             // 类别
             Rect catRect = listing.GetRect(30f);
-            Widgets.Label(catRect.LeftHalf(), "类别：");
+            Widgets.Label(catRect.LeftHalf(), "RTE_TaskEditor_Category".Translate());
             if (Widgets.ButtonText(catRect.RightHalf(), editCategory.ToString()))
             {
                 List<FloatMenuOption> options = new List<FloatMenuOption>();
@@ -136,19 +136,19 @@ namespace RimTalkHealthEnhance
             listing.Gap();
             
             // 标题
-            Widgets.Label(listing.GetRect(24f), "标题：");
+            Widgets.Label(listing.GetRect(24f), "RTE_TaskEditor_Title".Translate());
             editTitle = listing.TextEntry(editTitle);
             listing.Gap();
             
             // 描述
-            Widgets.Label(listing.GetRect(24f), "描述：");
+            Widgets.Label(listing.GetRect(24f), "RTE_TaskEditor_Description".Translate());
             Rect descRect = listing.GetRect(100f);
             editDescription = Widgets.TextArea(descRect, editDescription);
             listing.Gap();
             
             // 优先级
             Rect priorityRect = listing.GetRect(30f);
-            Widgets.Label(priorityRect.LeftHalf(), "优先级：");
+            Widgets.Label(priorityRect.LeftHalf(), "RTE_TaskEditor_Priority".Translate());
             
             string priorityLabel = editPriority.ToString();
             Color priorityColor = editPriority switch
@@ -176,7 +176,7 @@ namespace RimTalkHealthEnhance
             if (!isNew)
             {
                 Rect statusRect = listing.GetRect(30f);
-                Widgets.Label(statusRect.LeftHalf(), "状态：");
+                Widgets.Label(statusRect.LeftHalf(), "RTE_TaskEditor_Status".Translate());
                 if (Widgets.ButtonText(statusRect.RightHalf(), editStatus.ToString()))
                 {
                     List<FloatMenuOption> options = new List<FloatMenuOption>();
@@ -198,8 +198,8 @@ namespace RimTalkHealthEnhance
                 // 进度显示
                 bool hasArea = !string.IsNullOrEmpty(announcement.BlueprintAreaId);
                 string progressLabel = hasArea && announcement.AutoCalculateProgress 
-                    ? $"进度: {editProgress:P0} (自动计算)" 
-                    : $"进度: {editProgress:P0}";
+                    ? "RTE_TaskEditor_Progress_AutoCalc".Translate(editProgress) 
+                    : "RTE_TaskEditor_Progress_Manual_Display".Translate(editProgress);
                 
                 Widgets.Label(listing.GetRect(24f), progressLabel);
                 
@@ -218,11 +218,11 @@ namespace RimTalkHealthEnhance
                 listing.Gap();
                 
                 // 负责人
-                Widgets.Label(listing.GetRect(24f), "负责人：");
-                if (Widgets.ButtonText(listing.GetRect(30f), string.IsNullOrEmpty(editAssignedPawn) ? "无" : editAssignedPawn))
+                Widgets.Label(listing.GetRect(24f), "RTE_TaskEditor_AssignedPawn".Translate());
+                if (Widgets.ButtonText(listing.GetRect(30f), string.IsNullOrEmpty(editAssignedPawn) ? "RTE_TaskEditor_None".Translate() : editAssignedPawn))
                 {
                     List<FloatMenuOption> options = new List<FloatMenuOption>();
-                    options.Add(new FloatMenuOption("无", () => editAssignedPawn = ""));
+                    options.Add(new FloatMenuOption("RTE_TaskEditor_None".Translate(), () => editAssignedPawn = ""));
                     
                     foreach (var pawn in Find.CurrentMap.mapPawns.FreeColonists)
                     {
@@ -241,8 +241,8 @@ namespace RimTalkHealthEnhance
                 {
                     var area = manager.CustomAreas?.FirstOrDefault(a => a.Id == announcement.BlueprintAreaId);
                     string areaLabel = area != null 
-                        ? $"施工区域: {area.Label} ({announcement.InitialBlueprintCount} 蓝图)" 
-                        : "施工区域: (已删除)";
+                        ? "RTE_TaskEditor_ConstructionArea_Display".Translate(area.Label, announcement.InitialBlueprintCount) 
+                        : "RTE_TaskEditor_ConstructionArea_Deleted".Translate();
                     
                     if (Widgets.ButtonText(areaButtonRect.LeftHalf(), areaLabel))
                     {
@@ -250,14 +250,14 @@ namespace RimTalkHealthEnhance
                         StartAreaSelection();
                     }
                     
-                    if (Widgets.ButtonText(areaButtonRect.RightHalf(), "移除区域"))
+                    if (Widgets.ButtonText(areaButtonRect.RightHalf(), "RTE_TaskEditor_RemoveArea".Translate()))
                     {
                         RemoveConstructionArea();
                     }
                 }
                 else
                 {
-                    if (Widgets.ButtonText(areaButtonRect, "框选施工区域"))
+                    if (Widgets.ButtonText(areaButtonRect, "RTE_TaskEditor_SelectArea".Translate()))
                     {
                         StartAreaSelection();
                     }
@@ -267,7 +267,7 @@ namespace RimTalkHealthEnhance
                 // AI 总结按钮
                 Rect aiButtonRect = listing.GetRect(30f);
                 GUI.enabled = hasArea && !isGeneratingAISummary;
-                string aiButtonLabel = isGeneratingAISummary ? "生成中..." : "AI 总结工程";
+                string aiButtonLabel = isGeneratingAISummary ? "RTE_TaskEditor_Generating".Translate() : "RTE_TaskEditor_AISummary".Translate();
                 if (Widgets.ButtonText(aiButtonRect.LeftHalf(), aiButtonLabel))
                 {
                     _ = GenerateAISummary();
@@ -275,7 +275,7 @@ namespace RimTalkHealthEnhance
                 GUI.enabled = true;
                 
                 // 自定义提示词按钮
-                if (Widgets.ButtonText(aiButtonRect.RightHalf(), "自定义提示词"))
+                if (Widgets.ButtonText(aiButtonRect.RightHalf(), "RTE_TaskEditor_CustomPromptButton".Translate()))
                 {
                     string defaultPrompt = @"请根据以下建筑蓝图信息，为这个工程项目生成一个简洁的名称和描述。
 
@@ -295,7 +295,7 @@ namespace RimTalkHealthEnhance
 }";
 
                     Find.WindowStack.Add(new PromptEditorDialog(
-                        "工程AI总结提示词",
+                        "RTE_PromptEditor_CustomPrompt".Translate("RTE_PromptEditor_ProjectSummary".Translate()),
                         RimTalkHealthEnhanceMod.Settings.CustomProjectSummaryPrompt,
                         defaultPrompt,
                         (newPrompt) => {
@@ -308,11 +308,11 @@ namespace RimTalkHealthEnhance
             }
             else if (editCategory == AnnouncementCategory.Personnel)
             {
-                Widgets.Label(listing.GetRect(24f), "相关人员：");
-                if (Widgets.ButtonText(listing.GetRect(30f), string.IsNullOrEmpty(editAssignedPawn) ? "无" : editAssignedPawn))
+                Widgets.Label(listing.GetRect(24f), "RTE_TaskEditor_RelatedPerson".Translate());
+                if (Widgets.ButtonText(listing.GetRect(30f), string.IsNullOrEmpty(editAssignedPawn) ? "RTE_TaskEditor_None".Translate() : editAssignedPawn))
                 {
                     List<FloatMenuOption> options = new List<FloatMenuOption>();
-                    options.Add(new FloatMenuOption("无", () => editAssignedPawn = ""));
+                    options.Add(new FloatMenuOption("RTE_TaskEditor_None".Translate(), () => editAssignedPawn = ""));
                     
                     foreach (var pawn in Find.CurrentMap.mapPawns.FreeColonists)
                     {
@@ -326,12 +326,12 @@ namespace RimTalkHealthEnhance
             listing.End();
             
             // 保存/取消按钮（固定在底部）
-            if (Widgets.ButtonText(buttonRect.LeftHalf().ContractedBy(5f), "保存 (Enter)"))
+            if (Widgets.ButtonText(buttonRect.LeftHalf().ContractedBy(5f), "RTE_TaskEditor_Save".Translate()))
             {
                 SaveAndClose();
             }
             
-            if (Widgets.ButtonText(buttonRect.RightHalf().ContractedBy(5f), "取消 (Esc)"))
+            if (Widgets.ButtonText(buttonRect.RightHalf().ContractedBy(5f), "RTE_TaskEditor_Cancel".Translate()))
             {
                 Close();
             }
@@ -366,7 +366,7 @@ namespace RimTalkHealthEnhance
                 // 如果没有标题，给一个默认标题
                 if (string.IsNullOrEmpty(editTitle))
                 {
-                    editTitle = "未命名工程";
+                    editTitle = "RTE_TaskEditor_UnnamedProject".Translate();
                 }
                 
                 announcement.Title = editTitle;
@@ -397,7 +397,7 @@ namespace RimTalkHealthEnhance
                 else
                 {
                     // 区域已被删除，创建新的
-                    area = new CustomNamedArea(Find.CurrentMap, $"{announcement.Title} 施工区");
+                    area = new CustomNamedArea(Find.CurrentMap, "RTE_TaskEditor_ConstructionArea_Name".Translate(announcement.Title));
                     area.IsConstructionArea = true;
                     announcement.BlueprintAreaId = area.Id;
                     manager.AddCustomArea(area);
@@ -407,8 +407,8 @@ namespace RimTalkHealthEnhance
             {
                 // 新建区域
                 string areaName = string.IsNullOrEmpty(announcement.Title) 
-                    ? "施工区域" 
-                    : $"{announcement.Title} 施工区";
+                    ? "RTE_TaskEditor_ConstructionArea_DefaultName".Translate() 
+                    : "RTE_TaskEditor_ConstructionArea_Name".Translate(announcement.Title);
                 area = new CustomNamedArea(Find.CurrentMap, areaName);
                 area.IsConstructionArea = true;
                 announcement.BlueprintAreaId = area.Id;
@@ -421,7 +421,7 @@ namespace RimTalkHealthEnhance
             
             // 显示提示消息
             Messages.Message(
-                "拖拽鼠标框选施工区域。完成后会自动扫描蓝图数量。",
+                "RTE_TaskEditor_SelectAreaTip".Translate(),
                 MessageTypeDefOf.NeutralEvent,
                 false
             );
@@ -444,7 +444,7 @@ namespace RimTalkHealthEnhance
                 announcement.InitialBlueprintCount = 0;
                 announcement.AutoCalculateProgress = false;
                 
-                Messages.Message("已移除施工区域", MessageTypeDefOf.NeutralEvent, false);
+                Messages.Message("RTE_TaskEditor_AreaRemoved".Translate(), MessageTypeDefOf.NeutralEvent, false);
             }
         }
         
@@ -455,14 +455,14 @@ namespace RimTalkHealthEnhance
         {
             if (string.IsNullOrEmpty(announcement.BlueprintAreaId))
             {
-                Messages.Message("请先框选施工区域", MessageTypeDefOf.RejectInput, false);
+                Messages.Message("RTE_TaskEditor_SelectAreaFirst".Translate(), MessageTypeDefOf.RejectInput, false);
                 return;
             }
             
             var area = manager.CustomAreas?.FirstOrDefault(a => a.Id == announcement.BlueprintAreaId);
             if (area == null)
             {
-                Messages.Message("施工区域不存在", MessageTypeDefOf.RejectInput, false);
+                Messages.Message("RTE_TaskEditor_AreaNotExist".Translate(), MessageTypeDefOf.RejectInput, false);
                 return;
             }
             
@@ -475,7 +475,7 @@ namespace RimTalkHealthEnhance
                 
                 if (blueprints.Count == 0)
                 {
-                    Messages.Message("施工区域内没有蓝图", MessageTypeDefOf.RejectInput, false);
+                    Messages.Message("RTE_TaskEditor_NoBlueprintsInArea".Translate(), MessageTypeDefOf.RejectInput, false);
                     isGeneratingAISummary = false;
                     return;
                 }
@@ -518,7 +518,7 @@ namespace RimTalkHealthEnhance
                 
                 if (string.IsNullOrEmpty(response))
                 {
-                    Messages.Message("AI调用失败，请检查API配置", MessageTypeDefOf.RejectInput, false);
+                    Messages.Message("RTE_TaskEditor_AICallFailed".Translate(), MessageTypeDefOf.RejectInput, false);
                     isGeneratingAISummary = false;
                     return;
                 }
@@ -563,7 +563,7 @@ namespace RimTalkHealthEnhance
                         announcement.Description = description;
                     }
                     
-                    Messages.Message("AI总结完成", MessageTypeDefOf.PositiveEvent, false);
+                    Messages.Message("RTE_TaskEditor_AISummaryComplete".Translate(), MessageTypeDefOf.PositiveEvent, false);
                 }
                 catch (Exception parseEx)
                 {
@@ -574,7 +574,7 @@ namespace RimTalkHealthEnhance
                     {
                         editTitle = response.Substring(0, Math.Min(30, response.Length));
                         announcement.Title = editTitle;
-                        Messages.Message("AI响应格式异常，已使用原始文本", MessageTypeDefOf.CautionInput, false);
+                        Messages.Message("RTE_TaskEditor_AIResponseError".Translate(), MessageTypeDefOf.CautionInput, false);
                     }
                     else
                     {
