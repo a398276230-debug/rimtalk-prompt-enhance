@@ -199,6 +199,13 @@
   <RTE_Settings_Location_Note>说明：\n1. 系统会自动计算殖民地中心（基于居住区）。\n2. 提供8方位判断（东、南、西、北及四个斜向）。\n3. 区域类型：Town Center（核心）、Town（城镇）、Town Edge（边缘）、Wilderness（野外）。\n4. 自动检测种植区、储存区等游戏原生区域。\n5. 信息会自动注入到 AI 的上下文中，让 AI 了解 Pawn 的位置。</RTE_Settings_Location_Note>
   <RTE_Settings_Location_ExampleTitle>输出示例</RTE_Settings_Location_ExampleTitle>
   
+  <!-- 设置界面 - 杂项 -->
+  <RTE_Settings_Misc_Title>杂项设置</RTE_Settings_Misc_Title>
+  <RTE_Settings_Misc_UnlimitedRelations>解除关系数量限制</RTE_Settings_Misc_UnlimitedRelations>
+  <RTE_Settings_Misc_UnlimitedRelations_Desc>显示所有关系，不再受 RimTalk 设置中的 MaxPawnContextCount 限制</RTE_Settings_Misc_UnlimitedRelations_Desc>
+  <RTE_Settings_Misc_UnlimitedTraits>解除配角特质限制</RTE_Settings_Misc_UnlimitedTraits>
+  <RTE_Settings_Misc_UnlimitedTraits_Desc>在 Short 模式下显示所有特质，不再只显示前 3 个</RTE_Settings_Misc_UnlimitedTraits_Desc>
+
   <!-- 设置界面 - 通告系统 -->
   <RTE_Settings_Announcement_Title>通告系统设置</RTE_Settings_Announcement_Title>
   <RTE_Settings_Announcement_Enable>启用通告系统</RTE_Settings_Announcement_Enable>

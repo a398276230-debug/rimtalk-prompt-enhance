@@ -199,6 +199,13 @@
   <RTE_Settings_Location_Note>Note:\n1. System automatically calculates colony center (based on home area).\n2. Provides 8-direction judgment (E, S, W, N and four diagonals).\n3. Area types: Town Center, Town, Town Edge, Wilderness.\n4. Automatically detects growing zones, storage zones, and other native game areas.\n5. Info is automatically injected into AI context, letting AI know pawn's location.</RTE_Settings_Location_Note>
   <RTE_Settings_Location_ExampleTitle>Output Examples</RTE_Settings_Location_ExampleTitle>
   
+  <!-- Settings - Misc -->
+  <RTE_Settings_Misc_Title>Misc Settings</RTE_Settings_Misc_Title>
+  <RTE_Settings_Misc_UnlimitedRelations>Unlimited Relations</RTE_Settings_Misc_UnlimitedRelations>
+  <RTE_Settings_Misc_UnlimitedRelations_Desc>Show all relations, ignoring MaxPawnContextCount limit in RimTalk settings</RTE_Settings_Misc_UnlimitedRelations_Desc>
+  <RTE_Settings_Misc_UnlimitedTraits>Unlimited Traits</RTE_Settings_Misc_UnlimitedTraits>
+  <RTE_Settings_Misc_UnlimitedTraits_Desc>Show all traits in Short mode, ignoring the limit of 3</RTE_Settings_Misc_UnlimitedTraits_Desc>
+
   <!-- Settings - Announcement System -->
   <RTE_Settings_Announcement_Title>Announcement System Settings</RTE_Settings_Announcement_Title>
   <RTE_Settings_Announcement_Enable>Enable announcement system</RTE_Settings_Announcement_Enable>
