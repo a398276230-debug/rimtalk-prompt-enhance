@@ -12,6 +12,7 @@ namespace RimTalkHealthEnhance
         OpenAI,
         Google, // Gemini
         DeepSeek,
+        Player2,
         Custom // OpenAI Compatible
     }
 
@@ -504,6 +505,7 @@ namespace RimTalkHealthEnhance
                         new FloatMenuOption("OpenAI", () => { SynthesisProvider = AIProvider.OpenAI; CustomModelName = "gpt-4o-mini"; }),
                         new FloatMenuOption("Google (Gemini)", () => { SynthesisProvider = AIProvider.Google; CustomModelName = "gemini-pro"; }),
                         new FloatMenuOption("DeepSeek", () => { SynthesisProvider = AIProvider.DeepSeek; CustomModelName = "deepseek-chat"; }),
+                        new FloatMenuOption("Player2", () => { SynthesisProvider = AIProvider.Player2; CustomModelName = ""; CustomApiKey = ""; }),
                         new FloatMenuOption("Custom (OpenAI Compatible)", () => SynthesisProvider = AIProvider.Custom)
                     };
                     Find.WindowStack.Add(new FloatMenu(options));
@@ -614,6 +616,7 @@ namespace RimTalkHealthEnhance
                 case AIProvider.OpenAI: return "https://api.openai.com/v1/chat/completions";
                 case AIProvider.Google: return "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent";
                 case AIProvider.DeepSeek: return "https://api.deepseek.com/v1/chat/completions";
+                case AIProvider.Player2: return "https://api.player2.game/v1/chat/completions";
                 default: return "";
             }
         }

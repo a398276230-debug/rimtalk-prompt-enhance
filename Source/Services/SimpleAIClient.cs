@@ -14,7 +14,8 @@ namespace RimTalkHealthEnhance
         {
             var settings = RimTalkHealthEnhanceMod.Settings;
             
-            if (string.IsNullOrEmpty(settings.CustomApiKey))
+            // Player2 doesn't require API key (uses local app or optional key)
+            if (settings.SynthesisProvider != AIProvider.Player2 && string.IsNullOrEmpty(settings.CustomApiKey))
             {
                 Log.Warning("[RimTalk Enhance] AI API Key not set.");
                 return null;
@@ -28,7 +29,8 @@ namespace RimTalkHealthEnhance
                 {
                     case AIProvider.OpenAI: url = "https://api.openai.com/v1/chat/completions"; break;
                     case AIProvider.Google: url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent"; break;
-                    case AIProvider.DeepSeek: url = "https://api.deepseek.com/chat/completions"; break; // DeepSeek usually uses /chat/completions directly or /v1/chat/completions
+                    case AIProvider.DeepSeek: url = "https://api.deepseek.com/chat/completions"; break;
+                    case AIProvider.Player2: url = "https://api.player2.game/v1/chat/completions"; break;
                     default: url = "https://api.openai.com/v1/chat/completions"; break;
                 }
             }
@@ -59,7 +61,17 @@ namespace RimTalkHealthEnhance
                 // Set headers
                 if (settings.SynthesisProvider != AIProvider.Google)
                 {
-                    client.DefaultRequestHeaders.Add("Authorization", $"Bearer {settings.CustomApiKey}");
+                    // Player2 may not have API key if using local app
+                    if (!string.IsNullOrEmpty(settings.CustomApiKey))
+                    {
+                        client.DefaultRequestHeaders.Add("Authorization", $"Bearer {settings.CustomApiKey}");
+                    }
+                }
+                
+                // Player2 requires special game client ID header
+                if (settings.SynthesisProvider == AIProvider.Player2)
+                {
+                    client.DefaultRequestHeaders.Add("X-Game-Client-Id", "019a8368-b00b-72bc-b367-2825079dc6fb");
                 }
                 
                 string requestJson = "";
