@@ -1,0 +1,307 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LanguageData>
+  <!-- 主窗口标签页 -->
+  <RTE_Tab_CurrentStatus>当前状态</RTE_Tab_CurrentStatus>
+  <RTE_Tab_HistorySnapshots>历史快照</RTE_Tab_HistorySnapshots>
+  <RTE_Tab_CustomAreas>自定义区域</RTE_Tab_CustomAreas>
+  
+  <!-- 殖民地概况 -->
+  <RTE_ColonyOverview_Title>📝 殖民地概况</RTE_ColonyOverview_Title>
+  <RTE_ColonyOverview_Save>保存概况</RTE_ColonyOverview_Save>
+  <RTE_ColonyOverview_AISummary>AI 总结概况</RTE_ColonyOverview_AISummary>
+  <RTE_ColonyOverview_CustomPrompt>⚙ 提示词</RTE_ColonyOverview_CustomPrompt>
+  <RTE_ColonyOverview_Tip>提示：用自然语言描述殖民地状态，AI会读取这些信息。</RTE_ColonyOverview_Tip>
+  <RTE_ColonyOverview_Updated>殖民地概况已更新</RTE_ColonyOverview_Updated>
+  <RTE_ColonyOverview_EmptyError>概况为空，无法总结</RTE_ColonyOverview_EmptyError>
+  <RTE_ColonyOverview_ConfirmSummary>确定要让 AI 总结并精简当前的概况吗？\n这将替换当前的文本。</RTE_ColonyOverview_ConfirmSummary>
+  <RTE_ColonyOverview_SummarySuccess>概况已由 AI 总结更新</RTE_ColonyOverview_SummarySuccess>
+  <RTE_ColonyOverview_SummaryFailed>AI 总结失败</RTE_ColonyOverview_SummaryFailed>
+  
+  <!-- 历史快照 -->
+  <RTE_Snapshot_NoData>暂无快照记录。每日 0 点将自动生成快照。</RTE_Snapshot_NoData>
+  <RTE_Snapshot_PrevDay>← 前一天</RTE_Snapshot_PrevDay>
+  <RTE_Snapshot_NextDay>后一天 →</RTE_Snapshot_NextDay>
+  <RTE_Snapshot_AISummary>【AI 总结】</RTE_Snapshot_AISummary>
+  <RTE_Snapshot_DetailedChanges>📊 详细变化</RTE_Snapshot_DetailedChanges>
+  <RTE_Snapshot_PlayerActions>【玩家操作】</RTE_Snapshot_PlayerActions>
+  <RTE_Snapshot_Events>【事件记录】</RTE_Snapshot_Events>
+  <RTE_Snapshot_CopyToOverview>复制到概况</RTE_Snapshot_CopyToOverview>
+  <RTE_Snapshot_Regenerate>重新生成</RTE_Snapshot_Regenerate>
+  <RTE_Snapshot_CopiedWithDate>已追加到概况（含日期）</RTE_Snapshot_CopiedWithDate>
+  <RTE_Snapshot_ConfirmRegenerate>确定要重新生成此快照的 AI 总结吗？</RTE_Snapshot_ConfirmRegenerate>
+  <RTE_Snapshot_RegenerateSuccess>AI 总结已更新</RTE_Snapshot_RegenerateSuccess>
+  <RTE_Snapshot_RegenerateFailed>AI 总结生成失败</RTE_Snapshot_RegenerateFailed>
+  
+  <!-- 状况板 -->
+  <RTE_Announcement_NewTask>+ 新建状况</RTE_Announcement_NewTask>
+  <RTE_Announcement_AllCategories>全部</RTE_Announcement_AllCategories>
+  <RTE_Announcement_Category_Project>工程</RTE_Announcement_Category_Project>
+  <RTE_Announcement_Category_Event>事件</RTE_Announcement_Category_Event>
+  <RTE_Announcement_Category_Quest>任务</RTE_Announcement_Category_Quest>
+  <RTE_Announcement_Category_Resource>资源</RTE_Announcement_Category_Resource>
+  <RTE_Announcement_Category_Personnel>人员</RTE_Announcement_Category_Personnel>
+  <RTE_Announcement_Category_Custom>自定义</RTE_Announcement_Category_Custom>
+  <RTE_Announcement_Complete>完成</RTE_Announcement_Complete>
+  <RTE_Announcement_Resume>恢复</RTE_Announcement_Resume>
+  <RTE_Announcement_Reopen>重开</RTE_Announcement_Reopen>
+  <RTE_Announcement_Edit>编辑</RTE_Announcement_Edit>
+  <RTE_Announcement_Delete>删除</RTE_Announcement_Delete>
+  <RTE_Announcement_Progress>进度: {0}</RTE_Announcement_Progress>
+  <RTE_Announcement_AssignedTo>负责人: {0}</RTE_Announcement_AssignedTo>
+  
+  <!-- 自定义区域 -->
+  <RTE_Area_NewArea>+ 新建区域</RTE_Area_NewArea>
+  <RTE_Area_NoData>暂无自定义区域。点击右上角"新建区域"按钮创建。</RTE_Area_NoData>
+  <RTE_Area_EnterMapFirst>请先进入地图</RTE_Area_EnterMapFirst>
+  <RTE_Area_CellCount>格子数: {0}</RTE_Area_CellCount>
+  <RTE_Area_Status_Active>启用</RTE_Area_Status_Active>
+  <RTE_Area_Status_Inactive>禁用</RTE_Area_Status_Inactive>
+  <RTE_Area_Draw>绘制</RTE_Area_Draw>
+  <RTE_Area_RemoveCells>移除格子</RTE_Area_RemoveCells>
+  <RTE_Area_ConfirmDelete>确定要删除区域 "{0}" 吗？</RTE_Area_ConfirmDelete>
+  <RTE_Area_NewAreaName>新区域</RTE_Area_NewAreaName>
+  
+  <!-- 任务编辑器 -->
+  <RTE_TaskEditor_NewTask>新建状况</RTE_TaskEditor_NewTask>
+  <RTE_TaskEditor_EditTask>编辑状况</RTE_TaskEditor_EditTask>
+  <RTE_TaskEditor_Category>类别：</RTE_TaskEditor_Category>
+  <RTE_TaskEditor_Title>标题：</RTE_TaskEditor_Title>
+  <RTE_TaskEditor_Description>描述：</RTE_TaskEditor_Description>
+  <RTE_TaskEditor_Priority>优先级：</RTE_TaskEditor_Priority>
+  <RTE_TaskEditor_Status>状态：</RTE_TaskEditor_Status>
+  <RTE_TaskEditor_Progress_Auto>进度: {0} (自动计算)</RTE_TaskEditor_Progress_Auto>
+  <RTE_TaskEditor_Progress_Manual>进度: {0}</RTE_TaskEditor_Progress_Manual>
+  <RTE_TaskEditor_AssignedPawn>负责人：</RTE_TaskEditor_AssignedPawn>
+  <RTE_TaskEditor_RelatedPerson>相关人员：</RTE_TaskEditor_RelatedPerson>
+  <RTE_TaskEditor_None>无</RTE_TaskEditor_None>
+  <RTE_TaskEditor_Save>保存 (Enter)</RTE_TaskEditor_Save>
+  <RTE_TaskEditor_Cancel>取消 (Esc)</RTE_TaskEditor_Cancel>
+  <RTE_TaskEditor_SelectArea>框选施工区域</RTE_TaskEditor_SelectArea>
+  <RTE_TaskEditor_ConstructionArea>施工区域: {0} ({1} 蓝图)</RTE_TaskEditor_ConstructionArea>
+  <RTE_TaskEditor_AreaDeleted>施工区域: (已删除)</RTE_TaskEditor_AreaDeleted>
+  <RTE_TaskEditor_RemoveArea>移除区域</RTE_TaskEditor_RemoveArea>
+  <RTE_TaskEditor_AreaRemoved>已移除施工区域</RTE_TaskEditor_AreaRemoved>
+  <RTE_TaskEditor_AISummary>AI 总结工程</RTE_TaskEditor_AISummary>
+  <RTE_TaskEditor_Generating>生成中...</RTE_TaskEditor_Generating>
+  <RTE_TaskEditor_SelectAreaFirst>请先框选施工区域</RTE_TaskEditor_SelectAreaFirst>
+  <RTE_TaskEditor_AreaNotExist>施工区域不存在</RTE_TaskEditor_AreaNotExist>
+  <RTE_TaskEditor_NoBlueprintsInArea>施工区域内没有蓝图</RTE_TaskEditor_NoBlueprintsInArea>
+  <RTE_TaskEditor_AICallFailed>AI调用失败，请检查API配置</RTE_TaskEditor_AICallFailed>
+  <RTE_TaskEditor_AISummaryComplete>AI总结完成</RTE_TaskEditor_AISummaryComplete>
+  <RTE_TaskEditor_AIResponseError>AI响应格式异常，已使用原始文本</RTE_TaskEditor_AIResponseError>
+  <RTE_TaskEditor_AIResponseFormatError>AI响应格式异常：{0}</RTE_TaskEditor_AIResponseFormatError>
+  <RTE_TaskEditor_SelectAreaTip>拖拽鼠标框选施工区域。完成后会自动扫描蓝图数量。</RTE_TaskEditor_SelectAreaTip>
+  <RTE_TaskEditor_UnnamedProject>未命名工程</RTE_TaskEditor_UnnamedProject>
+  
+  <!-- 区域编辑器 -->
+  <RTE_AreaEditor_AreaName>区域名称:</RTE_AreaEditor_AreaName>
+  <RTE_AreaEditor_AreaColor>区域颜色:</RTE_AreaEditor_AreaColor>
+  <RTE_AreaEditor_SelectColor>选择颜色</RTE_AreaEditor_SelectColor>
+  <RTE_AreaEditor_EnableArea>启用此区域</RTE_AreaEditor_EnableArea>
+  <RTE_AreaEditor_CellCount>格子数量: {0}</RTE_AreaEditor_CellCount>
+  <RTE_AreaEditor_SaveAndClose>保存并关闭</RTE_AreaEditor_SaveAndClose>
+  <RTE_AreaEditor_ClearArea>清空区域</RTE_AreaEditor_ClearArea>
+  
+  <!-- 颜色选择器 -->
+  <RTE_ColorPicker_Title>选择预设颜色:</RTE_ColorPicker_Title>
+  
+  <!-- 设置界面 - 标签页 -->
+  <RTE_Settings_Tab_Health>健康信息</RTE_Settings_Tab_Health>
+  <RTE_Settings_Tab_Items>物品描述</RTE_Settings_Tab_Items>
+  <RTE_Settings_Tab_Factions>派系关系</RTE_Settings_Tab_Factions>
+  <RTE_Settings_Tab_Location>地图位置</RTE_Settings_Tab_Location>
+  <RTE_Settings_Tab_Announcement>通告系统</RTE_Settings_Tab_Announcement>
+  <RTE_Settings_Tab_AutoCapture>自动捕获</RTE_Settings_Tab_AutoCapture>
+  <RTE_Settings_Tab_AIHistorian>AI 史官</RTE_Settings_Tab_AIHistorian>
+  
+  <!-- 设置界面 - 新标签页 -->
+  <RTE_Settings_Tab_ContextEnhancement>信息增强</RTE_Settings_Tab_ContextEnhancement>
+  <RTE_Settings_Tab_ColonyStatus>殖民地状况板</RTE_Settings_Tab_ColonyStatus>
+  
+  <!-- 设置界面 - 页面标题 -->
+  <RTE_Settings_ContextEnhancement_PageTitle>信息增强设置</RTE_Settings_ContextEnhancement_PageTitle>
+  <RTE_Settings_ColonyStatus_PageTitle>殖民地状况板设置</RTE_Settings_ColonyStatus_PageTitle>
+  
+  <!-- 设置界面 - 健康信息 -->
+  <RTE_Settings_Health_Title>RimTalk 增强健康信息设置</RTE_Settings_Health_Title>
+  <RTE_Settings_Health_ShowSeverity>显示严重度百分比</RTE_Settings_Health_ShowSeverity>
+  <RTE_Settings_Health_ShowSeverity_Desc>显示每个健康状况的严重程度百分比</RTE_Settings_Health_ShowSeverity_Desc>
+  <RTE_Settings_Health_ShowPainLevel>显示疼痛等级</RTE_Settings_Health_ShowPainLevel>
+  <RTE_Settings_Health_ShowPainLevel_Desc>显示疼痛强度（轻微/中等/严重/极度）</RTE_Settings_Health_ShowPainLevel_Desc>
+  <RTE_Settings_Health_ShowLethalMarker>显示致命标记</RTE_Settings_Health_ShowLethalMarker>
+  <RTE_Settings_Health_ShowLethalMarker_Desc>标记可能致命的健康状况</RTE_Settings_Health_ShowLethalMarker_Desc>
+  <RTE_Settings_Health_ShowDescription>显示详细描述（仅完整模式）</RTE_Settings_Health_ShowDescription>
+  <RTE_Settings_Health_ShowDescription_Desc>在完整信息级别下包含详细描述</RTE_Settings_Health_ShowDescription_Desc>
+  <RTE_Settings_Health_MinPainThreshold>最小疼痛显示阈值: {0:F2}</RTE_Settings_Health_MinPainThreshold>
+  <RTE_Settings_Health_LethalThreshold>致命标记阈值: {0:P0}</RTE_Settings_Health_LethalThreshold>
+  <RTE_Settings_Health_MaxDescLength>描述最大长度: {0} 字符</RTE_Settings_Health_MaxDescLength>
+  <RTE_Settings_Health_Note1>注意：需要在RimTalk设置中启用包含健康信息选项。</RTE_Settings_Health_Note1>
+  <RTE_Settings_Health_Note2>此mod增强RimTalk发送给AI的健康上下文信息。</RTE_Settings_Health_Note2>
+  
+  <!-- 设置界面 - 物品描述 -->
+  <RTE_Settings_Items_Title>物品描述增强设置</RTE_Settings_Items_Title>
+  <RTE_Settings_Items_ShowEquipmentDesc>显示装备描述（武器+服装）</RTE_Settings_Items_ShowEquipmentDesc>
+  <RTE_Settings_Items_ShowEquipmentDesc_Desc>在装备列表中包含物品的详细描述</RTE_Settings_Items_ShowEquipmentDesc_Desc>
+  <RTE_Settings_Items_ShowCarriedDesc>显示携带物品描述</RTE_Settings_Items_ShowCarriedDesc>
+  <RTE_Settings_Items_ShowCarriedDesc_Desc>显示正在搬运或携带的物品描述</RTE_Settings_Items_ShowCarriedDesc_Desc>
+  <RTE_Settings_Items_ShowInventory>显示背包物品列表</RTE_Settings_Items_ShowInventory>
+  <RTE_Settings_Items_ShowInventory_Desc>列出背包中的物品（消耗tokens）</RTE_Settings_Items_ShowInventory_Desc>
+  <RTE_Settings_Items_ShowInventoryDesc>  └─ 显示背包物品描述</RTE_Settings_Items_ShowInventoryDesc>
+  <RTE_Settings_Items_ShowInventoryDesc_Desc>为背包物品添加详细描述（消耗更多tokens）</RTE_Settings_Items_ShowInventoryDesc_Desc>
+  <RTE_Settings_Items_InteractionTitle>交互物品设置</RTE_Settings_Items_InteractionTitle>
+  <RTE_Settings_Items_ShowInteraction>显示正在交互的物品/建筑描述</RTE_Settings_Items_ShowInteraction>
+  <RTE_Settings_Items_ShowInteraction_Desc>例如：正在使用的研究台、工作台、床等</RTE_Settings_Items_ShowInteraction_Desc>
+  <RTE_Settings_Items_OnlyImportantBuildings>  └─ 仅显示重要建筑</RTE_Settings_Items_OnlyImportantBuildings>
+  <RTE_Settings_Items_OnlyImportantBuildings_Desc>只显示工作台、研究台等重要设施，忽略普通家具</RTE_Settings_Items_OnlyImportantBuildings_Desc>
+  <RTE_Settings_Items_InteractionMaxLength>交互描述最大长度: {0} 字符</RTE_Settings_Items_InteractionMaxLength>
+  <RTE_Settings_Items_MinQuality>显示描述的最低品质:</RTE_Settings_Items_MinQuality>
+  <RTE_Settings_Items_MaxDescLength>物品描述最大长度: {0} 字符</RTE_Settings_Items_MaxDescLength>
+  <RTE_Settings_Items_MaxInventoryItems>最多显示背包物品: {0} 件</RTE_Settings_Items_MaxInventoryItems>
+  <RTE_Settings_Items_MaxItemsWithDesc>最多描述物品数: {0} 件</RTE_Settings_Items_MaxItemsWithDesc>
+  <RTE_Settings_Items_SkipCommon>跳过常见物品</RTE_Settings_Items_SkipCommon>
+  <RTE_Settings_Items_SkipCommon_Desc>跳过原材料、食物、尸体等常见物品的描述</RTE_Settings_Items_SkipCommon_Desc>
+  <RTE_Settings_Items_SkipArt>跳过艺术描述（避免泰南语）</RTE_Settings_Items_SkipArt>
+  <RTE_Settings_Items_SkipArt_Desc>高品质物品的艺术描述通常是无意义的故事，勾选此项将只显示物品的功能性描述</RTE_Settings_Items_SkipArt_Desc>
+  <RTE_Settings_Items_QualityTip>提示：品质等级从低到高为：Awful &lt; Poor &lt; Normal &lt; Good &lt; Excellent &lt; Masterwork &lt; Legendary\n建议设置为Normal或Good以平衡信息量和token消耗</RTE_Settings_Items_QualityTip>
+  
+  <!-- 设置界面 - 派系关系 -->
+  <RTE_Settings_Factions_Title>派系关系设置</RTE_Settings_Factions_Title>
+  <RTE_Settings_Factions_Enable>启用派系关系显示</RTE_Settings_Factions_Enable>
+  <RTE_Settings_Factions_Enable_Desc>显示当前地图上存在的其他派系及其与玩家的关系</RTE_Settings_Factions_Enable_Desc>
+  <RTE_Settings_Factions_ShowGoodwill>显示好感度数值</RTE_Settings_Factions_ShowGoodwill>
+  <RTE_Settings_Factions_ShowGoodwill_Desc>显示每个派系对玩家的好感度（-100 到 100）</RTE_Settings_Factions_ShowGoodwill_Desc>
+  <RTE_Settings_Factions_ShowMemberCount>显示派系成员数量</RTE_Settings_Factions_ShowMemberCount>
+  <RTE_Settings_Factions_ShowMemberCount_Desc>显示该派系在当前地图上有多少成员</RTE_Settings_Factions_ShowMemberCount_Desc>
+  <RTE_Settings_Factions_ShowIdentity>显示身份细分</RTE_Settings_Factions_ShowIdentity>
+  <RTE_Settings_Factions_ShowIdentity_Desc>区分囚犯、敌对分子、访客和商队等不同身份</RTE_Settings_Factions_ShowIdentity_Desc>
+  <RTE_Settings_Factions_ShowSummary>显示全局身份摘要</RTE_Settings_Factions_ShowSummary>
+  <RTE_Settings_Factions_ShowSummary_Desc>在派系列表前显示整体态势摘要（威胁/囚犯/访客统计）</RTE_Settings_Factions_ShowSummary_Desc>
+  <RTE_Settings_Factions_ShowNeutral>显示中立派系</RTE_Settings_Factions_ShowNeutral>
+  <RTE_Settings_Factions_ShowNeutral_Desc>包含中立派系（好感度在 -75 到 75 之间）</RTE_Settings_Factions_ShowNeutral_Desc>
+  <RTE_Settings_Factions_CacheInterval>缓存更新间隔: {0:F1} 秒</RTE_Settings_Factions_CacheInterval>
+  <RTE_Settings_Factions_CacheInterval_Desc>    派系信息每隔指定时间更新一次（避免线程冲突）</RTE_Settings_Factions_CacheInterval_Desc>
+  <RTE_Settings_Factions_FilterByGoodwill>按好感度过滤</RTE_Settings_Factions_FilterByGoodwill>
+  <RTE_Settings_Factions_FilterByGoodwill_Desc>只显示好感度高于指定阈值的派系</RTE_Settings_Factions_FilterByGoodwill_Desc>
+  <RTE_Settings_Factions_MinGoodwill>  └─ 最低好感度: {0}</RTE_Settings_Factions_MinGoodwill>
+  <RTE_Settings_Factions_MinGoodwill_Desc>      只显示好感度 ≥ {0} 的派系</RTE_Settings_Factions_MinGoodwill_Desc>
+  <RTE_Settings_Factions_Note>说明：\n1. 此功能只显示当前地图上实际存在的派系（有成员在场）。\n2. 使用游戏原生的关系状态\n3. 信息会自动注入到 AI 的上下文中，让 AI 了解当前的外交状况。\n4. 当地图上没有其他派系时，不会显示任何信息。</RTE_Settings_Factions_Note>
+  
+  <!-- 设置界面 - 地图位置 -->
+  <RTE_Settings_Location_Title>地图位置信息设置</RTE_Settings_Location_Title>
+  <RTE_Settings_Location_Enable>启用相对位置显示</RTE_Settings_Location_Enable>
+  <RTE_Settings_Location_Enable_Desc>显示 Pawn 相对于殖民地中心的位置和方位</RTE_Settings_Location_Enable_Desc>
+  <RTE_Settings_Location_ShowArea>  └─ 显示 Area 信息</RTE_Settings_Location_ShowArea>
+  <RTE_Settings_Location_ShowArea_Desc>显示 Pawn 所在的种植区、储存区等区域信息</RTE_Settings_Location_ShowArea_Desc>
+  <RTE_Settings_Location_TownCenter>  └─ 启用城镇核心检测</RTE_Settings_Location_TownCenter>
+  <RTE_Settings_Location_TownCenter_Desc>区分城镇核心和普通城镇区域（可选功能）</RTE_Settings_Location_TownCenter_Desc>
+  <RTE_Settings_Location_CenterRadius>    └─ 核心区半径: {0} 格</RTE_Settings_Location_CenterRadius>
+  <RTE_Settings_Location_CenterRadius_Desc>      距离殖民地中心 {0} 格内视为核心区</RTE_Settings_Location_CenterRadius_Desc>
+  <RTE_Settings_Location_Note>说明：\n1. 系统会自动计算殖民地中心（基于居住区）。\n2. 提供8方位判断（东、南、西、北及四个斜向）。\n3. 区域类型：Town Center（核心）、Town（城镇）、Town Edge（边缘）、Wilderness（野外）。\n4. 自动检测种植区、储存区等游戏原生区域。\n5. 信息会自动注入到 AI 的上下文中，让 AI 了解 Pawn 的位置。</RTE_Settings_Location_Note>
+  <RTE_Settings_Location_ExampleTitle>输出示例</RTE_Settings_Location_ExampleTitle>
+  
+  <!-- 设置界面 - 通告系统 -->
+  <RTE_Settings_Announcement_Title>通告系统设置</RTE_Settings_Announcement_Title>
+  <RTE_Settings_Announcement_Enable>启用通告系统</RTE_Settings_Announcement_Enable>
+  <RTE_Settings_Announcement_Enable_Desc>允许AI读取殖民地通告板的内容</RTE_Settings_Announcement_Enable_Desc>
+  <RTE_Settings_Announcement_ShowOverview>显示殖民地概况</RTE_Settings_Announcement_ShowOverview>
+  <RTE_Settings_Announcement_ShowOverview_Desc>包含玩家编写的自由文本概况</RTE_Settings_Announcement_ShowOverview_Desc>
+  <RTE_Settings_Announcement_OverviewMaxLength>概况最大长度: {0} 字符</RTE_Settings_Announcement_OverviewMaxLength>
+  <RTE_Settings_Announcement_ShowTasks>显示结构化任务</RTE_Settings_Announcement_ShowTasks>
+  <RTE_Settings_Announcement_ShowTasks_Desc>包含任务列表中的任务</RTE_Settings_Announcement_ShowTasks_Desc>
+  <RTE_Settings_Announcement_OnlyActive>  └─ 仅显示进行中的任务</RTE_Settings_Announcement_OnlyActive>
+  <RTE_Settings_Announcement_OnlyActive_Desc>忽略已完成或暂停的任务</RTE_Settings_Announcement_OnlyActive_Desc>
+  <RTE_Settings_Announcement_CompletedDays>    └─ 已完成保留时间: {0:F1} 天</RTE_Settings_Announcement_CompletedDays>
+  <RTE_Settings_Announcement_Tip>提示：通告板可以通过游戏底部的'通告'标签页打开。\n在这里你可以向AI传达任何关于殖民地的信息。</RTE_Settings_Announcement_Tip>
+  
+  <!-- 设置界面 - 自动捕获 -->
+  <RTE_Settings_AutoCapture_Title>自动事件捕获设置</RTE_Settings_AutoCapture_Title>
+  <RTE_Settings_AutoCapture_Enable>启用自动事件捕获</RTE_Settings_AutoCapture_Enable>
+  <RTE_Settings_AutoCapture_Enable_Desc>自动将游戏事件添加到状况板</RTE_Settings_AutoCapture_Enable_Desc>
+  <RTE_Settings_AutoCapture_GeneralOptions>通用选项</RTE_Settings_AutoCapture_GeneralOptions>
+  <RTE_Settings_AutoCapture_Quests>捕获任务 (Quests)</RTE_Settings_AutoCapture_Quests>
+  <RTE_Settings_AutoCapture_Events>捕获事件 (Events)</RTE_Settings_AutoCapture_Events>
+  <RTE_Settings_AutoCapture_Resources>捕获资源发现 (Resources)</RTE_Settings_AutoCapture_Resources>
+  <RTE_Settings_AutoCapture_QuestExpire>任务自动过期: {0} 天</RTE_Settings_AutoCapture_QuestExpire>
+  <RTE_Settings_AutoCapture_EventExpire>普通事件过期: {0:F1} 天</RTE_Settings_AutoCapture_EventExpire>
+  <RTE_Settings_AutoCapture_DeleteDays>自动捕获事件完成后删除: {0:F1} 天</RTE_Settings_AutoCapture_DeleteDays>
+  <RTE_Settings_AutoCapture_DeleteDays_Zero>    设为 0 天表示立即删除已完成的自动捕获事件</RTE_Settings_AutoCapture_DeleteDays_Zero>
+  <RTE_Settings_AutoCapture_DeleteDays_Desc>    自动捕获的事件完成后将在 {0:F1} 天后自动删除</RTE_Settings_AutoCapture_DeleteDays_Desc>
+  <RTE_Settings_AutoCapture_MergeDuplicates>合并重复事件</RTE_Settings_AutoCapture_MergeDuplicates>
+  <RTE_Settings_AutoCapture_MergeDuplicates_Desc>如果标题相同，合并为一条并增加计数</RTE_Settings_AutoCapture_MergeDuplicates_Desc>
+  <RTE_Settings_AutoCapture_AutoArchive>自动归档手动创建的已完成项</RTE_Settings_AutoCapture_AutoArchive>
+  <RTE_Settings_AutoCapture_AutoArchive_Desc>定期清理手动创建的已完成条目（1天后）</RTE_Settings_AutoCapture_AutoArchive_Desc>
+  <RTE_Settings_AutoCapture_DiscoveredTypes>已发现的事件类型 ({0})</RTE_Settings_AutoCapture_DiscoveredTypes>
+  <RTE_Settings_AutoCapture_NoTypes>未发现事件类型。请进入游戏加载存档后刷新。</RTE_Settings_AutoCapture_NoTypes>
+  <RTE_Settings_AutoCapture_ResetDefaults>重置为默认</RTE_Settings_AutoCapture_ResetDefaults>
+  
+  <!-- 设置界面 - AI 史官 -->
+  <RTE_Settings_AI_Title>AI 史官设置</RTE_Settings_AI_Title>
+  <RTE_Settings_AI_Enable>启用 AI 每日总结</RTE_Settings_AI_Enable>
+  <RTE_Settings_AI_Enable_Desc>每日 0 点自动生成殖民地发展快照和总结</RTE_Settings_AI_Enable_Desc>
+  <RTE_Settings_AI_Provider>AI 提供商:</RTE_Settings_AI_Provider>
+  <RTE_Settings_AI_APIConfig>API 配置</RTE_Settings_AI_APIConfig>
+  <RTE_Settings_AI_APIKey>API Key:</RTE_Settings_AI_APIKey>
+  <RTE_Settings_AI_APIURL>API URL (可选，默认 {0}):</RTE_Settings_AI_APIURL>
+  <RTE_Settings_AI_DefaultURL>默认: {0}</RTE_Settings_AI_DefaultURL>
+  <RTE_Settings_AI_ModelName>模型名称:</RTE_Settings_AI_ModelName>
+  <RTE_Settings_AI_TestConnection>测试连接</RTE_Settings_AI_TestConnection>
+  <RTE_Settings_AI_TestSuccess>连接成功！AI 回复: {0}</RTE_Settings_AI_TestSuccess>
+  <RTE_Settings_AI_TestFailed>连接失败，请检查日志。</RTE_Settings_AI_TestFailed>
+  <RTE_Settings_AI_SnapshotContent>快照内容设置</RTE_Settings_AI_SnapshotContent>
+  <RTE_Settings_AI_IncludeProjects>包含状况板工程信息</RTE_Settings_AI_IncludeProjects>
+  <RTE_Settings_AI_IncludeProjects_Desc>将状况板中的进行中和已完成工程发送给史官</RTE_Settings_AI_IncludeProjects_Desc>
+  <RTE_Settings_AI_IncludeResearch>包含科技研究状态</RTE_Settings_AI_IncludeResearch>
+  <RTE_Settings_AI_IncludeResearch_Desc>将所有科技的完成状态发送给史官（约1000字以内）</RTE_Settings_AI_IncludeResearch_Desc>
+  <RTE_Settings_AI_IncludeUnfinished>  └─ 包含未完成科技列表</RTE_Settings_AI_IncludeUnfinished>
+  <RTE_Settings_AI_IncludeUnfinished_Desc>同时发送未完成的科技列表（会增加token消耗）</RTE_Settings_AI_IncludeUnfinished_Desc>
+  <RTE_Settings_AI_ContextInjection>上下文注入设置</RTE_Settings_AI_ContextInjection>
+  <RTE_Settings_AI_InjectSnapshot>自动注入快照到 AI 对话</RTE_Settings_AI_InjectSnapshot>
+  <RTE_Settings_AI_InjectSnapshot_Desc>启用后，AI 在对话时会自动看到最近的历史快照总结</RTE_Settings_AI_InjectSnapshot_Desc>
+  <RTE_Settings_AI_InjectDays>  └─ 注入天数: {0:F1} 天</RTE_Settings_AI_InjectDays>
+  <RTE_Settings_AI_InjectDays_Desc>      当前将注入最近 {0:F1} 天的快照总结</RTE_Settings_AI_InjectDays_Desc>
+  <RTE_Settings_AI_Note>说明：\n1. 每日 0 点系统会自动拍摄殖民地快照（建筑、房间、蓝图）。\n2. AI 将对比昨日快照，结合玩家操作日志、工程进度、科技状态和事件，生成一段简短的总结。\n3. 总结结果将显示在'每日快照'标签页中，不会直接修改概况。\n4. 如果启用'自动注入'，AI 在对话时会自动看到最近的历史记录（含日期）。\n5. 工程信息：从状况板读取进行中和已完成的工程项目。\n6. 科技状态：包含当前研究、已完成科技，可选包含未完成科技（默认关闭以节省token）。</RTE_Settings_AI_Note>
+  
+  <!-- 提示词编辑器 -->
+  <RTE_PromptEditor_CustomPrompt>自定义{0}提示词</RTE_PromptEditor_CustomPrompt>
+  <RTE_PromptEditor_OverviewSummary>概况总结</RTE_PromptEditor_OverviewSummary>
+  <RTE_PromptEditor_DailySynthesis>每日快照</RTE_PromptEditor_DailySynthesis>
+  <RTE_PromptEditor_ProjectSummary>工程AI总结</RTE_PromptEditor_ProjectSummary>
+  <RTE_PromptEditor_Tip>提示：留空将使用默认提示词。支持多行文本。\n可用变量：{overview} (概况), {diffReport} (变化), {actions} (操作), {events} (事件)</RTE_PromptEditor_Tip>
+  <RTE_PromptEditor_RestoreDefault>恢复默认</RTE_PromptEditor_RestoreDefault>
+  <RTE_PromptEditor_ViewDefault>查看默认</RTE_PromptEditor_ViewDefault>
+  <RTE_PromptEditor_Save>保存</RTE_PromptEditor_Save>
+  <RTE_PromptEditor_Cancel>取消</RTE_PromptEditor_Cancel>
+  <RTE_PromptEditor_Restored>已清空自定义提示词，将使用默认提示词</RTE_PromptEditor_Restored>
+  <RTE_PromptEditor_DefaultPrompt>默认提示词：\n\n{0}</RTE_PromptEditor_DefaultPrompt>
+  <RTE_PromptEditor_Close>关闭</RTE_PromptEditor_Close>
+  <RTE_PromptEditor_Saved>提示词已保存</RTE_PromptEditor_Saved>
+  <RTE_PromptEditor_UseDefault>使用默认提示词</RTE_PromptEditor_UseDefault>
+  <RTE_PromptEditor_CharCount>字符数: {0}</RTE_PromptEditor_CharCount>
+  
+  <!-- 区域绘制工具 -->
+  <RTE_AreaDrawing_Label>绘制区域</RTE_AreaDrawing_Label>
+  <RTE_AreaDrawing_Desc>拖拽鼠标绘制或移除区域格子</RTE_AreaDrawing_Desc>
+  <RTE_AreaDrawing_NoAreaSelected>没有选择区域</RTE_AreaDrawing_NoAreaSelected>
+  <RTE_AreaDrawing_SelectAreaFirst>请先选择一个区域</RTE_AreaDrawing_SelectAreaFirst>
+  
+  <!-- 任务编辑器 - 补充 -->
+  <RTE_TaskEditor_Progress_AutoCalc>进度: {0} (自动计算)</RTE_TaskEditor_Progress_AutoCalc>
+  <RTE_TaskEditor_Progress_Manual_Display>进度: {0}</RTE_TaskEditor_Progress_Manual_Display>
+  <RTE_TaskEditor_ConstructionArea_Display>施工区域: {0} ({1} 蓝图)</RTE_TaskEditor_ConstructionArea_Display>
+  <RTE_TaskEditor_ConstructionArea_Deleted>施工区域: (已删除)</RTE_TaskEditor_ConstructionArea_Deleted>
+  <RTE_TaskEditor_ConstructionArea_Name>{0} 施工区</RTE_TaskEditor_ConstructionArea_Name>
+  <RTE_TaskEditor_ConstructionArea_DefaultName>施工区域</RTE_TaskEditor_ConstructionArea_DefaultName>
+  <RTE_TaskEditor_CustomPromptButton>自定义提示词</RTE_TaskEditor_CustomPromptButton>
+  
+  <!-- 区域编辑器 - 补充 -->
+  <RTE_AreaEditor_CellCount_Display>格子数量: {0}</RTE_AreaEditor_CellCount_Display>
+  
+  <!-- 状况板 - 补充 -->
+  <RTE_Announcement_Status_Completed>[已完成]</RTE_Announcement_Status_Completed>
+  <RTE_Announcement_Status_Paused>[暂停]</RTE_Announcement_Status_Paused>
+  <RTE_Announcement_Status_Active>[进行中]</RTE_Announcement_Status_Active>
+  <RTE_Announcement_Progress_Display> [进度: {0}]</RTE_Announcement_Progress_Display>
+  <RTE_Announcement_AssignedTo_Display> [负责人: {0}]</RTE_Announcement_AssignedTo_Display>
+  <RTE_Area_CellCount_Display>格子数: {0}</RTE_Area_CellCount_Display>
+  <RTE_Area_Status_Label>状态</RTE_Area_Status_Label>
+</LanguageData>

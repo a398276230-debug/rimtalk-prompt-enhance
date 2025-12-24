@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Verse;
 using RimWorld;
+using RimTalkHealthEnhance.Models;
 
 namespace RimTalkHealthEnhance
 {
@@ -10,6 +11,9 @@ namespace RimTalkHealthEnhance
         public static ColonyAnnouncementManager Instance => Current.Game?.GetComponent<ColonyAnnouncementManager>();
         
         public ColonyAnnouncementData Data = new ColonyAnnouncementData();
+        
+        // 自定义命名区域列表
+        public List<CustomNamedArea> CustomAreas = new List<CustomNamedArea>();
         
         // 用于UI缓存刷新的版本号
         public int DataVersion { get; private set; } = 0;
@@ -81,6 +85,11 @@ namespace RimTalkHealthEnhance
                 {
                     Log.Message($"[RimTalk Enhance] Triggering daily synthesis. Day: {currentDay}, Last: {Data.LastSynthesisDay}");
                     Data.LastSynthesisDay = currentDay;
+                    
+                    // 更新所有工程的自动进度
+                    BlueprintProgressService.UpdateAllAutoProjects();
+                    
+                    // 执行AI总结
                     _ = MidnightSynthesisService.PerformSynthesis();
                 }
                 else
@@ -179,9 +188,26 @@ namespace RimTalkHealthEnhance
         {
             base.ExposeData();
             Scribe_Deep.Look(ref Data, "colonyAnnouncementData");
+            Scribe_Collections.Look(ref CustomAreas, "customAreas", LookMode.Deep);
             
             if (Data == null)
                 Data = new ColonyAnnouncementData();
+            
+            if (CustomAreas == null)
+                CustomAreas = new List<CustomNamedArea>();
+            
+            // 加载后重新关联地图
+            if (Scribe.mode == LoadSaveMode.PostLoadInit)
+            {
+                var map = Find.CurrentMap;
+                if (map != null)
+                {
+                    foreach (var area in CustomAreas)
+                    {
+                        area.ReassignMap(map);
+                    }
+                }
+            }
         }
 
         public void AddAnnouncement(ColonyAnnouncement announcement)
@@ -200,6 +226,12 @@ namespace RimTalkHealthEnhance
             var item = Data.Announcements.FirstOrDefault(t => t.Id == id);
             if (item != null)
             {
+                // 如果工程关联了施工区域，同步删除区域
+                if (!string.IsNullOrEmpty(item.BlueprintAreaId))
+                {
+                    DeleteCustomArea(item.BlueprintAreaId);
+                }
+                
                 Data.Announcements.Remove(item);
                 DataVersion++;
             }
@@ -230,6 +262,63 @@ namespace RimTalkHealthEnhance
         public string GetCachedFactionInfo()
         {
             return _cachedFactionInfo;
+        }
+        
+        /// <summary>
+        /// 添加自定义区域
+        /// </summary>
+        public void AddCustomArea(CustomNamedArea area)
+        {
+            if (CustomAreas == null)
+                CustomAreas = new List<CustomNamedArea>();
+            
+            CustomAreas.Add(area);
+            DataVersion++;
+        }
+        
+        /// <summary>
+        /// 删除自定义区域
+        /// </summary>
+        public void DeleteCustomArea(string id)
+        {
+            if (CustomAreas == null) return;
+            
+            var area = CustomAreas.FirstOrDefault(a => a.Id == id);
+            if (area != null)
+            {
+                // 如果是施工区域，更新关联的工程状态
+                if (area.IsConstructionArea)
+                {
+                    var project = Data.Announcements.FirstOrDefault(a => a.BlueprintAreaId == id);
+                    if (project != null)
+                    {
+                        project.BlueprintAreaId = null;
+                    }
+                }
+
+                CustomAreas.Remove(area);
+                DataVersion++;
+            }
+        }
+        
+        /// <summary>
+        /// 获取指定位置的自定义区域（优先级：最后创建的优先）
+        /// </summary>
+        public CustomNamedArea GetCustomAreaAt(IntVec3 position)
+        {
+            if (CustomAreas == null) return null;
+            
+            for (int i = CustomAreas.Count - 1; i >= 0; i--)
+            {
+                var area = CustomAreas[i];
+                if (!area.IsActive) continue;
+                if (area.Cells == null) continue;
+                
+                if (area[position])
+                    return area;
+            }
+            
+            return null;
         }
     }
 }

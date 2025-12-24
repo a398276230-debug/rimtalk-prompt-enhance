@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using Verse;
 using RimWorld;
 
@@ -36,7 +36,7 @@ namespace RimTalkHealthEnhance
             Rect tipRect = new Rect(0f, 40f, inRect.width, 40f);
             Text.Font = GameFont.Tiny;
             GUI.color = Color.yellow;
-            Widgets.Label(tipRect, "提示：留空将使用默认提示词。支持多行文本。\n可用变量：{overview} (概况), {diffReport} (变化), {actions} (操作), {events} (事件)");
+            Widgets.Label(tipRect, "RTE_PromptEditor_Tip".Translate());
             GUI.color = Color.white;
             Text.Font = GameFont.Small;
 
@@ -58,31 +58,31 @@ namespace RimTalkHealthEnhance
             float gap = 10f;
 
             // 恢复默认按钮
-            if (Widgets.ButtonText(new Rect(0f, buttonY, buttonWidth, 35f), "恢复默认"))
+            if (Widgets.ButtonText(new Rect(0f, buttonY, buttonWidth, 35f), "RTE_PromptEditor_RestoreDefault".Translate()))
             {
                 promptText = "";
-                Messages.Message("已清空自定义提示词，将使用默认提示词", MessageTypeDefOf.PositiveEvent, false);
+                Messages.Message("RTE_PromptEditor_Restored".Translate(), MessageTypeDefOf.PositiveEvent, false);
             }
 
             // 查看默认按钮
-            if (Widgets.ButtonText(new Rect(buttonWidth + gap, buttonY, buttonWidth, 35f), "查看默认"))
+            if (Widgets.ButtonText(new Rect(buttonWidth + gap, buttonY, buttonWidth, 35f), "RTE_PromptEditor_ViewDefault".Translate()))
             {
                 Find.WindowStack.Add(new Dialog_MessageBox(
-                    $"默认提示词：\n\n{defaultPrompt}",
-                    "关闭", null, null, null, null, false, null, null
+                    "RTE_PromptEditor_DefaultPrompt".Translate(defaultPrompt),
+                    "RTE_PromptEditor_Close".Translate(), null, null, null, null, false, null, null
                 ));
             }
 
             // 保存按钮
-            if (Widgets.ButtonText(new Rect(inRect.width - buttonWidth * 2 - gap, buttonY, buttonWidth, 35f), "保存"))
+            if (Widgets.ButtonText(new Rect(inRect.width - buttonWidth * 2 - gap, buttonY, buttonWidth, 35f), "RTE_PromptEditor_Save".Translate()))
             {
                 onSave?.Invoke(promptText);
-                Messages.Message("提示词已保存", MessageTypeDefOf.PositiveEvent, false);
+                Messages.Message("RTE_PromptEditor_Saved".Translate(), MessageTypeDefOf.PositiveEvent, false);
                 Close();
             }
 
             // 取消按钮
-            if (Widgets.ButtonText(new Rect(inRect.width - buttonWidth, buttonY, buttonWidth, 35f), "取消"))
+            if (Widgets.ButtonText(new Rect(inRect.width - buttonWidth, buttonY, buttonWidth, 35f), "RTE_PromptEditor_Cancel".Translate()))
             {
                 Close();
             }
@@ -91,8 +91,8 @@ namespace RimTalkHealthEnhance
             Text.Font = GameFont.Tiny;
             GUI.color = Color.gray;
             string countText = string.IsNullOrEmpty(promptText) 
-                ? "使用默认提示词" 
-                : $"字符数: {promptText.Length}";
+                ? "RTE_PromptEditor_UseDefault".Translate() 
+                : "RTE_PromptEditor_CharCount".Translate(promptText.Length);
             Widgets.Label(new Rect(0f, buttonY + 40f, inRect.width, 20f), countText);
             GUI.color = Color.white;
             Text.Font = GameFont.Small;

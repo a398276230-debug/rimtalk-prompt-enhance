@@ -48,7 +48,7 @@
           "dependencies": {
             "Krafs.Rimworld.Ref": {
               "target": "Package",
-              "version": "[1.5.4104, )"
+              "version": "[1.6.4633, )"
             }
           },
           "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.101\\RuntimeIdentifierGraph.json"

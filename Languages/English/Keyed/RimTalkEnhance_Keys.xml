@@ -1,0 +1,307 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LanguageData>
+  <!-- Main Window Tabs -->
+  <RTE_Tab_CurrentStatus>Current Status</RTE_Tab_CurrentStatus>
+  <RTE_Tab_HistorySnapshots>History Snapshots</RTE_Tab_HistorySnapshots>
+  <RTE_Tab_CustomAreas>Custom Areas</RTE_Tab_CustomAreas>
+  
+  <!-- Colony Overview -->
+  <RTE_ColonyOverview_Title>📝 Colony Overview</RTE_ColonyOverview_Title>
+  <RTE_ColonyOverview_Save>Save Overview</RTE_ColonyOverview_Save>
+  <RTE_ColonyOverview_AISummary>AI Summary</RTE_ColonyOverview_AISummary>
+  <RTE_ColonyOverview_CustomPrompt>⚙ Prompt</RTE_ColonyOverview_CustomPrompt>
+  <RTE_ColonyOverview_Tip>Tip: Describe your colony status in natural language, AI will read this information.</RTE_ColonyOverview_Tip>
+  <RTE_ColonyOverview_Updated>Colony overview updated</RTE_ColonyOverview_Updated>
+  <RTE_ColonyOverview_EmptyError>Overview is empty, cannot summarize</RTE_ColonyOverview_EmptyError>
+  <RTE_ColonyOverview_ConfirmSummary>Are you sure you want AI to summarize and condense the current overview?\nThis will replace the current text.</RTE_ColonyOverview_ConfirmSummary>
+  <RTE_ColonyOverview_SummarySuccess>Overview updated by AI summary</RTE_ColonyOverview_SummarySuccess>
+  <RTE_ColonyOverview_SummaryFailed>AI summary failed</RTE_ColonyOverview_SummaryFailed>
+  
+  <!-- History Snapshots -->
+  <RTE_Snapshot_NoData>No snapshot records yet. Snapshots will be generated automatically at midnight.</RTE_Snapshot_NoData>
+  <RTE_Snapshot_PrevDay>← Previous Day</RTE_Snapshot_PrevDay>
+  <RTE_Snapshot_NextDay>Next Day →</RTE_Snapshot_NextDay>
+  <RTE_Snapshot_AISummary>【AI Summary】</RTE_Snapshot_AISummary>
+  <RTE_Snapshot_DetailedChanges>📊 Detailed Changes</RTE_Snapshot_DetailedChanges>
+  <RTE_Snapshot_PlayerActions>【Player Actions】</RTE_Snapshot_PlayerActions>
+  <RTE_Snapshot_Events>【Event Records】</RTE_Snapshot_Events>
+  <RTE_Snapshot_CopyToOverview>Copy to Overview</RTE_Snapshot_CopyToOverview>
+  <RTE_Snapshot_Regenerate>Regenerate</RTE_Snapshot_Regenerate>
+  <RTE_Snapshot_CopiedWithDate>Appended to overview (with date)</RTE_Snapshot_CopiedWithDate>
+  <RTE_Snapshot_ConfirmRegenerate>Are you sure you want to regenerate the AI summary for this snapshot?</RTE_Snapshot_ConfirmRegenerate>
+  <RTE_Snapshot_RegenerateSuccess>AI summary updated</RTE_Snapshot_RegenerateSuccess>
+  <RTE_Snapshot_RegenerateFailed>AI summary generation failed</RTE_Snapshot_RegenerateFailed>
+  
+  <!-- Announcement Board -->
+  <RTE_Announcement_NewTask>+ New Status</RTE_Announcement_NewTask>
+  <RTE_Announcement_AllCategories>All</RTE_Announcement_AllCategories>
+  <RTE_Announcement_Category_Project>Project</RTE_Announcement_Category_Project>
+  <RTE_Announcement_Category_Event>Event</RTE_Announcement_Category_Event>
+  <RTE_Announcement_Category_Quest>Quest</RTE_Announcement_Category_Quest>
+  <RTE_Announcement_Category_Resource>Resource</RTE_Announcement_Category_Resource>
+  <RTE_Announcement_Category_Personnel>Personnel</RTE_Announcement_Category_Personnel>
+  <RTE_Announcement_Category_Custom>Custom</RTE_Announcement_Category_Custom>
+  <RTE_Announcement_Complete>Complete</RTE_Announcement_Complete>
+  <RTE_Announcement_Resume>Resume</RTE_Announcement_Resume>
+  <RTE_Announcement_Reopen>Reopen</RTE_Announcement_Reopen>
+  <RTE_Announcement_Edit>Edit</RTE_Announcement_Edit>
+  <RTE_Announcement_Delete>Delete</RTE_Announcement_Delete>
+  <RTE_Announcement_Progress>Progress: {0}</RTE_Announcement_Progress>
+  <RTE_Announcement_AssignedTo>Assigned: {0}</RTE_Announcement_AssignedTo>
+  
+  <!-- Custom Areas -->
+  <RTE_Area_NewArea>+ New Area</RTE_Area_NewArea>
+  <RTE_Area_NoData>No custom areas yet. Click the "New Area" button in the top right to create one.</RTE_Area_NoData>
+  <RTE_Area_EnterMapFirst>Please enter a map first</RTE_Area_EnterMapFirst>
+  <RTE_Area_CellCount>Cells: {0}</RTE_Area_CellCount>
+  <RTE_Area_Status_Active>Active</RTE_Area_Status_Active>
+  <RTE_Area_Status_Inactive>Inactive</RTE_Area_Status_Inactive>
+  <RTE_Area_Draw>Draw</RTE_Area_Draw>
+  <RTE_Area_RemoveCells>Remove Cells</RTE_Area_RemoveCells>
+  <RTE_Area_ConfirmDelete>Are you sure you want to delete area "{0}"?</RTE_Area_ConfirmDelete>
+  <RTE_Area_NewAreaName>New Area</RTE_Area_NewAreaName>
+  
+  <!-- Task Editor -->
+  <RTE_TaskEditor_NewTask>New Status</RTE_TaskEditor_NewTask>
+  <RTE_TaskEditor_EditTask>Edit Status</RTE_TaskEditor_EditTask>
+  <RTE_TaskEditor_Category>Category:</RTE_TaskEditor_Category>
+  <RTE_TaskEditor_Title>Title:</RTE_TaskEditor_Title>
+  <RTE_TaskEditor_Description>Description:</RTE_TaskEditor_Description>
+  <RTE_TaskEditor_Priority>Priority:</RTE_TaskEditor_Priority>
+  <RTE_TaskEditor_Status>Status:</RTE_TaskEditor_Status>
+  <RTE_TaskEditor_Progress_Auto>Progress: {0} (Auto)</RTE_TaskEditor_Progress_Auto>
+  <RTE_TaskEditor_Progress_Manual>Progress: {0}</RTE_TaskEditor_Progress_Manual>
+  <RTE_TaskEditor_AssignedPawn>Assigned:</RTE_TaskEditor_AssignedPawn>
+  <RTE_TaskEditor_RelatedPerson>Related Person:</RTE_TaskEditor_RelatedPerson>
+  <RTE_TaskEditor_None>None</RTE_TaskEditor_None>
+  <RTE_TaskEditor_Save>Save (Enter)</RTE_TaskEditor_Save>
+  <RTE_TaskEditor_Cancel>Cancel (Esc)</RTE_TaskEditor_Cancel>
+  <RTE_TaskEditor_SelectArea>Select Construction Area</RTE_TaskEditor_SelectArea>
+  <RTE_TaskEditor_ConstructionArea>Construction Area: {0} ({1} blueprints)</RTE_TaskEditor_ConstructionArea>
+  <RTE_TaskEditor_AreaDeleted>Construction Area: (deleted)</RTE_TaskEditor_AreaDeleted>
+  <RTE_TaskEditor_RemoveArea>Remove Area</RTE_TaskEditor_RemoveArea>
+  <RTE_TaskEditor_AreaRemoved>Construction area removed</RTE_TaskEditor_AreaRemoved>
+  <RTE_TaskEditor_AISummary>AI Summarize Project</RTE_TaskEditor_AISummary>
+  <RTE_TaskEditor_Generating>Generating...</RTE_TaskEditor_Generating>
+  <RTE_TaskEditor_SelectAreaFirst>Please select construction area first</RTE_TaskEditor_SelectAreaFirst>
+  <RTE_TaskEditor_AreaNotExist>Construction area does not exist</RTE_TaskEditor_AreaNotExist>
+  <RTE_TaskEditor_NoBlueprintsInArea>No blueprints in construction area</RTE_TaskEditor_NoBlueprintsInArea>
+  <RTE_TaskEditor_AICallFailed>AI call failed, please check API configuration</RTE_TaskEditor_AICallFailed>
+  <RTE_TaskEditor_AISummaryComplete>AI summary complete</RTE_TaskEditor_AISummaryComplete>
+  <RTE_TaskEditor_AIResponseError>AI response format error, using raw text</RTE_TaskEditor_AIResponseError>
+  <RTE_TaskEditor_AIResponseFormatError>AI response format error: {0}</RTE_TaskEditor_AIResponseFormatError>
+  <RTE_TaskEditor_SelectAreaTip>Drag mouse to select construction area. Blueprint count will be scanned automatically after completion.</RTE_TaskEditor_SelectAreaTip>
+  <RTE_TaskEditor_UnnamedProject>Unnamed Project</RTE_TaskEditor_UnnamedProject>
+  
+  <!-- Area Editor -->
+  <RTE_AreaEditor_AreaName>Area Name:</RTE_AreaEditor_AreaName>
+  <RTE_AreaEditor_AreaColor>Area Color:</RTE_AreaEditor_AreaColor>
+  <RTE_AreaEditor_SelectColor>Select Color</RTE_AreaEditor_SelectColor>
+  <RTE_AreaEditor_EnableArea>Enable this area</RTE_AreaEditor_EnableArea>
+  <RTE_AreaEditor_CellCount>Cell Count: {0}</RTE_AreaEditor_CellCount>
+  <RTE_AreaEditor_SaveAndClose>Save and Close</RTE_AreaEditor_SaveAndClose>
+  <RTE_AreaEditor_ClearArea>Clear Area</RTE_AreaEditor_ClearArea>
+  
+  <!-- Color Picker -->
+  <RTE_ColorPicker_Title>Select Preset Color:</RTE_ColorPicker_Title>
+  
+  <!-- Settings - Tabs -->
+  <RTE_Settings_Tab_Health>Health Info</RTE_Settings_Tab_Health>
+  <RTE_Settings_Tab_Items>Item Descriptions</RTE_Settings_Tab_Items>
+  <RTE_Settings_Tab_Factions>Faction Relations</RTE_Settings_Tab_Factions>
+  <RTE_Settings_Tab_Location>Map Location</RTE_Settings_Tab_Location>
+  <RTE_Settings_Tab_Announcement>Announcement System</RTE_Settings_Tab_Announcement>
+  <RTE_Settings_Tab_AutoCapture>Auto Capture</RTE_Settings_Tab_AutoCapture>
+  <RTE_Settings_Tab_AIHistorian>AI Historian</RTE_Settings_Tab_AIHistorian>
+  
+  <!-- Settings - New Tabs -->
+  <RTE_Settings_Tab_ContextEnhancement>📊 Context Enhancement</RTE_Settings_Tab_ContextEnhancement>
+  <RTE_Settings_Tab_ColonyStatus>📢 Colony Status</RTE_Settings_Tab_ColonyStatus>
+  
+  <!-- Settings - Page Titles -->
+  <RTE_Settings_ContextEnhancement_PageTitle>📊 Context Enhancement Settings</RTE_Settings_ContextEnhancement_PageTitle>
+  <RTE_Settings_ColonyStatus_PageTitle>📢 Colony Status Settings</RTE_Settings_ColonyStatus_PageTitle>
+  
+  <!-- Settings - Health Info -->
+  <RTE_Settings_Health_Title>RimTalk Enhanced Health Info Settings</RTE_Settings_Health_Title>
+  <RTE_Settings_Health_ShowSeverity>Show severity percentage</RTE_Settings_Health_ShowSeverity>
+  <RTE_Settings_Health_ShowSeverity_Desc>Display severity percentage for each health condition</RTE_Settings_Health_ShowSeverity_Desc>
+  <RTE_Settings_Health_ShowPainLevel>Show pain level</RTE_Settings_Health_ShowPainLevel>
+  <RTE_Settings_Health_ShowPainLevel_Desc>Display pain intensity (Mild/Moderate/Severe/Extreme)</RTE_Settings_Health_ShowPainLevel_Desc>
+  <RTE_Settings_Health_ShowLethalMarker>Show lethal marker</RTE_Settings_Health_ShowLethalMarker>
+  <RTE_Settings_Health_ShowLethalMarker_Desc>Mark potentially lethal health conditions</RTE_Settings_Health_ShowLethalMarker_Desc>
+  <RTE_Settings_Health_ShowDescription>Show detailed description (full mode only)</RTE_Settings_Health_ShowDescription>
+  <RTE_Settings_Health_ShowDescription_Desc>Include detailed descriptions at full information level</RTE_Settings_Health_ShowDescription_Desc>
+  <RTE_Settings_Health_MinPainThreshold>Minimum pain threshold: {0:F2}</RTE_Settings_Health_MinPainThreshold>
+  <RTE_Settings_Health_LethalThreshold>Lethal marker threshold: {0:P0}</RTE_Settings_Health_LethalThreshold>
+  <RTE_Settings_Health_MaxDescLength>Max description length: {0} chars</RTE_Settings_Health_MaxDescLength>
+  <RTE_Settings_Health_Note1>Note: You need to enable health info in RimTalk settings.</RTE_Settings_Health_Note1>
+  <RTE_Settings_Health_Note2>This mod enhances the health context sent to AI by RimTalk.</RTE_Settings_Health_Note2>
+  
+  <!-- Settings - Item Descriptions -->
+  <RTE_Settings_Items_Title>Item Description Enhancement Settings</RTE_Settings_Items_Title>
+  <RTE_Settings_Items_ShowEquipmentDesc>Show equipment descriptions (weapons + apparel)</RTE_Settings_Items_ShowEquipmentDesc>
+  <RTE_Settings_Items_ShowEquipmentDesc_Desc>Include detailed descriptions in equipment list</RTE_Settings_Items_ShowEquipmentDesc_Desc>
+  <RTE_Settings_Items_ShowCarriedDesc>Show carried item descriptions</RTE_Settings_Items_ShowCarriedDesc>
+  <RTE_Settings_Items_ShowCarriedDesc_Desc>Display descriptions for items being hauled or carried</RTE_Settings_Items_ShowCarriedDesc_Desc>
+  <RTE_Settings_Items_ShowInventory>Show inventory item list</RTE_Settings_Items_ShowInventory>
+  <RTE_Settings_Items_ShowInventory_Desc>List items in inventory (consumes tokens)</RTE_Settings_Items_ShowInventory_Desc>
+  <RTE_Settings_Items_ShowInventoryDesc>  └─ Show inventory item descriptions</RTE_Settings_Items_ShowInventoryDesc>
+  <RTE_Settings_Items_ShowInventoryDesc_Desc>Add detailed descriptions for inventory items (consumes more tokens)</RTE_Settings_Items_ShowInventoryDesc_Desc>
+  <RTE_Settings_Items_InteractionTitle>Interaction Item Settings</RTE_Settings_Items_InteractionTitle>
+  <RTE_Settings_Items_ShowInteraction>Show interacting item/building descriptions</RTE_Settings_Items_ShowInteraction>
+  <RTE_Settings_Items_ShowInteraction_Desc>E.g.: research bench, workbench, bed being used</RTE_Settings_Items_ShowInteraction_Desc>
+  <RTE_Settings_Items_OnlyImportantBuildings>  └─ Only show important buildings</RTE_Settings_Items_OnlyImportantBuildings>
+  <RTE_Settings_Items_OnlyImportantBuildings_Desc>Only show workbenches, research benches, etc., ignore regular furniture</RTE_Settings_Items_OnlyImportantBuildings_Desc>
+  <RTE_Settings_Items_InteractionMaxLength>Interaction description max length: {0} chars</RTE_Settings_Items_InteractionMaxLength>
+  <RTE_Settings_Items_MinQuality>Minimum quality for descriptions:</RTE_Settings_Items_MinQuality>
+  <RTE_Settings_Items_MaxDescLength>Item description max length: {0} chars</RTE_Settings_Items_MaxDescLength>
+  <RTE_Settings_Items_MaxInventoryItems>Max inventory items to show: {0}</RTE_Settings_Items_MaxInventoryItems>
+  <RTE_Settings_Items_MaxItemsWithDesc>Max items with descriptions: {0}</RTE_Settings_Items_MaxItemsWithDesc>
+  <RTE_Settings_Items_SkipCommon>Skip common items</RTE_Settings_Items_SkipCommon>
+  <RTE_Settings_Items_SkipCommon_Desc>Skip descriptions for raw materials, food, corpses, etc.</RTE_Settings_Items_SkipCommon_Desc>
+  <RTE_Settings_Items_SkipArt>Skip art descriptions (avoid Tananese)</RTE_Settings_Items_SkipArt>
+  <RTE_Settings_Items_SkipArt_Desc>Art descriptions on high-quality items are usually meaningless stories, check this to only show functional descriptions</RTE_Settings_Items_SkipArt_Desc>
+  <RTE_Settings_Items_QualityTip>Tip: Quality levels from low to high: Awful &lt; Poor &lt; Normal &lt; Good &lt; Excellent &lt; Masterwork &lt; Legendary\nRecommend setting to Normal or Good to balance information and token consumption</RTE_Settings_Items_QualityTip>
+  
+  <!-- Settings - Faction Relations -->
+  <RTE_Settings_Factions_Title>Faction Relations Settings</RTE_Settings_Factions_Title>
+  <RTE_Settings_Factions_Enable>Enable faction relations display</RTE_Settings_Factions_Enable>
+  <RTE_Settings_Factions_Enable_Desc>Show other factions present on current map and their relations with player</RTE_Settings_Factions_Enable_Desc>
+  <RTE_Settings_Factions_ShowGoodwill>Show goodwill values</RTE_Settings_Factions_ShowGoodwill>
+  <RTE_Settings_Factions_ShowGoodwill_Desc>Display each faction's goodwill toward player (-100 to 100)</RTE_Settings_Factions_ShowGoodwill_Desc>
+  <RTE_Settings_Factions_ShowMemberCount>Show faction member count</RTE_Settings_Factions_ShowMemberCount>
+  <RTE_Settings_Factions_ShowMemberCount_Desc>Display how many members this faction has on current map</RTE_Settings_Factions_ShowMemberCount_Desc>
+  <RTE_Settings_Factions_ShowIdentity>Show identity breakdown</RTE_Settings_Factions_ShowIdentity>
+  <RTE_Settings_Factions_ShowIdentity_Desc>Distinguish between prisoners, hostiles, visitors, and caravans</RTE_Settings_Factions_ShowIdentity_Desc>
+  <RTE_Settings_Factions_ShowSummary>Show global identity summary</RTE_Settings_Factions_ShowSummary>
+  <RTE_Settings_Factions_ShowSummary_Desc>Display overall situation summary before faction list (threats/prisoners/visitors stats)</RTE_Settings_Factions_ShowSummary_Desc>
+  <RTE_Settings_Factions_ShowNeutral>Show neutral factions</RTE_Settings_Factions_ShowNeutral>
+  <RTE_Settings_Factions_ShowNeutral_Desc>Include neutral factions (goodwill between -75 and 75)</RTE_Settings_Factions_ShowNeutral_Desc>
+  <RTE_Settings_Factions_CacheInterval>Cache update interval: {0:F1} seconds</RTE_Settings_Factions_CacheInterval>
+  <RTE_Settings_Factions_CacheInterval_Desc>    Faction info updates at specified intervals (avoid thread conflicts)</RTE_Settings_Factions_CacheInterval_Desc>
+  <RTE_Settings_Factions_FilterByGoodwill>Filter by goodwill</RTE_Settings_Factions_FilterByGoodwill>
+  <RTE_Settings_Factions_FilterByGoodwill_Desc>Only show factions with goodwill above specified threshold</RTE_Settings_Factions_FilterByGoodwill_Desc>
+  <RTE_Settings_Factions_MinGoodwill>  └─ Minimum goodwill: {0}</RTE_Settings_Factions_MinGoodwill>
+  <RTE_Settings_Factions_MinGoodwill_Desc>      Only show factions with goodwill ≥ {0}</RTE_Settings_Factions_MinGoodwill_Desc>
+  <RTE_Settings_Factions_Note>Note:\n1. This feature only shows factions actually present on current map (with members present).\n2. Uses game's native relation status\n3. Info is automatically injected into AI context, letting AI understand current diplomatic situation.\n4. When no other factions are on map, no info is displayed.</RTE_Settings_Factions_Note>
+  
+  <!-- Settings - Map Location -->
+  <RTE_Settings_Location_Title>Map Location Info Settings</RTE_Settings_Location_Title>
+  <RTE_Settings_Location_Enable>Enable relative location display</RTE_Settings_Location_Enable>
+  <RTE_Settings_Location_Enable_Desc>Show pawn's position and direction relative to colony center</RTE_Settings_Location_Enable_Desc>
+  <RTE_Settings_Location_ShowArea>  └─ Show area info</RTE_Settings_Location_ShowArea>
+  <RTE_Settings_Location_ShowArea_Desc>Display area info like growing zones, storage zones, etc.</RTE_Settings_Location_ShowArea_Desc>
+  <RTE_Settings_Location_TownCenter>  └─ Enable town center detection</RTE_Settings_Location_TownCenter>
+  <RTE_Settings_Location_TownCenter_Desc>Distinguish between town center and regular town areas (optional feature)</RTE_Settings_Location_TownCenter_Desc>
+  <RTE_Settings_Location_CenterRadius>    └─ Center radius: {0} cells</RTE_Settings_Location_CenterRadius>
+  <RTE_Settings_Location_CenterRadius_Desc>      Within {0} cells of colony center is considered center area</RTE_Settings_Location_CenterRadius_Desc>
+  <RTE_Settings_Location_Note>Note:\n1. System automatically calculates colony center (based on home area).\n2. Provides 8-direction judgment (E, S, W, N and four diagonals).\n3. Area types: Town Center, Town, Town Edge, Wilderness.\n4. Automatically detects growing zones, storage zones, and other native game areas.\n5. Info is automatically injected into AI context, letting AI know pawn's location.</RTE_Settings_Location_Note>
+  <RTE_Settings_Location_ExampleTitle>Output Examples</RTE_Settings_Location_ExampleTitle>
+  
+  <!-- Settings - Announcement System -->
+  <RTE_Settings_Announcement_Title>Announcement System Settings</RTE_Settings_Announcement_Title>
+  <RTE_Settings_Announcement_Enable>Enable announcement system</RTE_Settings_Announcement_Enable>
+  <RTE_Settings_Announcement_Enable_Desc>Allow AI to read colony announcement board content</RTE_Settings_Announcement_Enable_Desc>
+  <RTE_Settings_Announcement_ShowOverview>Show colony overview</RTE_Settings_Announcement_ShowOverview>
+  <RTE_Settings_Announcement_ShowOverview_Desc>Include player-written free text overview</RTE_Settings_Announcement_ShowOverview_Desc>
+  <RTE_Settings_Announcement_OverviewMaxLength>Overview max length: {0} chars</RTE_Settings_Announcement_OverviewMaxLength>
+  <RTE_Settings_Announcement_ShowTasks>Show structured tasks</RTE_Settings_Announcement_ShowTasks>
+  <RTE_Settings_Announcement_ShowTasks_Desc>Include tasks from task list</RTE_Settings_Announcement_ShowTasks_Desc>
+  <RTE_Settings_Announcement_OnlyActive>  └─ Only show active tasks</RTE_Settings_Announcement_OnlyActive>
+  <RTE_Settings_Announcement_OnlyActive_Desc>Ignore completed or paused tasks</RTE_Settings_Announcement_OnlyActive_Desc>
+  <RTE_Settings_Announcement_CompletedDays>    └─ Completed retention time: {0:F1} days</RTE_Settings_Announcement_CompletedDays>
+  <RTE_Settings_Announcement_Tip>Tip: Announcement board can be opened via the 'Announcement' tab at bottom of game.\nHere you can communicate any colony information to AI.</RTE_Settings_Announcement_Tip>
+  
+  <!-- Settings - Auto Capture -->
+  <RTE_Settings_AutoCapture_Title>Auto Event Capture Settings</RTE_Settings_AutoCapture_Title>
+  <RTE_Settings_AutoCapture_Enable>Enable auto event capture</RTE_Settings_AutoCapture_Enable>
+  <RTE_Settings_AutoCapture_Enable_Desc>Automatically add game events to status board</RTE_Settings_AutoCapture_Enable_Desc>
+  <RTE_Settings_AutoCapture_GeneralOptions>General Options</RTE_Settings_AutoCapture_GeneralOptions>
+  <RTE_Settings_AutoCapture_Quests>Capture quests</RTE_Settings_AutoCapture_Quests>
+  <RTE_Settings_AutoCapture_Events>Capture events</RTE_Settings_AutoCapture_Events>
+  <RTE_Settings_AutoCapture_Resources>Capture resource discoveries</RTE_Settings_AutoCapture_Resources>
+  <RTE_Settings_AutoCapture_QuestExpire>Quest auto-expire: {0} days</RTE_Settings_AutoCapture_QuestExpire>
+  <RTE_Settings_AutoCapture_EventExpire>Event expire: {0:F1} days</RTE_Settings_AutoCapture_EventExpire>
+  <RTE_Settings_AutoCapture_DeleteDays>Auto-captured event delete after completion: {0:F1} days</RTE_Settings_AutoCapture_DeleteDays>
+  <RTE_Settings_AutoCapture_DeleteDays_Zero>    Setting to 0 days means immediately delete completed auto-captured events</RTE_Settings_AutoCapture_DeleteDays_Zero>
+  <RTE_Settings_AutoCapture_DeleteDays_Desc>    Auto-captured events will be deleted {0:F1} days after completion</RTE_Settings_AutoCapture_DeleteDays_Desc>
+  <RTE_Settings_AutoCapture_MergeDuplicates>Merge duplicate events</RTE_Settings_AutoCapture_MergeDuplicates>
+  <RTE_Settings_AutoCapture_MergeDuplicates_Desc>If titles match, merge into one entry and increase count</RTE_Settings_AutoCapture_MergeDuplicates_Desc>
+  <RTE_Settings_AutoCapture_AutoArchive>Auto-archive manually created completed items</RTE_Settings_AutoCapture_AutoArchive>
+  <RTE_Settings_AutoCapture_AutoArchive_Desc>Periodically clean up manually created completed entries (after 1 day)</RTE_Settings_AutoCapture_AutoArchive_Desc>
+  <RTE_Settings_AutoCapture_DiscoveredTypes>Discovered Event Types ({0})</RTE_Settings_AutoCapture_DiscoveredTypes>
+  <RTE_Settings_AutoCapture_NoTypes>No event types discovered. Please enter game and load a save, then refresh.</RTE_Settings_AutoCapture_NoTypes>
+  <RTE_Settings_AutoCapture_ResetDefaults>Reset to Defaults</RTE_Settings_AutoCapture_ResetDefaults>
+  
+  <!-- Settings - AI Historian -->
+  <RTE_Settings_AI_Title>AI Historian Settings</RTE_Settings_AI_Title>
+  <RTE_Settings_AI_Enable>Enable AI daily summary</RTE_Settings_AI_Enable>
+  <RTE_Settings_AI_Enable_Desc>Automatically generate colony development snapshots and summaries at midnight</RTE_Settings_AI_Enable_Desc>
+  <RTE_Settings_AI_Provider>AI Provider:</RTE_Settings_AI_Provider>
+  <RTE_Settings_AI_APIConfig>API Configuration</RTE_Settings_AI_APIConfig>
+  <RTE_Settings_AI_APIKey>API Key:</RTE_Settings_AI_APIKey>
+  <RTE_Settings_AI_APIURL>API URL (optional, default {0}):</RTE_Settings_AI_APIURL>
+  <RTE_Settings_AI_DefaultURL>Default: {0}</RTE_Settings_AI_DefaultURL>
+  <RTE_Settings_AI_ModelName>Model Name:</RTE_Settings_AI_ModelName>
+  <RTE_Settings_AI_TestConnection>Test Connection</RTE_Settings_AI_TestConnection>
+  <RTE_Settings_AI_TestSuccess>Connection successful! AI response: {0}</RTE_Settings_AI_TestSuccess>
+  <RTE_Settings_AI_TestFailed>Connection failed, please check logs.</RTE_Settings_AI_TestFailed>
+  <RTE_Settings_AI_SnapshotContent>Snapshot Content Settings</RTE_Settings_AI_SnapshotContent>
+  <RTE_Settings_AI_IncludeProjects>Include status board project info</RTE_Settings_AI_IncludeProjects>
+  <RTE_Settings_AI_IncludeProjects_Desc>Send in-progress and completed projects from status board to historian</RTE_Settings_AI_IncludeProjects_Desc>
+  <RTE_Settings_AI_IncludeResearch>Include research status</RTE_Settings_AI_IncludeResearch>
+  <RTE_Settings_AI_IncludeResearch_Desc>Send all research completion status to historian (within ~1000 chars)</RTE_Settings_AI_IncludeResearch_Desc>
+  <RTE_Settings_AI_IncludeUnfinished>  └─ Include unfinished research list</RTE_Settings_AI_IncludeUnfinished>
+  <RTE_Settings_AI_IncludeUnfinished_Desc>Also send unfinished research list (increases token consumption)</RTE_Settings_AI_IncludeUnfinished_Desc>
+  <RTE_Settings_AI_ContextInjection>Context Injection Settings</RTE_Settings_AI_ContextInjection>
+  <RTE_Settings_AI_InjectSnapshot>Auto-inject snapshots into AI dialogue</RTE_Settings_AI_InjectSnapshot>
+  <RTE_Settings_AI_InjectSnapshot_Desc>When enabled, AI will automatically see recent historical snapshot summaries during dialogue</RTE_Settings_AI_InjectSnapshot_Desc>
+  <RTE_Settings_AI_InjectDays>  └─ Injection days: {0:F1} days</RTE_Settings_AI_InjectDays>
+  <RTE_Settings_AI_InjectDays_Desc>      Currently will inject snapshot summaries from last {0:F1} days</RTE_Settings_AI_InjectDays_Desc>
+  <RTE_Settings_AI_Note>Note:\n1. System automatically takes colony snapshots at midnight (buildings, rooms, blueprints).\n2. AI compares with yesterday's snapshot, combines player action logs, project progress, research status, and events to generate brief summary.\n3. Summary results display in 'History Snapshots' tab, won't directly modify overview.\n4. If 'Auto-inject' is enabled, AI will automatically see recent history (with dates) during dialogue.\n5. Project info: Reads in-progress and completed projects from status board.\n6. Research status: Includes current research, completed research, optionally includes unfinished research (default off to save tokens).</RTE_Settings_AI_Note>
+  
+  <!-- Prompt Editor -->
+  <RTE_PromptEditor_CustomPrompt>Custom {0} Prompt</RTE_PromptEditor_CustomPrompt>
+  <RTE_PromptEditor_OverviewSummary>Overview Summary</RTE_PromptEditor_OverviewSummary>
+  <RTE_PromptEditor_DailySynthesis>Daily Snapshot</RTE_PromptEditor_DailySynthesis>
+  <RTE_PromptEditor_ProjectSummary>Project AI Summary</RTE_PromptEditor_ProjectSummary>
+  <RTE_PromptEditor_Tip>Tip: Leave empty to use default prompt. Supports multi-line text.\nAvailable variables: {overview}, {diffReport}, {actions}, {events}</RTE_PromptEditor_Tip>
+  <RTE_PromptEditor_RestoreDefault>Restore Default</RTE_PromptEditor_RestoreDefault>
+  <RTE_PromptEditor_ViewDefault>View Default</RTE_PromptEditor_ViewDefault>
+  <RTE_PromptEditor_Save>Save</RTE_PromptEditor_Save>
+  <RTE_PromptEditor_Cancel>Cancel</RTE_PromptEditor_Cancel>
+  <RTE_PromptEditor_Restored>Custom prompt cleared, will use default prompt</RTE_PromptEditor_Restored>
+  <RTE_PromptEditor_DefaultPrompt>Default Prompt:\n\n{0}</RTE_PromptEditor_DefaultPrompt>
+  <RTE_PromptEditor_Close>Close</RTE_PromptEditor_Close>
+  <RTE_PromptEditor_Saved>Prompt saved</RTE_PromptEditor_Saved>
+  <RTE_PromptEditor_UseDefault>Using default prompt</RTE_PromptEditor_UseDefault>
+  <RTE_PromptEditor_CharCount>Character count: {0}</RTE_PromptEditor_CharCount>
+  
+  <!-- Area Drawing Tool -->
+  <RTE_AreaDrawing_Label>Draw Area</RTE_AreaDrawing_Label>
+  <RTE_AreaDrawing_Desc>Drag mouse to draw or remove area cells</RTE_AreaDrawing_Desc>
+  <RTE_AreaDrawing_NoAreaSelected>No area selected</RTE_AreaDrawing_NoAreaSelected>
+  <RTE_AreaDrawing_SelectAreaFirst>Please select an area first</RTE_AreaDrawing_SelectAreaFirst>
+  
+  <!-- Task Editor - Additional -->
+  <RTE_TaskEditor_Progress_AutoCalc>Progress: {0} (Auto)</RTE_TaskEditor_Progress_AutoCalc>
+  <RTE_TaskEditor_Progress_Manual_Display>Progress: {0}</RTE_TaskEditor_Progress_Manual_Display>
+  <RTE_TaskEditor_ConstructionArea_Display>Construction Area: {0} ({1} blueprints)</RTE_TaskEditor_ConstructionArea_Display>
+  <RTE_TaskEditor_ConstructionArea_Deleted>Construction Area: (deleted)</RTE_TaskEditor_ConstructionArea_Deleted>
+  <RTE_TaskEditor_ConstructionArea_Name>{0} Construction Zone</RTE_TaskEditor_ConstructionArea_Name>
+  <RTE_TaskEditor_ConstructionArea_DefaultName>Construction Zone</RTE_TaskEditor_ConstructionArea_DefaultName>
+  <RTE_TaskEditor_CustomPromptButton>Custom Prompt</RTE_TaskEditor_CustomPromptButton>
+  
+  <!-- Area Editor - Additional -->
+  <RTE_AreaEditor_CellCount_Display>Cell Count: {0}</RTE_AreaEditor_CellCount_Display>
+  
+  <!-- Announcement Board - Additional -->
+  <RTE_Announcement_Status_Completed>[Completed]</RTE_Announcement_Status_Completed>
+  <RTE_Announcement_Status_Paused>[Paused]</RTE_Announcement_Status_Paused>
+  <RTE_Announcement_Status_Active>[In Progress]</RTE_Announcement_Status_Active>
+  <RTE_Announcement_Progress_Display> [Progress: {0}]</RTE_Announcement_Progress_Display>
+  <RTE_Announcement_AssignedTo_Display> [Assigned: {0}]</RTE_Announcement_AssignedTo_Display>
+  <RTE_Area_CellCount_Display>Cells: {0}</RTE_Area_CellCount_Display>
+  <RTE_Area_Status_Label>Status</RTE_Area_Status_Label>
+</LanguageData>

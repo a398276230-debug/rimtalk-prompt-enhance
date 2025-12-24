@@ -53,6 +53,11 @@ namespace RimTalkHealthEnhance
         public int RelatedQuestId = -1;        // 关联的任务ID (用于自动追踪状态)
         public bool IsAutoCaptured = false;    // 是否为自动捕获的事件
         
+        // === 施工区域相关 ===
+        public string BlueprintAreaId;         // 关联的施工区域ID
+        public int InitialBlueprintCount = 0;  // 初始蓝图数量
+        public bool AutoCalculateProgress = false; // 是否自动计算进度（(初始-剩余)/初始，0%→100%）
+        
         public int CreatedTick;
         public int CompletedTick;
         
@@ -75,6 +80,10 @@ namespace RimTalkHealthEnhance
             Scribe_Values.Look(ref DeadlineTicks, "deadlineTicks", -1);
             Scribe_Values.Look(ref RelatedQuestId, "relatedQuestId", -1);
             Scribe_Values.Look(ref IsAutoCaptured, "isAutoCaptured", false);
+            
+            Scribe_Values.Look(ref BlueprintAreaId, "blueprintAreaId");
+            Scribe_Values.Look(ref InitialBlueprintCount, "initialBlueprintCount", 0);
+            Scribe_Values.Look(ref AutoCalculateProgress, "autoCalculateProgress", false);
             
             Scribe_Values.Look(ref CreatedTick, "createdTick");
             Scribe_Values.Look(ref CompletedTick, "completedTick");

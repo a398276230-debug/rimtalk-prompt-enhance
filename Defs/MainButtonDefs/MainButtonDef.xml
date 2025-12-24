@@ -2,9 +2,10 @@
 <Defs>
   <MainButtonDef>
     <defName>RimTalk_Announcements</defName>
-    <label>通告</label>
-    <description>殖民地通告板，用于向AI发布任务和信息。</description>
+    <label>Announcements</label>
+    <description>Colony announcement board for posting tasks and information to AI.</description>
     <tabWindowClass>RimTalkHealthEnhance.MainTabWindow_Announcement</tabWindowClass>
+    <workerClass>RimTalkHealthEnhance.MainButtonWorker_Announcement</workerClass>
     <order>99</order>
   </MainButtonDef>
 </Defs>
