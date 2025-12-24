@@ -286,6 +286,16 @@ namespace RimTalkHealthEnhance
             var area = CustomAreas.FirstOrDefault(a => a.Id == id);
             if (area != null)
             {
+                // 如果是施工区域，更新关联的工程状态
+                if (area.IsConstructionArea)
+                {
+                    var project = Data.Announcements.FirstOrDefault(a => a.BlueprintAreaId == id);
+                    if (project != null)
+                    {
+                        project.BlueprintAreaId = null;
+                    }
+                }
+
                 CustomAreas.Remove(area);
                 DataVersion++;
             }

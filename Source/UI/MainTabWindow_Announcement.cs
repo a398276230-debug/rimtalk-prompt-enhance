@@ -682,25 +682,18 @@ namespace RimTalkHealthEnhance
             Widgets.BeginScrollView(listRect, ref areaScrollPos, viewRect);
             
             float curY = 0f;
-            var areasToRemove = new List<string>();
             
             foreach (var area in manager.CustomAreas)
             {
                 Rect itemRect = new Rect(0, curY, viewRect.width, itemHeight);
-                DrawCustomAreaItem(itemRect, area, manager, areasToRemove);
+                DrawCustomAreaItem(itemRect, area, manager);
                 curY += itemHeight + gap;
             }
             
             Widgets.EndScrollView();
-            
-            // 处理删除
-            foreach (var id in areasToRemove)
-            {
-                manager.DeleteCustomArea(id);
-            }
         }
         
-        private void DrawCustomAreaItem(Rect rect, RimTalkHealthEnhance.Models.CustomNamedArea area, ColonyAnnouncementManager manager, List<string> areasToRemove)
+        private void DrawCustomAreaItem(Rect rect, RimTalkHealthEnhance.Models.CustomNamedArea area, ColonyAnnouncementManager manager)
         {
             Widgets.DrawOptionBackground(rect, false);
             if (Mouse.IsOver(rect)) Widgets.DrawHighlight(rect);
@@ -756,9 +749,14 @@ namespace RimTalkHealthEnhance
             // 删除按钮
             if (Widgets.ButtonText(new Rect(btnRect.x + (btnW + gap) * 3, btnY, btnW, 24f), "RTE_Announcement_Delete".Translate()))
             {
+                // 捕获 ID 以避免闭包问题
+                string areaId = area.Id;
                 Find.WindowStack.Add(Dialog_MessageBox.CreateConfirmation(
-                    $"确定要删除区域 \"{area.Label}\" 吗？",
-                    () => areasToRemove.Add(area.Id)
+                    "RTE_Area_ConfirmDelete".Translate(area.Label),
+                    () => 
+                    {
+                        manager.DeleteCustomArea(areaId);
+                    }
                 ));
             }
         }
