@@ -198,8 +198,8 @@ namespace RimTalkHealthEnhance
                 // 进度显示
                 bool hasArea = !string.IsNullOrEmpty(announcement.BlueprintAreaId);
                 string progressLabel = hasArea && announcement.AutoCalculateProgress 
-                    ? "RTE_TaskEditor_Progress_AutoCalc".Translate(editProgress) 
-                    : "RTE_TaskEditor_Progress_Manual_Display".Translate(editProgress);
+                    ? "RTE_TaskEditor_Progress_AutoCalc".Translate(editProgress.ToStringPercent()) 
+                    : "RTE_TaskEditor_Progress_Manual_Display".Translate(editProgress.ToStringPercent());
                 
                 Widgets.Label(listing.GetRect(24f), progressLabel);
                 

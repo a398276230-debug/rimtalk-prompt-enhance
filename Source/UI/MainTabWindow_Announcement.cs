@@ -501,7 +501,7 @@ namespace RimTalkHealthEnhance
             string desc = item.Description;
             string extra = "";
             if (item.Category == AnnouncementCategory.Project && item.Progress > 0)
-                extra += "RTE_Announcement_Progress_Display".Translate(item.Progress);
+                extra += "RTE_Announcement_Progress_Display".Translate(item.Progress.ToStringPercent());
             if (!string.IsNullOrEmpty(item.AssignedPawnName))
                 extra += "RTE_Announcement_AssignedTo_Display".Translate(item.AssignedPawnName);
             
@@ -600,7 +600,7 @@ namespace RimTalkHealthEnhance
             
             string extra = "";
             if (item.Category == AnnouncementCategory.Project && item.Progress > 0)
-                extra += "RTE_Announcement_Progress_Display".Translate(item.Progress);
+                extra += "RTE_Announcement_Progress_Display".Translate(item.Progress.ToStringPercent());
             if (!string.IsNullOrEmpty(item.AssignedPawnName))
                 extra += "RTE_Announcement_AssignedTo_Display".Translate(item.AssignedPawnName);
                 
