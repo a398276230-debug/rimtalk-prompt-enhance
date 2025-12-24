@@ -20,11 +20,6 @@ namespace RimTalkHealthEnhance
         public RimTalkHealthEnhanceMod(ModContentPack content) : base(content)
         {
             Settings = GetSettings<HealthEnhanceSettings>();
-            
-            var harmony = new Harmony("ruaji.rimtalkpromptenhance");
-            harmony.PatchAll();
-            
-            Log.Message("[RimTalk Enhanced Prompt] Harmony patches applied successfully.");
         }
 
         public override string SettingsCategory() => "RimTalk 增强提示词";

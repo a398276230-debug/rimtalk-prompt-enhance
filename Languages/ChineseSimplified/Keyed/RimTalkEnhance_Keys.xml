@@ -264,6 +264,11 @@
   <RTE_Settings_AI_ContextInjection>上下文注入设置</RTE_Settings_AI_ContextInjection>
   <RTE_Settings_AI_InjectSnapshot>自动注入快照到 AI 对话</RTE_Settings_AI_InjectSnapshot>
   <RTE_Settings_AI_InjectSnapshot_Desc>启用后，AI 在对话时会自动看到最近的历史快照总结</RTE_Settings_AI_InjectSnapshot_Desc>
+  <RTE_Settings_AI_InjectionMode>  └─ 注入位置</RTE_Settings_AI_InjectionMode>
+  <RTE_Settings_AI_InjectionMode_Context>Context（系统上下文）</RTE_Settings_AI_InjectionMode_Context>
+  <RTE_Settings_AI_InjectionMode_Prompt>Prompt（对话提示词）</RTE_Settings_AI_InjectionMode_Prompt>
+  <RTE_Settings_AI_InjectionMode_Context_Desc>      Context模式：快照会注入到系统上下文中，所有小人都能看到。适合让小人讨论殖民地的发展历史。</RTE_Settings_AI_InjectionMode_Context_Desc>
+  <RTE_Settings_AI_InjectionMode_Prompt_Desc>      Prompt模式：快照会注入到对话提示词中，只影响当前对话。适合让AI了解背景，但不让小人直接讨论。</RTE_Settings_AI_InjectionMode_Prompt_Desc>
   <RTE_Settings_AI_InjectDays>  └─ 注入天数: {0:F1} 天</RTE_Settings_AI_InjectDays>
   <RTE_Settings_AI_InjectDays_Desc>      当前将注入最近 {0:F1} 天的快照总结</RTE_Settings_AI_InjectDays_Desc>
   <RTE_Settings_AI_Note>说明：\n1. 每日 0 点系统会自动拍摄殖民地快照（建筑、房间、蓝图）。\n2. AI 将对比昨日快照，结合玩家操作日志、工程进度、科技状态和事件，生成一段简短的总结。\n3. 总结结果将显示在'每日快照'标签页中，不会直接修改概况。\n4. 如果启用'自动注入'，AI 在对话时会自动看到最近的历史记录（含日期）。\n5. 工程信息：从状况板读取进行中和已完成的工程项目。\n6. 科技状态：包含当前研究、已完成科技，可选包含未完成科技（默认关闭以节省token）。</RTE_Settings_AI_Note>

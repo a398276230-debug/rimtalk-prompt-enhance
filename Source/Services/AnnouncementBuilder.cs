@@ -44,7 +44,9 @@ namespace RimTalkHealthEnhance
             }
 
             // === 3. AI 史官总结 ===
-            if (settings.EnableAISynthesis && settings.InjectSnapshotToContext && manager.Data.DailySnapshots.Count > 0)
+            if (settings.EnableAISynthesis && settings.InjectSnapshotToContext 
+                && settings.SnapshotInjectionTarget == SnapshotInjectionMode.Context
+                && manager.Data.DailySnapshots.Count > 0)
             {
                 // 获取最近 N 天的快照
                 int currentDay = GenDate.DaysPassed;

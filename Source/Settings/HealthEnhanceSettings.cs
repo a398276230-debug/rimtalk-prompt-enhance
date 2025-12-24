@@ -16,6 +16,12 @@ namespace RimTalkHealthEnhance
         Custom // OpenAI Compatible
     }
 
+    public enum SnapshotInjectionMode
+    {
+        Context,  // 注入到 Context（系统上下文）
+        Prompt    // 注入到 Prompt（对话提示词）
+    }
+
     /// <summary>
     /// Settings for RimTalk Enhancement (Health & Items)
     /// </summary>
@@ -90,6 +96,7 @@ namespace RimTalkHealthEnhance
         // === AI Synthesis Settings ===
         public bool EnableAISynthesis = false;
         public bool InjectSnapshotToContext = true;      // 是否将快照注入到 AI context
+        public SnapshotInjectionMode SnapshotInjectionTarget = SnapshotInjectionMode.Context; // 注入位置
         public float SnapshotInjectDays = 1.0f;          // 注入多少天的快照（0.5-7天）
         public bool IncludeProjectsInSnapshot = true;    // 将状况板工程信息发给史官
         public bool IncludeResearchInSnapshot = false;   // 将科技状态发给史官（默认关闭）
@@ -194,6 +201,7 @@ namespace RimTalkHealthEnhance
 
             Scribe_Values.Look(ref EnableAISynthesis, "enableAISynthesis", false);
             Scribe_Values.Look(ref InjectSnapshotToContext, "injectSnapshotToContext", true);
+            Scribe_Values.Look(ref SnapshotInjectionTarget, "snapshotInjectionTarget", SnapshotInjectionMode.Context);
             Scribe_Values.Look(ref SnapshotInjectDays, "snapshotInjectDays", 1.0f);
             Scribe_Values.Look(ref IncludeProjectsInSnapshot, "includeProjectsInSnapshot", true);
             Scribe_Values.Look(ref IncludeResearchInSnapshot, "includeResearchInSnapshot", false);
@@ -887,6 +895,34 @@ namespace RimTalkHealthEnhance
                 
                 if (InjectSnapshotToContext)
                 {
+                    // 注入位置选择
+                    Rect modeRect = listing.GetRect(30f);
+                    Widgets.Label(modeRect.LeftHalf(), "RTE_Settings_AI_InjectionMode".Translate());
+                    if (Widgets.ButtonText(modeRect.RightHalf(), 
+                        SnapshotInjectionTarget == SnapshotInjectionMode.Context ? "RTE_Settings_AI_InjectionMode_Context".Translate() : "RTE_Settings_AI_InjectionMode_Prompt".Translate()))
+                    {
+                        List<FloatMenuOption> options = new List<FloatMenuOption>
+                        {
+                            new FloatMenuOption("RTE_Settings_AI_InjectionMode_Context".Translate(), () => SnapshotInjectionTarget = SnapshotInjectionMode.Context),
+                            new FloatMenuOption("RTE_Settings_AI_InjectionMode_Prompt".Translate(), () => SnapshotInjectionTarget = SnapshotInjectionMode.Prompt)
+                        };
+                        Find.WindowStack.Add(new FloatMenu(options));
+                    }
+                    
+                    // 说明文字
+                    Text.Font = GameFont.Tiny;
+                    GUI.color = Color.gray;
+                    if (SnapshotInjectionTarget == SnapshotInjectionMode.Context)
+                    {
+                        Widgets.Label(listing.GetRect(36f), "RTE_Settings_AI_InjectionMode_Context_Desc".Translate());
+                    }
+                    else
+                    {
+                        Widgets.Label(listing.GetRect(36f), "RTE_Settings_AI_InjectionMode_Prompt_Desc".Translate());
+                    }
+                    GUI.color = Color.white;
+                    Text.Font = GameFont.Small;
+
                     Widgets.Label(listing.GetRect(22f), "RTE_Settings_AI_InjectDays".Translate(SnapshotInjectDays));
                     SnapshotInjectDays = listing.Slider(SnapshotInjectDays, 0.5f, 7f);
                     

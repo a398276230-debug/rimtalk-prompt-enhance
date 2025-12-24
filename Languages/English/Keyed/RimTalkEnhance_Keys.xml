@@ -264,6 +264,11 @@
   <RTE_Settings_AI_ContextInjection>Context Injection Settings</RTE_Settings_AI_ContextInjection>
   <RTE_Settings_AI_InjectSnapshot>Auto-inject snapshots into AI dialogue</RTE_Settings_AI_InjectSnapshot>
   <RTE_Settings_AI_InjectSnapshot_Desc>When enabled, AI will automatically see recent historical snapshot summaries during dialogue</RTE_Settings_AI_InjectSnapshot_Desc>
+  <RTE_Settings_AI_InjectionMode>  └─ Injection Mode</RTE_Settings_AI_InjectionMode>
+  <RTE_Settings_AI_InjectionMode_Context>Context (System Context)</RTE_Settings_AI_InjectionMode_Context>
+  <RTE_Settings_AI_InjectionMode_Prompt>Prompt (Dialogue Prompt)</RTE_Settings_AI_InjectionMode_Prompt>
+  <RTE_Settings_AI_InjectionMode_Context_Desc>      Context Mode: Snapshots are injected into system context, visible to all pawns. Suitable for pawns discussing colony history.</RTE_Settings_AI_InjectionMode_Context_Desc>
+  <RTE_Settings_AI_InjectionMode_Prompt_Desc>      Prompt Mode: Snapshots are injected into dialogue prompt, only affecting current conversation. Suitable for giving AI background info without pawns discussing it directly.</RTE_Settings_AI_InjectionMode_Prompt_Desc>
   <RTE_Settings_AI_InjectDays>  └─ Injection days: {0:F1} days</RTE_Settings_AI_InjectDays>
   <RTE_Settings_AI_InjectDays_Desc>      Currently will inject snapshot summaries from last {0:F1} days</RTE_Settings_AI_InjectDays_Desc>
   <RTE_Settings_AI_Note>Note:\n1. System automatically takes colony snapshots at midnight (buildings, rooms, blueprints).\n2. AI compares with yesterday's snapshot, combines player action logs, project progress, research status, and events to generate brief summary.\n3. Summary results display in 'History Snapshots' tab, won't directly modify overview.\n4. If 'Auto-inject' is enabled, AI will automatically see recent history (with dates) during dialogue.\n5. Project info: Reads in-progress and completed projects from status board.\n6. Research status: Includes current research, completed research, optionally includes unfinished research (default off to save tokens).</RTE_Settings_AI_Note>
