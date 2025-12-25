@@ -332,4 +332,17 @@
   <RTE_Announcement_AssignedTo_Display> [负责人: {0}]</RTE_Announcement_AssignedTo_Display>
   <RTE_Area_CellCount_Display>格子数: {0}</RTE_Area_CellCount_Display>
   <RTE_Area_Status_Label>状态</RTE_Area_Status_Label>
+  <!-- 殖民地中心点 -->
+  <RTE_ColonyCenter_Tooltip>显示/调整殖民地中心点</RTE_ColonyCenter_Tooltip>
+  <RTE_ColonyCenter_Title>殖民地中心点调整</RTE_ColonyCenter_Title>
+  <RTE_ColonyCenter_AutoCenter>自动中心：({0}, {1})</RTE_ColonyCenter_AutoCenter>
+  <RTE_ColonyCenter_OffsetX>X轴偏移：{0}</RTE_ColonyCenter_OffsetX>
+  <RTE_ColonyCenter_OffsetZ>Z轴偏移：{0}</RTE_ColonyCenter_OffsetZ>
+  <RTE_ColonyCenter_FinalCenter>最终中心：({0}, {1})</RTE_ColonyCenter_FinalCenter>
+  <RTE_ColonyCenter_Reset>重置偏移</RTE_ColonyCenter_Reset>
+  <RTE_ColonyCenter_Apply>应用</RTE_ColonyCenter_Apply>
+  <RTE_ColonyCenter_ApplyClose>应用并关闭</RTE_ColonyCenter_ApplyClose>
+  <RTE_ColonyCenter_Hint>提示：调整偏移量时，地图上的黄色标记会实时移动。\n即使居住区扩展，偏移量也会自动应用到新的自动中心点。</RTE_ColonyCenter_Hint>
+  <RTE_ColonyCenter_Updated>殖民地中心点偏移已更新</RTE_ColonyCenter_Updated>
+
 </LanguageData>

@@ -332,4 +332,17 @@
   <RTE_Announcement_AssignedTo_Display> [Assigned: {0}]</RTE_Announcement_AssignedTo_Display>
   <RTE_Area_CellCount_Display>Cells: {0}</RTE_Area_CellCount_Display>
   <RTE_Area_Status_Label>Status</RTE_Area_Status_Label>
+  <!-- Colony Center Point -->
+  <RTE_ColonyCenter_Tooltip>Show/Adjust Colony Center Point</RTE_ColonyCenter_Tooltip>
+  <RTE_ColonyCenter_Title>Colony Center Point Adjustment</RTE_ColonyCenter_Title>
+  <RTE_ColonyCenter_AutoCenter>Auto Center: ({0}, {1})</RTE_ColonyCenter_AutoCenter>
+  <RTE_ColonyCenter_OffsetX>X Offset: {0}</RTE_ColonyCenter_OffsetX>
+  <RTE_ColonyCenter_OffsetZ>Z Offset: {0}</RTE_ColonyCenter_OffsetZ>
+  <RTE_ColonyCenter_FinalCenter>Final Center: ({0}, {1})</RTE_ColonyCenter_FinalCenter>
+  <RTE_ColonyCenter_Reset>Reset Offset</RTE_ColonyCenter_Reset>
+  <RTE_ColonyCenter_Apply>Apply</RTE_ColonyCenter_Apply>
+  <RTE_ColonyCenter_ApplyClose>Apply & Close</RTE_ColonyCenter_ApplyClose>
+  <RTE_ColonyCenter_Hint>Hint: The yellow marker on the map will move in real-time as you adjust the offset.\nEven if the home area expands, the offset will automatically apply to the new auto center.</RTE_ColonyCenter_Hint>
+  <RTE_ColonyCenter_Updated>Colony center offset updated</RTE_ColonyCenter_Updated>
+
 </LanguageData>

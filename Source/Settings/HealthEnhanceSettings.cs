@@ -90,6 +90,7 @@ namespace RimTalkHealthEnhance
         public bool ShowAreaInfo = true;                 // 显示 Area 信息
         public bool EnableTownCenterDetection = false;   // 启用城镇核心检测
         public int TownCenterRadius = 20;                // 城镇核心半径
+        public IntVec3 ColonyCenterOffset = IntVec3.Zero; // 殖民地中心点偏移
         
         public bool EnableGlobalLayout = false;          // 启用全局布局信息
         public int MinRoomSize = 9;                      // 最小房间面积
@@ -206,6 +207,7 @@ namespace RimTalkHealthEnhance
             Scribe_Values.Look(ref ShowAreaInfo, "showAreaInfo", true);
             Scribe_Values.Look(ref EnableTownCenterDetection, "enableTownCenterDetection", false);
             Scribe_Values.Look(ref TownCenterRadius, "townCenterRadius", 20);
+            Scribe_Values.Look(ref ColonyCenterOffset, "colonyCenterOffset", IntVec3.Zero);
             
             Scribe_Values.Look(ref EnableGlobalLayout, "enableGlobalLayout", false);
             Scribe_Values.Look(ref MinRoomSize, "minRoomSize", 9);

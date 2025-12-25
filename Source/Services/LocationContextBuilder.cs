@@ -18,6 +18,25 @@ namespace RimTalkHealthEnhance
         private const int UPDATE_INTERVAL = 420; // 7秒 = 420 ticks (跟随 RimTalk 的 TalkInterval)
 
         /// <summary>
+        /// 获取自动计算的中心点（不含偏移）
+        /// </summary>
+        public static IntVec3 GetAutoCenter(Map map)
+        {
+            UpdateHomeAreaCenterIfNeeded(map);
+            return _homeAreaCenter;
+        }
+
+        /// <summary>
+        /// 获取最终中心点（含偏移）
+        /// </summary>
+        public static IntVec3 GetEffectiveCenter(Map map)
+        {
+            IntVec3 autoCenter = GetAutoCenter(map);
+            var settings = RimTalkHealthEnhanceMod.Settings;
+            return autoCenter + settings.ColonyCenterOffset;
+        }
+
+        /// <summary>
         /// 获取 Pawn 的相对位置信息
         /// </summary>
         public static string GetRelativeLocation(Pawn pawn)
@@ -43,8 +62,9 @@ namespace RimTalkHealthEnhance
             // 判断城镇区域
             string zone = GetTownZone(pawn, position);
 
-            // 判断方位
-            string direction = GetRelativeDirection(position, _homeAreaCenter);
+            // 判断方位（使用最终中心点，含偏移）
+            IntVec3 effectiveCenter = GetEffectiveCenter(pawn.Map);
+            string direction = GetRelativeDirection(position, effectiveCenter);
 
             // 检测 Area 信息
             string areaInfo = null;
@@ -276,10 +296,11 @@ namespace RimTalkHealthEnhance
             // 8格都在居住区内
             if (neighborCount == 8)
             {
-                // 可选：检测是否是核心区
+                // 可选：检测是否是核心区（使用最终中心点）
                 if (settings.EnableTownCenterDetection)
                 {
-                    float distanceToCenter = position.DistanceTo(_homeAreaCenter);
+                    IntVec3 effectiveCenter = GetEffectiveCenter(pawn.Map);
+                    float distanceToCenter = position.DistanceTo(effectiveCenter);
                     if (distanceToCenter <= settings.TownCenterRadius)
                         return "Town Center";
                 }
@@ -362,7 +383,7 @@ namespace RimTalkHealthEnhance
         }
 
         /// <summary>
-        /// 地图切换时清空缓存
+        /// 地图切换时清空缓存（偏移量修改后也需要调用）
         /// </summary>
         public static void OnMapChanged()
         {
