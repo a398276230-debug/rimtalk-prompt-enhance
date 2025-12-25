@@ -324,11 +324,21 @@ namespace RimTalkHealthEnhance
             if (room == null) return "Room";
             try
             {
+                // 优先使用 GetRoomRoleLabel()，它会返回带主人名字的完整标签（如"yaowen的卧室"）
+                var method = room.GetType().GetMethod("GetRoomRoleLabel");
+                if (method != null)
+                {
+                    string roleLabel = method.Invoke(room, null) as string;
+                    if (!string.IsNullOrEmpty(roleLabel))
+                        return roleLabel;
+                }
+                
+                // 备用方案：使用 LabelCap
                 var labelCapProp = room.GetType().GetProperty("LabelCap");
                 if (labelCapProp != null)
                 {
                     string labelCap = labelCapProp.GetValue(room) as string;
-                    if (!string.IsNullOrEmpty(labelCap) && labelCap != room.Role?.label)
+                    if (!string.IsNullOrEmpty(labelCap))
                         return labelCap;
                 }
             }
