@@ -119,7 +119,7 @@ namespace RimTalkHealthEnhance.UI
         }
         
         /// <summary>
-        /// 绘制区域高亮覆盖层
+        /// 绘制区域高亮覆盖层 - 优化版本，使用批量绘制
         /// </summary>
         private void DrawAreaOverlay()
         {
@@ -130,24 +130,37 @@ namespace RimTalkHealthEnhance.UI
             
             // 创建带颜色的材质
             Color overlayColor = currentArea.Color;
-            overlayColor.a = 0.5f; // 半透明
+            overlayColor.a = 0.33f; // 降低透明度，减少视觉干扰
             
             Material coloredMaterial = SolidColorMaterials.SimpleSolidColorMaterial(overlayColor);
             
-            // 绘制所有区域格子
+            // 优化：使用 CellBoolDrawer 批量绘制（性能更好）
+            // 但由于 CellBoolDrawer 需要持久化，这里使用简化的批量绘制
+            
+            // 只绘制可见区域内的格子
+            CellRect viewRect = Find.CameraDriver.CurrentViewRect;
+            viewRect = viewRect.ExpandedBy(5); // 稍微扩展边界
+            
+            int drawnCount = 0;
+            const int MAX_DRAW_PER_FRAME = 500; // 限制每帧最多绘制500个格子
+            
             foreach (var cell in currentArea.ActiveCells)
             {
-                if (cell.InBounds(map))
-                {
-                    Vector3 drawPos = cell.ToVector3ShiftedWithAltitude(AltitudeLayer.MetaOverlays);
-                    Graphics.DrawMesh(
-                        MeshPool.plane10,
-                        drawPos,
-                        Quaternion.identity,
-                        coloredMaterial,
-                        0
-                    );
-                }
+                // 只绘制可见区域内的格子
+                if (!viewRect.Contains(cell)) continue;
+                if (!cell.InBounds(map)) continue;
+                
+                Vector3 drawPos = cell.ToVector3ShiftedWithAltitude(AltitudeLayer.MetaOverlays);
+                Graphics.DrawMesh(
+                    MeshPool.plane10,
+                    drawPos,
+                    Quaternion.identity,
+                    coloredMaterial,
+                    0
+                );
+                
+                drawnCount++;
+                if (drawnCount >= MAX_DRAW_PER_FRAME) break; // 防止超大区域卡顿
             }
         }
         

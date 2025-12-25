@@ -673,21 +673,33 @@ namespace RimTalkHealthEnhance
                 return;
             }
             
-            // 计算总高度
+            // 虚拟化渲染 - 只绘制可见区域内的项
             float itemHeight = 60f;
             float gap = 5f;
             float totalHeight = manager.CustomAreas.Count * (itemHeight + gap);
+            float listWidth = listRect.width - 16f; // 减去滚动条宽度
             
-            Rect viewRect = new Rect(0, 0, listRect.width - 16f, totalHeight);
+            Rect viewRect = new Rect(0, 0, listWidth, totalHeight);
             Widgets.BeginScrollView(listRect, ref areaScrollPos, viewRect);
             
-            float curY = 0f;
+            // 虚拟化：只渲染可见区域
+            float scrollY = areaScrollPos.y;
+            float viewHeight = listRect.height;
+            float currentY = 0f;
             
             foreach (var area in manager.CustomAreas)
             {
-                Rect itemRect = new Rect(0, curY, viewRect.width, itemHeight);
-                DrawCustomAreaItem(itemRect, area, manager);
-                curY += itemHeight + gap;
+                // 只绘制可见区域内的项
+                if (currentY + itemHeight >= scrollY && currentY <= scrollY + viewHeight)
+                {
+                    Rect itemRect = new Rect(0, currentY, listWidth, itemHeight);
+                    DrawCustomAreaItem(itemRect, area, manager);
+                }
+                
+                currentY += itemHeight + gap;
+                
+                // 提前退出优化：如果已经超出可视区域，不再继续遍历
+                if (currentY > scrollY + viewHeight) break;
             }
             
             Widgets.EndScrollView();

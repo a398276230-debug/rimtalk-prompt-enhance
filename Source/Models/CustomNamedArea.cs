@@ -18,18 +18,22 @@ namespace RimTalkHealthEnhance.Models
         public bool IsConstructionArea = false;  // 是否为施工区域（用于位置显示后缀）
         
         private Map map;
+        private int cachedCellCount = -1; // 缓存格子数量，-1表示需要重新计算
+        private IntVec3 cachedCenter = IntVec3.Invalid; // 缓存中心点
         
         public Map Map => map;
         public int MapID => map?.uniqueID ?? -1;
         public bool IsEnabled => IsActive;
         
         /// <summary>
-        /// 计算区域中心点
+        /// 计算区域中心点（带缓存）
         /// </summary>
         public IntVec3 Center
         {
             get
             {
+                if (cachedCenter != IntVec3.Invalid) return cachedCenter;
+                
                 if (Cells == null || map == null) return IntVec3.Invalid;
                 
                 long sumX = 0, sumZ = 0;
@@ -43,7 +47,8 @@ namespace RimTalkHealthEnhance.Models
                 }
                 
                 if (count == 0) return IntVec3.Invalid;
-                return new IntVec3((int)(sumX / count), 0, (int)(sumZ / count));
+                cachedCenter = new IntVec3((int)(sumX / count), 0, (int)(sumZ / count));
+                return cachedCenter;
             }
         }
         
@@ -70,7 +75,10 @@ namespace RimTalkHealthEnhance.Models
             set
             {
                 if (Cells != null)
+                {
                     Cells[c] = value;
+                    InvalidateCache(); // 修改时使缓存失效
+                }
             }
         }
         
@@ -92,19 +100,32 @@ namespace RimTalkHealthEnhance.Models
         }
         
         /// <summary>
-        /// 获取区域内的格子数量
+        /// 获取区域内的格子数量（带缓存，性能优化）
         /// </summary>
         public int CellCount
         {
             get
             {
+                if (cachedCellCount >= 0) return cachedCellCount;
+                
                 if (Cells == null) return 0;
                 
                 int count = 0;
                 foreach (var cell in ActiveCells)
                     count++;
+                
+                cachedCellCount = count;
                 return count;
             }
+        }
+        
+        /// <summary>
+        /// 使缓存失效（在修改区域时调用）
+        /// </summary>
+        private void InvalidateCache()
+        {
+            cachedCellCount = -1;
+            cachedCenter = IntVec3.Invalid;
         }
         
         /// <summary>
@@ -116,6 +137,7 @@ namespace RimTalkHealthEnhance.Models
             {
                 foreach (var cell in map.AllCells)
                     Cells[cell] = false;
+                InvalidateCache();
             }
         }
         
@@ -131,6 +153,7 @@ namespace RimTalkHealthEnhance.Models
                 if (cell.InBounds(map))
                     Cells[cell] = value;
             }
+            InvalidateCache();
         }
         
         /// <summary>
@@ -143,6 +166,8 @@ namespace RimTalkHealthEnhance.Models
             // 如果 BoolGrid 为空，重新创建
             if (Cells == null && newMap != null)
                 Cells = new BoolGrid(newMap);
+            
+            InvalidateCache(); // 重新关联地图后使缓存失效
         }
         
         public void ExposeData()
