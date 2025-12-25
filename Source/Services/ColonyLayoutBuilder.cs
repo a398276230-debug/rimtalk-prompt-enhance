@@ -75,8 +75,16 @@ namespace RimTalkHealthEnhance
             var sb = new StringBuilder();
             sb.AppendLine("=== Colony Layout ===");
 
-            // 计算殖民地中心
-            IntVec3 center = CalculateHomeAreaCenter(map);
+            // 显示殖民地大小（居住区格数）
+            var homeArea = map.areaManager.Home;
+            if (homeArea != null && homeArea.TrueCount > 0)
+            {
+                sb.AppendLine($"Colony Size: {homeArea.TrueCount:N0} cells");
+                sb.AppendLine();
+            }
+
+            // 计算殖民地中心（使用 LocationContextBuilder 获取含偏移的中心点）
+            IntVec3 center = LocationContextBuilder.GetEffectiveCenter(map);
 
             // 收集所有房间和区域
             var items = new List<LayoutItem>();
@@ -226,7 +234,7 @@ namespace RimTalkHealthEnhance
                     sb.AppendLine($"{group.Key} Zone ({group.Count()} areas):");
                     foreach (var item in group.OrderBy(x => x.Distance))
                     {
-                        sb.AppendLine($"  - {item.Name} ({item.Size} cells, {item.Distance} cells {item.Direction.ToLower()} of center)");
+                        sb.AppendLine($"  - {item.Name} ({item.Size} cells, {item.Distance} cells {item.Direction.ToLower()} of colony (Town))");
                     }
                     sb.AppendLine();
                 }
@@ -240,7 +248,7 @@ namespace RimTalkHealthEnhance
                     sb.AppendLine($"{group.Key}s:");
                     foreach (var item in group.OrderBy(x => x.Distance))
                     {
-                        sb.AppendLine($"  - {item.Name} ({item.Size} cells, {item.Direction} of center)");
+                        sb.AppendLine($"  - {item.Name} ({item.Size} cells, {item.Direction} of colony (Town))");
                     }
                     sb.AppendLine();
                 }
@@ -258,29 +266,6 @@ namespace RimTalkHealthEnhance
             public string Direction;
             public int Distance;
         }
-
-        // 复用 LocationContextBuilder 的逻辑
-        private static IntVec3 CalculateHomeAreaCenter(Map map)
-        {
-            var homeArea = map.areaManager.Home;
-            if (homeArea == null || homeArea.TrueCount == 0)
-                return map.Center;
-
-            long sumX = 0, sumZ = 0;
-            int count = 0;
-
-            foreach (var cell in homeArea.ActiveCells)
-            {
-                sumX += cell.x;
-                sumZ += cell.z;
-                count++;
-                if (count > 5000 && count % 10 != 0) continue;
-            }
-
-            if (count == 0) return map.Center;
-            return new IntVec3((int)(sumX / count), 0, (int)(sumZ / count));
-        }
-
         private static string GetRelativeDirection(IntVec3 position, IntVec3 center)
         {
             int dx = position.x - center.x;
