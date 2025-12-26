@@ -55,6 +55,13 @@ namespace RimTalkHealthEnhance
                     Data.LastSynthesisDay = GenDate.DaysPassed;
                     Log.Message($"[RimTalk Enhance] Initialized baseline snapshot. Day: {Data.LastSynthesisDay}");
                 }
+                
+                // 订阅当前地图的 Lord 事件
+                var map = Find.CurrentMap;
+                if (map != null)
+                {
+                    LordMonitorService.SubscribeToMap(map);
+                }
             }
             
             int currentTick = Find.TickManager.TicksGame;
@@ -94,6 +101,13 @@ namespace RimTalkHealthEnhance
             
             // 处理延迟的袭击初始化
             ProcessPendingRaidInitializations(currentTick);
+            
+            // 定期更新 Lord 监控的初始计数（每60 ticks = 1秒检查一次）
+            // 这样可以持续追踪空投/边缘生成的敌人
+            if (currentTick % 60 == 0)
+            {
+                LordMonitorService.PeriodicUpdate();
+            }
             
             // 每日 0 点触发 AI 总结
             // 使用天数判断，避免跳过时间导致错过触发
@@ -410,7 +424,7 @@ namespace RimTalkHealthEnhance
                     
                     if (map != null)
                     {
-                        int count = RaidTrackingService.CountHostileHumanoids(map);
+                        int count = RaidTrackingService.CountHostileThreats(map);
                         
                         // 如果已有初始计数，说明是重新计数（有新增敌人），取较大值
                         if (raidEvent.RaidInitialCount > 0)
@@ -464,7 +478,7 @@ namespace RimTalkHealthEnhance
             if (map == null) return;
             
             // 使用 RaidTrackingService 的计数方法，确保逻辑一致
-            int hostileCount = RaidTrackingService.CountHostileHumanoids(map);
+            int hostileCount = RaidTrackingService.CountHostileThreats(map);
             
             Log.Message($"[RimTalk Enhance] CheckRaidCompletion: Hostile count = {hostileCount}");
             
@@ -499,7 +513,7 @@ namespace RimTalkHealthEnhance
             if (map == null) return;
             
             // 使用 RaidTrackingService 的计数方法，确保逻辑一致
-            int hostileCount = RaidTrackingService.CountHostileHumanoids(map);
+            int hostileCount = RaidTrackingService.CountHostileThreats(map);
             
             // 如果敌对单位从有变成没有，触发完成检测
             if (_lastHostileCount > 0 && hostileCount == 0)

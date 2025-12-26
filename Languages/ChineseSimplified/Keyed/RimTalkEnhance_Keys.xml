@@ -281,6 +281,16 @@
   <RTE_Settings_AutoCapture_NoTypes>未发现事件类型。请进入游戏加载存档后刷新。</RTE_Settings_AutoCapture_NoTypes>
   <RTE_Settings_AutoCapture_ResetDefaults>重置为默认</RTE_Settings_AutoCapture_ResetDefaults>
   
+  <!-- 环境事件捕获 -->
+  <RTE_Settings_AutoCapture_EnvironmentTitle>━━ 环境事件 ━━</RTE_Settings_AutoCapture_EnvironmentTitle>
+  <RTE_Settings_AutoCapture_Weather>捕获天气变化</RTE_Settings_AutoCapture_Weather>
+  <RTE_Settings_AutoCapture_Weather_Desc>自动捕获天气变化事件（晴天、下雨、暴风雪等）</RTE_Settings_AutoCapture_Weather_Desc>
+  <RTE_Settings_AutoCapture_WeatherExpire>天气事件过期时间: {0} 小时</RTE_Settings_AutoCapture_WeatherExpire>
+  <RTE_Settings_AutoCapture_GameConditions>捕获游戏状况</RTE_Settings_AutoCapture_GameConditions>
+  <RTE_Settings_AutoCapture_GameConditions_Desc>自动捕获游戏状况事件（热浪、寒潮、毒雾、日食等）</RTE_Settings_AutoCapture_GameConditions_Desc>
+  <RTE_Settings_AutoCapture_ConditionExpire>状况事件过期时间: {0} 小时</RTE_Settings_AutoCapture_ConditionExpire>
+  <RTE_Settings_AutoCapture_ConditionExpire_Desc>    永久性状况使用此过期时间，临时状况会在结束时自动完成</RTE_Settings_AutoCapture_ConditionExpire_Desc>
+  
   <!-- 设置界面 - AI 史官 -->
   <RTE_Settings_AI_Title>AI 史官设置</RTE_Settings_AI_Title>
   <RTE_Settings_AI_Enable>启用 AI 每日总结</RTE_Settings_AI_Enable>

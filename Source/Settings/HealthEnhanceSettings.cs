@@ -103,6 +103,12 @@ namespace RimTalkHealthEnhance
         public bool AutoCompleteRaidEvents = true;    // 自动完成袭击事件（当敌对单位被消灭时）
         public float RaidCheckDelay = 3f;             // 袭击检测延迟时间（秒）
         
+        // === 环境事件捕获 ===
+        public bool AutoCaptureWeather = true;        // 自动捕获天气变化
+        public bool AutoCaptureGameConditions = true; // 自动捕获游戏状况（热浪、寒潮、毒雾等）
+        public float WeatherEventExpireHours = 6f;    // 天气事件过期时间（游戏小时）
+        public float GameConditionExpireHours = 24f;  // 游戏状况过期时间（游戏小时，永久状况用）
+        
         // === Location Context Settings ===
         public bool ShowRelativeLocation = true;         // 启用相对位置显示
         public bool ShowAreaInfo = true;                 // 显示 Area 信息
@@ -234,6 +240,12 @@ namespace RimTalkHealthEnhance
             Scribe_Values.Look(ref AutoCapturedDeleteDays, "autoCapturedDeleteDays", 0.5f);
             Scribe_Values.Look(ref AutoCompleteRaidEvents, "autoCompleteRaidEvents", true);
             Scribe_Values.Look(ref RaidCheckDelay, "raidCheckDelay", 5f);
+            
+            // Environment Events
+            Scribe_Values.Look(ref AutoCaptureWeather, "autoCaptureWeather", true);
+            Scribe_Values.Look(ref AutoCaptureGameConditions, "autoCaptureGameConditions", true);
+            Scribe_Values.Look(ref WeatherEventExpireHours, "weatherEventExpireHours", 6f);
+            Scribe_Values.Look(ref GameConditionExpireHours, "gameConditionExpireHours", 24f);
             
             // Location Context
             Scribe_Values.Look(ref ShowRelativeLocation, "showRelativeLocation", true);
@@ -915,6 +927,42 @@ namespace RimTalkHealthEnhance
                 {
                     Widgets.Label(listing.GetRect(22f), "RTE_Settings_AutoCapture_RaidDelay".Translate(RaidCheckDelay.ToString("F1")));
                     RaidCheckDelay = listing.Slider(RaidCheckDelay, 1f, 30f);
+                }
+
+                listing.Gap();
+                listing.GapLine();
+                listing.Gap();
+                
+                // === 环境事件捕获 ===
+                Text.Font = GameFont.Medium;
+                GUI.color = new Color(0.6f, 0.9f, 1f);
+                Widgets.Label(listing.GetRect(26f), "RTE_Settings_AutoCapture_EnvironmentTitle".Translate());
+                GUI.color = Color.white;
+                Text.Font = GameFont.Small;
+                listing.Gap(4f);
+                
+                listing.CheckboxLabeled("RTE_Settings_AutoCapture_Weather".Translate(), ref AutoCaptureWeather,
+                    "RTE_Settings_AutoCapture_Weather_Desc".Translate());
+                
+                if (AutoCaptureWeather)
+                {
+                    Widgets.Label(listing.GetRect(22f), "RTE_Settings_AutoCapture_WeatherExpire".Translate(WeatherEventExpireHours.ToString("F1")));
+                    WeatherEventExpireHours = listing.Slider(WeatherEventExpireHours, 1f, 24f);
+                }
+                
+                listing.CheckboxLabeled("RTE_Settings_AutoCapture_GameConditions".Translate(), ref AutoCaptureGameConditions,
+                    "RTE_Settings_AutoCapture_GameConditions_Desc".Translate());
+                
+                if (AutoCaptureGameConditions)
+                {
+                    Widgets.Label(listing.GetRect(22f), "RTE_Settings_AutoCapture_ConditionExpire".Translate(GameConditionExpireHours.ToString("F1")));
+                    GameConditionExpireHours = listing.Slider(GameConditionExpireHours, 6f, 72f);
+                    
+                    Text.Font = GameFont.Tiny;
+                    GUI.color = Color.gray;
+                    Widgets.Label(listing.GetRect(18f), "RTE_Settings_AutoCapture_ConditionExpire_Desc".Translate());
+                    GUI.color = Color.white;
+                    Text.Font = GameFont.Small;
                 }
 
                 listing.Gap();

@@ -8,6 +8,49 @@ namespace RimTalkHealthEnhance
 {
     public static class EventCaptureService
     {
+        // 缓存已被 GameCondition 捕获的状况名称（避免重复捕获信件）
+        private static HashSet<string> _capturedGameConditionLabels = new HashSet<string>();
+        
+        /// <summary>
+        /// 标记某个 GameCondition 已被捕获（由 GameConditionCapturePatch 调用）
+        /// </summary>
+        public static void MarkGameConditionCaptured(string label)
+        {
+            if (!string.IsNullOrEmpty(label))
+            {
+                _capturedGameConditionLabels.Add(label.ToLower());
+            }
+        }
+        
+        /// <summary>
+        /// 清理过期的标记（可选，在游戏加载时调用）
+        /// </summary>
+        public static void ClearCapturedLabels()
+        {
+            _capturedGameConditionLabels.Clear();
+        }
+        
+        /// <summary>
+        /// 检查标题是否匹配已捕获的 GameCondition
+        /// </summary>
+        private static bool IsGameConditionAlreadyCaptured(string title)
+        {
+            if (string.IsNullOrEmpty(title)) return false;
+            
+            string lowerTitle = title.ToLower();
+            
+            // 检查是否在已捕获列表中
+            foreach (var label in _capturedGameConditionLabels)
+            {
+                if (lowerTitle.Contains(label) || label.Contains(lowerTitle))
+                {
+                    return true;
+                }
+            }
+            
+            return false;
+        }
+        
         public static void ProcessEvent(IArchivable archivable)
         {
             var settings = RimTalkHealthEnhanceMod.Settings;
@@ -29,6 +72,16 @@ namespace RimTalkHealthEnhance
             // 提取信息
             string title = archivable.ArchivedLabel;
             string description = archivable.ArchivedTooltip.StripTags();
+            
+            // 如果是事件类别，检查是否已被 GameCondition 系统捕获（避免重复）
+            if (category == AnnouncementCategory.Event && settings.AutoCaptureGameConditions)
+            {
+                if (IsGameConditionAlreadyCaptured(title))
+                {
+                    Log.Message($"[RimTalk Enhance] Skipping event '{title}' - already captured by GameCondition system");
+                    return;
+                }
+            }
             
             // 确定优先级
             var priority = DeterminePriority(archivable);
@@ -74,7 +127,7 @@ namespace RimTalkHealthEnhance
             // 所以我们先标记事件，使用 GameComponent 的 tick 来延迟初始化
             if (category == AnnouncementCategory.Event && RaidTrackingService.IsRaidEvent(title))
             {
-                Log.Message($"[RimTalk Enhance] Raid event detected: '{title}'. Scheduling delayed initialization (120 ticks = 2 seconds)...");
+                Log.Message($"[RimTalk Enhance] Raid event detected: '{title}'. Setting up tracking...");
                 
                 // 先标记为袭击事件
                 announcement.IsRaidEvent = true;
@@ -92,9 +145,30 @@ namespace RimTalkHealthEnhance
                 }
                 else
                 {
-                    // 安排延迟初始化（120 ticks = 2秒后）
                     var manager = ColonyAnnouncementManager.Instance;
-                    manager?.ScheduleRaidInitialization(announcement, 120);
+                    
+                    // 订阅当前地图的 Lord 事件（用于持续追踪初始敌人数）
+                    var map = Find.CurrentMap;
+                    if (map != null)
+                    {
+                        LordMonitorService.SubscribeToMap(map);
+                        LordMonitorService.ResetMonitoring();
+                    }
+                    
+                    // 区分动物袭击和派系袭击
+                    if (RaidTrackingService.IsAnimalRaidEvent(title))
+                    {
+                        // 动物袭击：不使用 Lord 系统，使用短延迟直接计数
+                        Log.Message($"[RimTalk Enhance] Animal raid detected. Using short delay (60 ticks = 1 second)...");
+                        manager?.ScheduleRaidInitialization(announcement, 60);
+                    }
+                    else
+                    {
+                        // 派系袭击（海盗、机械族等）：使用 Lord 监控持续追踪
+                        // 先进行初始计数，后续由 LordMonitorService 持续更新
+                        Log.Message($"[RimTalk Enhance] Faction raid detected. Using Lord monitoring with initial delay (120 ticks = 2 seconds)...");
+                        manager?.ScheduleRaidInitialization(announcement, 120);
+                    }
                 }
             }
         }

@@ -13,8 +13,9 @@ namespace RimTalkHealthEnhance
     public static class RaidTrackingService
     {
         // 袭击关键词（用于识别袭击事件）
-        private static readonly string[] RaidKeywords = { 
+        private static readonly string[] RaidKeywords = {
             "raid", "attack", "siege", "infestation", "manhunter", "ambush", "assault",
+            "mechanoid", "mech cluster", "animal",
             "袭击", "进攻", "围攻", "虫害", "猎杀", "伏击", "突袭"
         };
         
@@ -24,6 +25,21 @@ namespace RimTalkHealthEnhance
         
         // 追踪已倒地的敌人 Pawn（用于在击杀时正确调整计数）
         private static HashSet<int> _downedEnemyIds = new HashSet<int>();
+        
+        // 动物袭击关键词（用于智能识别袭击类型）
+        private static readonly string[] AnimalRaidKeywords = {
+            "manhunter", "animal", "猎杀", "动物", "发狂"
+        };
+        
+        // 虫群袭击关键词
+        private static readonly string[] InfestationKeywords = {
+            "infestation", "insect", "虫害", "虫群", "虫子"
+        };
+        
+        // 机械族袭击关键词
+        private static readonly string[] MechanoidKeywords = {
+            "mechanoid", "mech", "cluster", "机械", "机械族", "机械集群"
+        };
         
         // 当前活跃的袭击事件ID
         private static string _activeRaidEventId = null;
@@ -35,6 +51,44 @@ namespace RimTalkHealthEnhance
         {
             if (string.IsNullOrEmpty(title)) return false;
             return RaidKeywords.Any(k => title.IndexOf(k, StringComparison.OrdinalIgnoreCase) >= 0);
+        }
+        
+        /// <summary>
+        /// 判断是否为动物袭击事件
+        /// </summary>
+        public static bool IsAnimalRaidEvent(string title)
+        {
+            if (string.IsNullOrEmpty(title)) return false;
+            return AnimalRaidKeywords.Any(k => title.IndexOf(k, StringComparison.OrdinalIgnoreCase) >= 0);
+        }
+        
+        /// <summary>
+        /// 判断是否为虫群袭击事件
+        /// </summary>
+        public static bool IsInfestationEvent(string title)
+        {
+            if (string.IsNullOrEmpty(title)) return false;
+            return InfestationKeywords.Any(k => title.IndexOf(k, StringComparison.OrdinalIgnoreCase) >= 0);
+        }
+        
+        /// <summary>
+        /// 判断是否为机械族袭击事件
+        /// </summary>
+        public static bool IsMechanoidEvent(string title)
+        {
+            if (string.IsNullOrEmpty(title)) return false;
+            return MechanoidKeywords.Any(k => title.IndexOf(k, StringComparison.OrdinalIgnoreCase) >= 0);
+        }
+        
+        /// <summary>
+        /// 获取袭击类型的显示名称
+        /// </summary>
+        public static (string threatName, string unitName) GetRaidTypeDisplayNames(string title)
+        {
+            if (IsAnimalRaidEvent(title)) return ("发狂动物", "只");
+            if (IsInfestationEvent(title)) return ("虫群", "只");
+            if (IsMechanoidEvent(title)) return ("机械族", "个");
+            return ("敌人", "人");
         }
         
         /// <summary>
@@ -120,7 +174,7 @@ namespace RimTalkHealthEnhance
             var map = Find.CurrentMap;
             if (map != null)
             {
-                raidEvent.RaidInitialCount = CountHostileHumanoids(map);
+                raidEvent.RaidInitialCount = CountHostileThreats(map);
                 Log.Message($"[RimTalk Enhance] Raid tracking initialized for '{raidEvent.Title}' (ID: {raidEvent.Id}). Initial enemies: {raidEvent.RaidInitialCount}");
             }
             else
@@ -130,9 +184,11 @@ namespace RimTalkHealthEnhance
         }
         
         /// <summary>
-        /// 计算地图上的敌对人形生物数量（只计算活着且站立的）
+        /// 计算地图上的敌对威胁数量（只计算活着且站立的）
+        /// 包括：人类敌人、机械族、发狂动物、虫群等所有敌对目标
+        /// 使用 RimWorld 内置的 HostileTo 方法，自动处理派系敌对、精神状态（发狂）、掠食者等
         /// </summary>
-        public static int CountHostileHumanoids(Map map)
+        public static int CountHostileThreats(Map map)
         {
             if (map == null) return 0;
             
@@ -144,45 +200,30 @@ namespace RimTalkHealthEnhance
                 if (p == null) continue;
                 if (counted.Contains(p.thingIDNumber)) continue;
                 
-                // 检查各项条件
-                bool isHumanlike = p.RaceProps?.Humanlike ?? false;
-                bool isDead = p.Dead;
-                bool isSpawned = p.Spawned;
-                bool isDowned = p.Downed;
-                bool isHostile = false;
+                // 跳过已死亡、未生成或已倒地的
+                if (p.Dead || !p.Spawned || p.Downed) continue;
                 
-                try
-                {
-                    isHostile = p.Faction != null &&
-                               p.Faction != Faction.OfPlayer &&
-                               p.Faction.HostileTo(Faction.OfPlayer);
-                }
-                catch
-                {
-                    // 如果检测失败，假设非玩家派系的都是敌对的
-                    isHostile = p.Faction != null && p.Faction != Faction.OfPlayer;
-                }
+                // 跳过玩家派系的 Pawn
+                if (p.Faction == Faction.OfPlayer) continue;
                 
-                // 必须是：
-                // 1. 敌对玩家
-                // 2. 人形生物
-                // 3. 未死亡
-                // 4. 已生成在地图上 (Spawned)
-                // 5. 不是倒地状态（倒地的敌人不会再威胁殖民地）
-                if (isHostile && isHumanlike && !isDead && isSpawned && !isDowned)
+                // 使用 RimWorld 内置的 HostileTo 方法
+                // 这会自动处理：派系敌对、发狂动物（MentalState）、狂暴状态、掠食者等
+                bool isHostile = p.HostileTo(Faction.OfPlayer);
+                
+                if (isHostile)
                 {
                     counted.Add(p.thingIDNumber);
                     count++;
-                    Log.Message($"[RimTalk Enhance] Counted hostile: {p.LabelShort} (ID: {p.thingIDNumber}, Faction: {p.Faction?.Name ?? "None"})");
-                }
-                else if (isHumanlike && p.Faction != null && p.Faction != Faction.OfPlayer)
-                {
-                    // 记录为什么没被计数
-                    Log.Message($"[RimTalk Enhance] Skipped: {p.LabelShort} (ID: {p.thingIDNumber}, Dead: {isDead}, Downed: {isDowned}, Spawned: {isSpawned}, Hostile: {isHostile})");
+                    
+                    // 识别威胁类型用于日志
+                    string raceType = p.RaceProps?.Humanlike == true ? "Humanlike" :
+                                     (p.RaceProps?.Animal == true ? "Animal" :
+                                     (p.RaceProps?.IsMechanoid == true ? "Mechanoid" : "Other"));
+                    Log.Message($"[RimTalk Enhance] Counted hostile threat: {p.LabelShort} (ID: {p.thingIDNumber}, Type: {raceType}, Faction: {p.Faction?.Name ?? "None"})");
                 }
             }
             
-            Log.Message($"[RimTalk Enhance] Total hostile humanoids counted (alive & standing): {count}");
+            Log.Message($"[RimTalk Enhance] Total hostile threats counted (alive & standing): {count}");
             return count;
         }
         
@@ -220,6 +261,9 @@ namespace RimTalkHealthEnhance
                 }
             }
             
+            // 通知 LordMonitorService 战斗已开始，锁定初始计数
+            LordMonitorService.MarkCombatStarted();
+            
             raidEvent.RaidKillCount++;
             
             // 如果敌人之前被记录为倒地，需要减去（击杀优先于击倒）
@@ -246,6 +290,9 @@ namespace RimTalkHealthEnhance
             var raidEvent = GetActiveRaidEvent();
             if (raidEvent == null) return;
             
+            // 通知 LordMonitorService 战斗已开始，锁定初始计数
+            LordMonitorService.MarkCombatStarted();
+            
             // 防止重复记录同一个敌人的倒地
             if (_downedEnemyIds.Contains(enemy.thingIDNumber))
             {
@@ -265,6 +312,9 @@ namespace RimTalkHealthEnhance
         {
             var raidEvent = GetActiveRaidEvent();
             if (raidEvent == null) return;
+            
+            // 通知 LordMonitorService 战斗已开始，锁定初始计数
+            LordMonitorService.MarkCombatStarted();
             
             raidEvent.RaidFleeCount++;
             Log.Message($"[RimTalk Enhance] Enemy fled: {enemy?.LabelShort ?? "Unknown"}. Total fled: {raidEvent.RaidFleeCount}");
@@ -329,6 +379,15 @@ namespace RimTalkHealthEnhance
         }
         
         /// <summary>
+        /// 检查 Pawn 是否曾被记录为倒地的敌人
+        /// 用于判断倒地后死亡的敌人（此时 HostileTo 可能返回 false）
+        /// </summary>
+        public static bool WasEnemyDowned(int pawnId)
+        {
+            return _downedEnemyIds.Contains(pawnId);
+        }
+        
+        /// <summary>
         /// 获取受伤敌人数量
         /// </summary>
         public static int GetWoundedEnemyCount()
@@ -353,6 +412,9 @@ namespace RimTalkHealthEnhance
             
             _activeRaidEventId = null;
             
+            // 重置 LordMonitorService 的监控状态
+            LordMonitorService.ResetMonitoring();
+            
             int woundedEnemies = GetWoundedEnemyCount();
             int woundedColonists = GetWoundedColonistCount();
             
@@ -363,22 +425,25 @@ namespace RimTalkHealthEnhance
             
             // 生成战斗报告
             var report = new System.Text.StringBuilder();
-            report.Append($"[战斗结束] ");
+            report.Append("[战斗结束] ");
+            
+            // 根据袭击类型智能选择措辞
+            var (threatName, unitName) = GetRaidTypeDisplayNames(raidEvent.Title);
             
             // 敌方统计
             // 注意：倒地的敌人如果后来死了，RaidDownedCount 已经在 RecordEnemyKill 中减去
             // 所以这里的 RaidDownedCount 是最终存活但倒地的敌人（可能被俘虏或流血而死）
             var enemyStats = new List<string>();
             if (raidEvent.RaidKillCount > 0)
-                enemyStats.Add($"击杀{raidEvent.RaidKillCount}");
+                enemyStats.Add($"击杀{raidEvent.RaidKillCount}{unitName}");
             if (raidEvent.RaidDownedCount > 0)
-                enemyStats.Add($"击倒{raidEvent.RaidDownedCount}");  // 改为"击倒"而非"俘虏"
+                enemyStats.Add($"击倒{raidEvent.RaidDownedCount}{unitName}");
             if (raidEvent.RaidFleeCount > 0)
-                enemyStats.Add($"逃跑{raidEvent.RaidFleeCount}");
+                enemyStats.Add($"逃跑{raidEvent.RaidFleeCount}{unitName}");
             
             if (enemyStats.Count > 0)
             {
-                report.Append($"敌人(共{raidEvent.RaidInitialCount}人): ");
+                report.Append($"{threatName}(共{raidEvent.RaidInitialCount}{unitName}): ");
                 report.Append(string.Join(", ", enemyStats));
             }
             

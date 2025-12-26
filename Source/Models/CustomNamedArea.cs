@@ -7,8 +7,9 @@ namespace RimTalkHealthEnhance.Models
 {
     /// <summary>
     /// 自定义命名区域 - 完全独立的 Area 系统，专门为 AI 对话服务
+    /// 实现 ICellBoolGiver 接口以支持高性能的 CellBoolDrawer 渲染
     /// </summary>
-    public class CustomNamedArea : IExposable
+    public class CustomNamedArea : IExposable, ICellBoolGiver
     {
         public string Id;
         public string Label;
@@ -21,9 +22,32 @@ namespace RimTalkHealthEnhance.Models
         private int cachedCellCount = -1; // 缓存格子数量，-1表示需要重新计算
         private IntVec3 cachedCenter = IntVec3.Invalid; // 缓存中心点
         
+        // CellBoolDrawer 用于高性能渲染
+        private CellBoolDrawer drawer;
+        
         public Map Map => map;
         public int MapID => map?.uniqueID ?? -1;
         public bool IsEnabled => IsActive;
+        
+        /// <summary>
+        /// ICellBoolGiver 接口实现 - 返回区域颜色
+        /// </summary>
+        Color ICellBoolGiver.Color => Color;
+        
+        /// <summary>
+        /// 获取 CellBoolDrawer（懒加载）
+        /// </summary>
+        private CellBoolDrawer Drawer
+        {
+            get
+            {
+                if (drawer == null && map != null)
+                {
+                    drawer = new CellBoolDrawer(this, map.Size.x, map.Size.z, 3650, 0.33f);
+                }
+                return drawer;
+            }
+        }
         
         /// <summary>
         /// 计算区域中心点（带缓存）
@@ -67,6 +91,23 @@ namespace RimTalkHealthEnhance.Models
         }
         
         /// <summary>
+        /// ICellBoolGiver 接口实现 - 检查某个格子是否激活
+        /// </summary>
+        public bool GetCellBool(int index)
+        {
+            if (Cells == null || map == null) return false;
+            return Cells[index];
+        }
+        
+        /// <summary>
+        /// ICellBoolGiver 接口实现 - 获取额外颜色（返回白色表示使用默认颜色）
+        /// </summary>
+        public Color GetCellExtraColor(int index)
+        {
+            return UnityEngine.Color.white;
+        }
+        
+        /// <summary>
         /// 检测某个位置是否在区域内
         /// </summary>
         public bool this[IntVec3 c]
@@ -78,6 +119,7 @@ namespace RimTalkHealthEnhance.Models
                 {
                     Cells[c] = value;
                     InvalidateCache(); // 修改时使缓存失效
+                    MarkDrawerDirty(); // 标记绘制器需要更新
                 }
             }
         }
@@ -129,6 +171,33 @@ namespace RimTalkHealthEnhance.Models
         }
         
         /// <summary>
+        /// 标记绘制器需要重新生成网格
+        /// </summary>
+        private void MarkDrawerDirty()
+        {
+            drawer?.SetDirty();
+        }
+        
+        /// <summary>
+        /// 标记需要绘制
+        /// </summary>
+        public void MarkForDraw()
+        {
+            if (map == Find.CurrentMap && !Find.ScreenshotModeHandler.Active)
+            {
+                Drawer?.MarkForDraw();
+            }
+        }
+        
+        /// <summary>
+        /// 执行绘制更新（每帧调用）
+        /// </summary>
+        public void AreaUpdate()
+        {
+            Drawer?.CellBoolDrawerUpdate();
+        }
+        
+        /// <summary>
         /// 清空区域
         /// </summary>
         public void Clear()
@@ -138,6 +207,7 @@ namespace RimTalkHealthEnhance.Models
                 foreach (var cell in map.AllCells)
                     Cells[cell] = false;
                 InvalidateCache();
+                MarkDrawerDirty();
             }
         }
         
@@ -154,6 +224,7 @@ namespace RimTalkHealthEnhance.Models
                     Cells[cell] = value;
             }
             InvalidateCache();
+            MarkDrawerDirty();
         }
         
         /// <summary>
@@ -162,6 +233,9 @@ namespace RimTalkHealthEnhance.Models
         public void ReassignMap(Map newMap)
         {
             this.map = newMap;
+            
+            // 重置绘制器（地图变化后需要重新创建）
+            drawer = null;
             
             // 如果 BoolGrid 为空，重新创建
             if (Cells == null && newMap != null)

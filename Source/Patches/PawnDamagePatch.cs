@@ -7,6 +7,7 @@ namespace RimTalkHealthEnhance
     /// <summary>
     /// 拦截 Pawn 受伤事件，追踪战斗中的受伤情况
     /// 使用 HashSet 去重，每个 Pawn 只记录一次
+    /// 支持追踪所有敌对目标（人类、动物、机械族等）
     /// </summary>
     [HarmonyPatch(typeof(Pawn), "PostApplyDamage")]
     public static class PawnDamagePatch
@@ -16,19 +17,16 @@ namespace RimTalkHealthEnhance
             if (__instance == null) return;
             if (__instance.Dead) return; // 已死亡的不计入受伤
             
-            // 只追踪人形生物
-            if (!__instance.RaceProps.Humanlike) return;
-            
             // 只追踪战斗伤害（排除环境伤害等）
             if (dinfo.Instigator == null) return;
             
-            // 敌对人形生物受伤
+            // 敌对目标受伤（包括人类、动物、机械族等）
             if (__instance.HostileTo(Faction.OfPlayer))
             {
                 RaidTrackingService.RecordEnemyWounded(__instance);
             }
-            // 殖民者受伤
-            else if (__instance.Faction == Faction.OfPlayer)
+            // 殖民者受伤（玩家派系的人类）
+            else if (__instance.Faction == Faction.OfPlayer && (__instance.RaceProps?.Humanlike ?? false))
             {
                 RaidTrackingService.RecordColonistWounded(__instance);
             }

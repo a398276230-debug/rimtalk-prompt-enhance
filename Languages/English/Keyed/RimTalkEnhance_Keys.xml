@@ -281,6 +281,16 @@
   <RTE_Settings_AutoCapture_NoTypes>No event types discovered. Please enter game and load a save, then refresh.</RTE_Settings_AutoCapture_NoTypes>
   <RTE_Settings_AutoCapture_ResetDefaults>Reset to Defaults</RTE_Settings_AutoCapture_ResetDefaults>
   
+  <!-- Environment Event Capture -->
+  <RTE_Settings_AutoCapture_EnvironmentTitle>━━ Environment Events ━━</RTE_Settings_AutoCapture_EnvironmentTitle>
+  <RTE_Settings_AutoCapture_Weather>Capture Weather Changes</RTE_Settings_AutoCapture_Weather>
+  <RTE_Settings_AutoCapture_Weather_Desc>Auto capture weather change events (clear, rain, blizzard, etc.)</RTE_Settings_AutoCapture_Weather_Desc>
+  <RTE_Settings_AutoCapture_WeatherExpire>Weather event expire: {0} hours</RTE_Settings_AutoCapture_WeatherExpire>
+  <RTE_Settings_AutoCapture_GameConditions>Capture Game Conditions</RTE_Settings_AutoCapture_GameConditions>
+  <RTE_Settings_AutoCapture_GameConditions_Desc>Auto capture game condition events (heat wave, cold snap, toxic fallout, eclipse, etc.)</RTE_Settings_AutoCapture_GameConditions_Desc>
+  <RTE_Settings_AutoCapture_ConditionExpire>Condition event expire: {0} hours</RTE_Settings_AutoCapture_ConditionExpire>
+  <RTE_Settings_AutoCapture_ConditionExpire_Desc>    Permanent conditions use this expire time, temporary conditions auto-complete when ended</RTE_Settings_AutoCapture_ConditionExpire_Desc>
+  
   <!-- Settings - AI Historian -->
   <RTE_Settings_AI_Title>AI Historian Settings</RTE_Settings_AI_Title>
   <RTE_Settings_AI_Enable>Enable AI daily summary</RTE_Settings_AI_Enable>

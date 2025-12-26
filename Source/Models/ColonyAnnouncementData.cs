@@ -67,6 +67,11 @@ namespace RimTalkHealthEnhance
         public int ColonistDeathCount = 0;     // 殖民者死亡数量
         public int ColonistDownedCount = 0;    // 殖民者倒地数量
         
+        // === 环境事件 ===
+        public bool IsWeatherEvent = false;           // 是否为天气变化事件
+        public bool IsGameConditionEvent = false;     // 是否为游戏状况事件（热浪、寒潮、毒雾等）
+        public string GameConditionDefName;           // 游戏状况的defName（用于关联）
+        
         public int CreatedTick;
         public int CompletedTick;
         
@@ -102,6 +107,11 @@ namespace RimTalkHealthEnhance
             Scribe_Values.Look(ref RaidDownedCount, "raidDownedCount", 0);
             Scribe_Values.Look(ref ColonistDeathCount, "colonistDeathCount", 0);
             Scribe_Values.Look(ref ColonistDownedCount, "colonistDownedCount", 0);
+            
+            // 环境事件
+            Scribe_Values.Look(ref IsWeatherEvent, "isWeatherEvent", false);
+            Scribe_Values.Look(ref IsGameConditionEvent, "isGameConditionEvent", false);
+            Scribe_Values.Look(ref GameConditionDefName, "gameConditionDefName");
             
             Scribe_Values.Look(ref CreatedTick, "createdTick");
             Scribe_Values.Look(ref CompletedTick, "completedTick");
