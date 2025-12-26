@@ -68,6 +68,35 @@ namespace RimTalkHealthEnhance
 
             // 添加到管理器
             MergeOrAdd(announcement);
+            
+            // 如果是袭击事件，标记并安排延迟初始化
+            // 注意：事件信件发送时，敌人可能还未完全生成
+            // 所以我们先标记事件，使用 GameComponent 的 tick 来延迟初始化
+            if (category == AnnouncementCategory.Event && RaidTrackingService.IsRaidEvent(title))
+            {
+                Log.Message($"[RimTalk Enhance] Raid event detected: '{title}'. Scheduling delayed initialization (120 ticks = 2 seconds)...");
+                
+                // 先标记为袭击事件
+                announcement.IsRaidEvent = true;
+                
+                // 检查是否已有同一派系的活跃袭击事件
+                var existingRaid = RaidTrackingService.GetActiveRaidEvent();
+                if (existingRaid != null && existingRaid.Title == announcement.Title)
+                {
+                    // 已存在同名袭击事件，不需要重新初始化，但需要更新初始敌人计数
+                    Log.Message($"[RimTalk Enhance] Raid event '{title}' already exists (ID: {existingRaid.Id}). Updating enemy count instead of creating new.");
+                    
+                    // 安排重新计数（可能有新敌人到达）
+                    var manager = ColonyAnnouncementManager.Instance;
+                    manager?.ScheduleRaidRecount(existingRaid, 60);
+                }
+                else
+                {
+                    // 安排延迟初始化（120 ticks = 2秒后）
+                    var manager = ColonyAnnouncementManager.Instance;
+                    manager?.ScheduleRaidInitialization(announcement, 120);
+                }
+            }
         }
 
         private static AnnouncementCategory DetermineCategory(IArchivable archivable)

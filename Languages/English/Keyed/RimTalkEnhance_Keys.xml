@@ -277,6 +277,8 @@
   <RTE_Settings_AI_IncludeResearch_Desc>Send all research completion status to historian (within ~1000 chars)</RTE_Settings_AI_IncludeResearch_Desc>
   <RTE_Settings_AI_IncludeUnfinished>  └─ Include unfinished research list</RTE_Settings_AI_IncludeUnfinished>
   <RTE_Settings_AI_IncludeUnfinished_Desc>Also send unfinished research list (increases token consumption)</RTE_Settings_AI_IncludeUnfinished_Desc>
+  <RTE_Settings_AI_IncludePower>Include power status</RTE_Settings_AI_IncludePower>
+  <RTE_Settings_AI_IncludePower_Desc>Send colony's power supply and demand status to historian</RTE_Settings_AI_IncludePower_Desc>
   <RTE_Settings_AI_ContextInjection>Context Injection Settings</RTE_Settings_AI_ContextInjection>
   <RTE_Settings_AI_InjectSnapshot>Auto-inject snapshots into AI dialogue</RTE_Settings_AI_InjectSnapshot>
   <RTE_Settings_AI_InjectSnapshot_Desc>When enabled, AI will automatically see recent historical snapshot summaries during dialogue</RTE_Settings_AI_InjectSnapshot_Desc>

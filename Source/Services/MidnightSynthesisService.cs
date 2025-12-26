@@ -30,11 +30,11 @@ namespace RimTalkHealthEnhance
             var yesterdaySnapshot = manager.Data.LastSnapshot ?? new ColonySnapshot();
             string diffReport = DiffAnalyzer.GenerateDiffReport(yesterdaySnapshot, todaySnapshot);
             
-            // 3. 收集当日事件（包含标题和描述）
+            // 3. 收集当日事件（包含标题、描述和战斗统计）
             var todayEvents = manager.Data.Announcements
-                .Where(a => a.Category == AnnouncementCategory.Event && 
+                .Where(a => a.Category == AnnouncementCategory.Event &&
                             a.CreatedTick > Find.TickManager.TicksGame - 60000)
-                .Select(a => string.IsNullOrEmpty(a.Description) ? a.Title : $"{a.Title}: {a.Description}")
+                .Select(a => FormatEventInfo(a))
                 .ToList();
             
             // 4. 收集工程信息（如果启用）
@@ -103,6 +103,21 @@ namespace RimTalkHealthEnhance
                 Log.Message("[RimTalk Enhance] Research tracking is disabled in settings");
             }
             
+            // 6. 收集电力信息（如果启用）
+            string powerInfo = null;
+            if (settings.IncludePowerInSnapshot)
+            {
+                powerInfo = PowerInfoBuilder.BuildPowerContext();
+                if (!string.IsNullOrEmpty(powerInfo))
+                {
+                    Log.Message($"[RimTalk Enhance] Power info collected: {powerInfo.Length} chars");
+                }
+            }
+            else
+            {
+                Log.Message("[RimTalk Enhance] Power tracking is disabled in settings");
+            }
+            
             // 6. 创建快照记录
             // 注意：午夜触发时记录的是"昨天"的活动
             // 使用当前tick减去一整天(60000 ticks)来获取昨天的日期
@@ -133,7 +148,7 @@ namespace RimTalkHealthEnhance
                 {
                     try
                     {
-                        string prompt = BuildSynthesisPrompt(diffReport, dailySnapshot, projectInfo, researchInfo);
+                        string prompt = BuildSynthesisPrompt(diffReport, dailySnapshot, projectInfo, researchInfo, powerInfo);
                         Log.Message($"[RimTalk Enhance] Sending prompt to AI ({prompt.Length} chars)...");
                         dailySnapshot.AISummary = await SimpleAIClient.CallAI(prompt);
                         Log.Message($"[RimTalk Enhance] AI response received ({dailySnapshot.AISummary?.Length ?? 0} chars)");
@@ -152,7 +167,7 @@ namespace RimTalkHealthEnhance
             else
             {
                 // 无 API Key 时，使用简单模板
-                dailySnapshot.AISummary = GenerateSimpleSummary(diffReport, todayEvents, projectInfo, researchInfo);
+                dailySnapshot.AISummary = GenerateSimpleSummary(diffReport, todayEvents, projectInfo, researchInfo, powerInfo);
             }
             
             // 6. 保存快照
@@ -199,7 +214,10 @@ namespace RimTalkHealthEnhance
 4. 科技研究状态：
 {research}
 
-5. 发生事件：
+5. 电力状态：
+{power}
+
+6. 发生事件：
 {events}
 
 ---
@@ -210,16 +228,18 @@ namespace RimTalkHealthEnhance
    - 将""建筑任务执行完毕""描述为""...终于建成了""、""...完工了""。
    - 将工程项目描述为殖民地的建设计划和进展。
    - 将科技研究描述为殖民地的知识积累和技术突破。
+   - 将电力状态描述为殖民地的能源供需情况。
 3. **内容融合**：
    - 结合【规划】、【建筑变化】和【工程项目】，描述殖民地的建设进程。
    - 结合【科技研究】，描述殖民地的技术发展。
+   - 结合【电力状态】，如果电力不足或盈余较大，可以简要提及。
    - 结合【事件】，描述殖民地遭遇的挑战或机遇。
 4. **篇幅**：控制在100-200字左右，精炼概括今日重点。
 5. **风格一致性**：如果【参考风格】是第一人称（我/我们），请保持；如果是第三人称，请保持。如果风格幽默，请保持幽默；如果严肃，请保持严肃。
 6. 不要写开头和结尾的套话，直接输出内容。";
         }
 
-        public static string BuildSynthesisPrompt(string diffReport, DailySnapshot snapshot, List<string> projectInfo, string researchInfo)
+        public static string BuildSynthesisPrompt(string diffReport, DailySnapshot snapshot, List<string> projectInfo, string researchInfo, string powerInfo = null)
         {
             var manager = ColonyAnnouncementManager.Instance;
             var settings = RimTalkHealthEnhanceMod.Settings;
@@ -231,16 +251,17 @@ namespace RimTalkHealthEnhance
             {
                 // 使用自定义提示词并替换变量
                 string overviewText = hasOverview ? existingOverview : "（新殖民地，暂无历史记录）";
-                string actionsText = snapshot.PlayerActions.Count > 0 
-                    ? string.Join("\n", snapshot.PlayerActions) 
+                string actionsText = snapshot.PlayerActions.Count > 0
+                    ? string.Join("\n", snapshot.PlayerActions)
                     : "（无新规划）";
-                string eventsText = snapshot.Events.Count > 0 
-                    ? string.Join("\n", snapshot.Events.Select(e => $"- {e}")) 
+                string eventsText = snapshot.Events.Count > 0
+                    ? string.Join("\n", snapshot.Events.Select(e => $"- {e}"))
                     : "（无重大事件）";
                 string projectsText = projectInfo != null && projectInfo.Count > 0
                     ? string.Join("\n", projectInfo.Select(p => $"- {p}"))
                     : "（无工程项目）";
                 string researchText = !string.IsNullOrEmpty(researchInfo) ? researchInfo : "（无科技信息）";
+                string powerText = !string.IsNullOrEmpty(powerInfo) ? powerInfo : "（无电力信息）";
 
                 return settings.CustomDailySynthesisPrompt
                     .Replace("{overview}", overviewText)
@@ -248,7 +269,8 @@ namespace RimTalkHealthEnhance
                     .Replace("{actions}", actionsText)
                     .Replace("{events}", eventsText)
                     .Replace("{projects}", projectsText)
-                    .Replace("{research}", researchText);
+                    .Replace("{research}", researchText)
+                    .Replace("{power}", powerText);
             }
 
             // 使用默认提示词
@@ -288,17 +310,22 @@ namespace RimTalkHealthEnhance
             else
                 sb.AppendLine("（无工程项目）");
             
+            int sectionNum = 4;
             if (!string.IsNullOrEmpty(researchInfo))
             {
-                sb.AppendLine("4. 科技研究状态：");
+                sb.AppendLine($"{sectionNum}. 科技研究状态：");
                 sb.AppendLine(researchInfo);
-                sb.AppendLine("5. 发生事件：");
-            }
-            else
-            {
-                sb.AppendLine("4. 发生事件：");
+                sectionNum++;
             }
             
+            if (!string.IsNullOrEmpty(powerInfo))
+            {
+                sb.AppendLine($"{sectionNum}. 电力状态：");
+                sb.AppendLine(powerInfo);
+                sectionNum++;
+            }
+            
+            sb.AppendLine($"{sectionNum}. 发生事件：");
             if (snapshot.Events.Count > 0)
                 sb.AppendLine(string.Join("\n", snapshot.Events.Select(e => $"- {e}")));
             else
@@ -324,7 +351,82 @@ namespace RimTalkHealthEnhance
             return sb.ToString();
         }
         
-        private static string GenerateSimpleSummary(string diffReport, List<string> events, List<string> projectInfo, string researchInfo)
+        /// <summary>
+        /// 格式化事件信息，包含战斗统计
+        /// </summary>
+        private static string FormatEventInfo(ColonyAnnouncement announcement)
+        {
+            var sb = new StringBuilder();
+            sb.Append(announcement.Title);
+            
+            // 如果是袭击事件，显示战斗统计（即使还在进行中）
+            if (announcement.IsRaidEvent)
+            {
+                // 获取当前的受伤统计（从 RaidTrackingService 获取实时数据）
+                int woundedEnemies = RaidTrackingService.GetWoundedEnemyCount();
+                int woundedColonists = RaidTrackingService.GetWoundedColonistCount();
+                
+                // 如果有初始计数，显示详细统计
+                if (announcement.RaidInitialCount > 0)
+                {
+                    sb.Append($" (敌人{announcement.RaidInitialCount}人");
+                    
+                    var stats = new List<string>();
+                    if (announcement.RaidKillCount > 0)
+                        stats.Add($"击杀{announcement.RaidKillCount}");
+                    if (announcement.RaidDownedCount > 0)
+                        stats.Add($"俘虏{announcement.RaidDownedCount}");
+                    if (announcement.RaidFleeCount > 0)
+                        stats.Add($"逃跑{announcement.RaidFleeCount}");
+                    if (woundedEnemies > 0 && announcement.Status == AnnouncementStatus.Active)
+                        stats.Add($"受伤{woundedEnemies}");
+                    
+                    if (stats.Count > 0)
+                        sb.Append($": {string.Join(", ", stats)}");
+                    
+                    // 殖民者伤亡
+                    var colonistStats = new List<string>();
+                    if (announcement.ColonistDeathCount > 0)
+                        colonistStats.Add($"阵亡{announcement.ColonistDeathCount}");
+                    if (announcement.ColonistDownedCount > 0)
+                        colonistStats.Add($"倒地{announcement.ColonistDownedCount}");
+                    if (woundedColonists > 0 && announcement.Status == AnnouncementStatus.Active)
+                        colonistStats.Add($"受伤{woundedColonists}");
+                    
+                    if (colonistStats.Count > 0)
+                        sb.Append($" | 殖民地: {string.Join(", ", colonistStats)}");
+                    else
+                        sb.Append(" | 殖民地无伤亡");
+                    
+                    sb.Append(")");
+                }
+                else
+                {
+                    // 没有初始计数，但仍然是袭击事件
+                    Log.Warning($"[RimTalk Enhance] Raid event '{announcement.Title}' has no initial count!");
+                }
+            }
+            
+            // 添加描述（如果不是战斗报告，因为战斗报告已经包含在上面了）
+            if (!string.IsNullOrEmpty(announcement.Description) && !announcement.IsRaidEvent)
+            {
+                sb.Append($": {announcement.Description}");
+            }
+            
+            // 添加状态
+            if (announcement.Status == AnnouncementStatus.Completed)
+            {
+                sb.Append(" [已结束]");
+            }
+            else if (announcement.Status == AnnouncementStatus.Active && announcement.IsRaidEvent)
+            {
+                sb.Append(" [进行中]");
+            }
+            
+            return sb.ToString();
+        }
+        
+        private static string GenerateSimpleSummary(string diffReport, List<string> events, List<string> projectInfo, string researchInfo, string powerInfo = null)
         {
             // 无 AI 时的简单模板
             var sb = new StringBuilder();
@@ -344,6 +446,12 @@ namespace RimTalkHealthEnhance
             {
                 sb.AppendLine("\n科技状态：");
                 sb.AppendLine(researchInfo);
+            }
+            
+            if (!string.IsNullOrEmpty(powerInfo))
+            {
+                sb.AppendLine("\n电力状态：");
+                sb.AppendLine(powerInfo);
             }
             
             if (events.Count > 0)

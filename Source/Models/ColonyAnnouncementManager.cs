@@ -27,6 +27,12 @@ namespace RimTalkHealthEnhance
 
         // 袭击检测延迟标记
         private int _pendingRaidCheckTick = -1;
+        
+        // 上次检测时的敌人数量（用于检测变化）
+        private int _lastHostileCount = 0;
+        
+        // 延迟初始化袭击追踪的队列
+        private List<(ColonyAnnouncement Event, int TargetTick)> _pendingRaidInitializations = new List<(ColonyAnnouncement, int)>();
 
         public ColonyAnnouncementManager(Game game)
         {
@@ -71,12 +77,23 @@ namespace RimTalkHealthEnhance
                 CheckAutoCompletion();
             }
 
-            // 检查延迟的袭击检测
+            // 检查延迟的袭击检测（改进版：使用 tick 比较，确保快进时也能正确检测）
             if (_pendingRaidCheckTick > 0 && currentTick >= _pendingRaidCheckTick)
             {
+                Log.Message($"[RimTalk Enhance] Raid check delay elapsed. CurrentTick: {currentTick}, ScheduledTick: {_pendingRaidCheckTick}");
                 CheckRaidCompletion();
                 _pendingRaidCheckTick = -1; // 重置
             }
+            
+            // 额外保障：每2000 ticks 主动检查一次是否还有敌对单位
+            // 这样即使错过了延迟检测，也能在30秒内自动完成
+            if (currentTick % 2000 == 0)
+            {
+                CheckRaidCompletionFallback();
+            }
+            
+            // 处理延迟的袭击初始化
+            ProcessPendingRaidInitializations(currentTick);
             
             // 每日 0 点触发 AI 总结
             // 使用天数判断，避免跳过时间导致错过触发
@@ -352,6 +369,83 @@ namespace RimTalkHealthEnhance
         }
 
         /// <summary>
+        /// 安排延迟初始化袭击追踪
+        /// </summary>
+        public void ScheduleRaidInitialization(ColonyAnnouncement raidEvent, int delayTicks)
+        {
+            int targetTick = Find.TickManager.TicksGame + delayTicks;
+            _pendingRaidInitializations.Add((raidEvent, targetTick));
+            Log.Message($"[RimTalk Enhance] Scheduled raid initialization for '{raidEvent.Title}' at tick {targetTick} (delay: {delayTicks} ticks)");
+        }
+        
+        /// <summary>
+        /// 安排重新计数敌人（用于同一袭击有新增敌人时）
+        /// </summary>
+        public void ScheduleRaidRecount(ColonyAnnouncement raidEvent, int delayTicks)
+        {
+            if (raidEvent == null) return;
+            
+            int targetTick = Find.TickManager.TicksGame + delayTicks;
+            
+            // 使用同样的队列，但会更新计数而非初始化
+            _pendingRaidInitializations.Add((raidEvent, targetTick));
+            Log.Message($"[RimTalk Enhance] Scheduled raid recount for '{raidEvent.Title}' at tick {targetTick}");
+        }
+        
+        /// <summary>
+        /// 处理延迟的袭击初始化
+        /// </summary>
+        private void ProcessPendingRaidInitializations(int currentTick)
+        {
+            if (_pendingRaidInitializations.Count == 0) return;
+            
+            var toRemove = new List<(ColonyAnnouncement, int)>();
+            
+            foreach (var item in _pendingRaidInitializations)
+            {
+                if (currentTick >= item.TargetTick)
+                {
+                    var raidEvent = item.Event;
+                    var map = Find.CurrentMap;
+                    
+                    if (map != null)
+                    {
+                        int count = RaidTrackingService.CountHostileHumanoids(map);
+                        
+                        // 如果已有初始计数，说明是重新计数（有新增敌人），取较大值
+                        if (raidEvent.RaidInitialCount > 0)
+                        {
+                            int newCount = Math.Max(raidEvent.RaidInitialCount, count);
+                            Log.Message($"[RimTalk Enhance] Raid recount for '{raidEvent.Title}'. Previous: {raidEvent.RaidInitialCount}, Current: {count}, Updated to: {newCount}");
+                            raidEvent.RaidInitialCount = newCount;
+                        }
+                        else
+                        {
+                            raidEvent.RaidInitialCount = count;
+                            Log.Message($"[RimTalk Enhance] Raid tracking initialized (delayed) for '{raidEvent.Title}'. Initial enemies: {count}");
+                        }
+                        
+                        RaidTrackingService.SetActiveRaidEvent(raidEvent);
+                        
+                        // 更新敌人计数
+                        _lastHostileCount = count;
+                    }
+                    else
+                    {
+                        Log.Warning($"[RimTalk Enhance] ProcessPendingRaidInitializations: No current map for event '{raidEvent.Title}'");
+                    }
+                    
+                    toRemove.Add(item);
+                }
+            }
+            
+            foreach (var item in toRemove)
+            {
+                _pendingRaidInitializations.Remove(item);
+            }
+        }
+        
+        /// <summary>
         /// 调度袭击检测（由 Pawn 死亡事件触发）
         /// </summary>
         public void ScheduleRaidCheck()
@@ -369,18 +463,52 @@ namespace RimTalkHealthEnhance
             var map = Find.CurrentMap;
             if (map == null) return;
             
-            // 检查是否还有敌对单位
-            bool hasHostiles = map.mapPawns.AllPawns.Any(p => 
-                p.HostileTo(Faction.OfPlayer) && 
-                !p.Downed && 
-                !p.Dead &&
-                p.RaceProps.Humanlike);
+            // 使用 RaidTrackingService 的计数方法，确保逻辑一致
+            int hostileCount = RaidTrackingService.CountHostileHumanoids(map);
             
-            if (!hasHostiles)
+            Log.Message($"[RimTalk Enhance] CheckRaidCompletion: Hostile count = {hostileCount}");
+            
+            if (hostileCount == 0)
             {
-                // 自动完成所有活跃的袭击事件
+                // 自动完成所有活跃的袭击事件，并附加战斗报告
                 CompleteActiveRaidEvents();
             }
+            
+            _lastHostileCount = hostileCount;
+        }
+        
+        /// <summary>
+        /// 备用的袭击检测（每2000 ticks调用一次）
+        /// 用于在延迟检测失败时作为保障
+        /// </summary>
+        private void CheckRaidCompletionFallback()
+        {
+            var settings = RimTalkHealthEnhanceMod.Settings;
+            if (settings == null || !settings.AutoCompleteRaidEvents) return;
+            
+            // 只有当有活跃的袭击事件时才检测
+            if (Data.Announcements == null) return;
+            bool hasActiveRaid = Data.Announcements.Any(a =>
+                a.Status == AnnouncementStatus.Active &&
+                a.Category == AnnouncementCategory.Event &&
+                a.IsRaidEvent);
+            
+            if (!hasActiveRaid) return;
+            
+            var map = Find.CurrentMap;
+            if (map == null) return;
+            
+            // 使用 RaidTrackingService 的计数方法，确保逻辑一致
+            int hostileCount = RaidTrackingService.CountHostileHumanoids(map);
+            
+            // 如果敌对单位从有变成没有，触发完成检测
+            if (_lastHostileCount > 0 && hostileCount == 0)
+            {
+                Log.Message($"[RimTalk Enhance] Fallback raid check triggered. Previous: {_lastHostileCount}, Current: {hostileCount}");
+                CompleteActiveRaidEvents();
+            }
+            
+            _lastHostileCount = hostileCount;
         }
 
         private void CompleteActiveRaidEvents()
@@ -389,24 +517,30 @@ namespace RimTalkHealthEnhance
             
             int currentTick = Find.TickManager.TicksGame;
             var settings = RimTalkHealthEnhanceMod.Settings;
-            
-            // 袭击关键词
-            string[] raidKeywords = { "raid", "attack", "siege", "infestation", "manhunter", "袭击", "进攻", "围攻", "虫害", "猎杀" };
 
             foreach (var announcement in Data.Announcements)
             {
-                if (announcement.Status == AnnouncementStatus.Active && 
-                    announcement.Category == AnnouncementCategory.Event)
+                if (announcement.Status == AnnouncementStatus.Active &&
+                    announcement.Category == AnnouncementCategory.Event &&
+                    announcement.IsRaidEvent)
                 {
-                    // 检查标题是否包含袭击关键词
-                    bool isRaid = raidKeywords.Any(k => announcement.Title.IndexOf(k, StringComparison.OrdinalIgnoreCase) >= 0);
-                    
-                    if (isRaid)
+                    // 生成战斗报告并附加到描述
+                    string battleReport = RaidTrackingService.FinishRaidTracking(announcement);
+                    if (!string.IsNullOrEmpty(battleReport))
                     {
-                        announcement.Status = AnnouncementStatus.Completed;
-                        announcement.CompletedTick = currentTick;
-                        Log.Message($"[RimTalk Enhance] Auto-completed raid event: {announcement.Title}");
+                        if (string.IsNullOrEmpty(announcement.Description))
+                        {
+                            announcement.Description = battleReport;
+                        }
+                        else
+                        {
+                            announcement.Description += "\n" + battleReport;
+                        }
                     }
+                    
+                    announcement.Status = AnnouncementStatus.Completed;
+                    announcement.CompletedTick = currentTick;
+                    Log.Message($"[RimTalk Enhance] Auto-completed raid event: {announcement.Title}. {battleReport}");
                 }
             }
             

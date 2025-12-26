@@ -83,7 +83,7 @@ namespace RimTalkHealthEnhance
         public bool AutoArchiveCompleted = false;     // 自动归档已完成的事件（手动创建的）
         public float AutoCapturedDeleteDays = 0.5f;   // 自动捕获事件完成后删除时间（0-3天，0表示立即）
         public bool AutoCompleteRaidEvents = true;    // 自动完成袭击事件（当敌对单位被消灭时）
-        public float RaidCheckDelay = 5f;             // 袭击检测延迟时间（秒）
+        public float RaidCheckDelay = 3f;             // 袭击检测延迟时间（秒）
         
         // === Location Context Settings ===
         public bool ShowRelativeLocation = true;         // 启用相对位置显示
@@ -111,6 +111,7 @@ namespace RimTalkHealthEnhance
         public bool IncludeProjectsInSnapshot = true;    // 将状况板工程信息发给史官
         public bool IncludeResearchInSnapshot = false;   // 将科技状态发给史官（默认关闭）
         public bool IncludeUnfinishedResearch = false;   // 包含未完成的科技列表
+        public bool IncludePowerInSnapshot = false;      // 将电力状态发给史官（默认关闭）
         public AIProvider SynthesisProvider = AIProvider.OpenAI;
         public string CustomApiKey = "";
         public string CustomApiUrl = "";
@@ -226,6 +227,7 @@ namespace RimTalkHealthEnhance
             Scribe_Values.Look(ref IncludeProjectsInSnapshot, "includeProjectsInSnapshot", true);
             Scribe_Values.Look(ref IncludeResearchInSnapshot, "includeResearchInSnapshot", false);
             Scribe_Values.Look(ref IncludeUnfinishedResearch, "includeUnfinishedResearch", false);
+            Scribe_Values.Look(ref IncludePowerInSnapshot, "includePowerInSnapshot", false);
             Scribe_Values.Look(ref SynthesisProvider, "synthesisProvider", AIProvider.OpenAI);
             Scribe_Values.Look(ref CustomApiKey, "customApiKey", "");
             Scribe_Values.Look(ref CustomApiUrl, "customApiUrl", "");
@@ -949,6 +951,9 @@ namespace RimTalkHealthEnhance
                     listing.CheckboxLabeled("RTE_Settings_AI_IncludeUnfinished".Translate(), ref IncludeUnfinishedResearch,
                         "RTE_Settings_AI_IncludeUnfinished_Desc".Translate());
                 }
+                
+                listing.CheckboxLabeled("RTE_Settings_AI_IncludePower".Translate(), ref IncludePowerInSnapshot,
+                    "RTE_Settings_AI_IncludePower_Desc".Translate());
                 
                 listing.Gap();
                 listing.GapLine();

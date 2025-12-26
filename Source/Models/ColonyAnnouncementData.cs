@@ -58,6 +58,15 @@ namespace RimTalkHealthEnhance
         public int InitialBlueprintCount = 0;  // 初始蓝图数量
         public bool AutoCalculateProgress = false; // 是否自动计算进度（(初始-剩余)/初始，0%→100%）
         
+        // === 袭击事件统计 ===
+        public bool IsRaidEvent = false;       // 是否为袭击事件
+        public int RaidInitialCount = 0;       // 初始敌人数量
+        public int RaidKillCount = 0;          // 敌人死亡数量
+        public int RaidFleeCount = 0;          // 敌人撤退数量
+        public int RaidDownedCount = 0;        // 敌人倒地数量（被俘虏）
+        public int ColonistDeathCount = 0;     // 殖民者死亡数量
+        public int ColonistDownedCount = 0;    // 殖民者倒地数量
+        
         public int CreatedTick;
         public int CompletedTick;
         
@@ -84,6 +93,15 @@ namespace RimTalkHealthEnhance
             Scribe_Values.Look(ref BlueprintAreaId, "blueprintAreaId");
             Scribe_Values.Look(ref InitialBlueprintCount, "initialBlueprintCount", 0);
             Scribe_Values.Look(ref AutoCalculateProgress, "autoCalculateProgress", false);
+            
+            // 袭击统计
+            Scribe_Values.Look(ref IsRaidEvent, "isRaidEvent", false);
+            Scribe_Values.Look(ref RaidInitialCount, "raidInitialCount", 0);
+            Scribe_Values.Look(ref RaidKillCount, "raidKillCount", 0);
+            Scribe_Values.Look(ref RaidFleeCount, "raidFleeCount", 0);
+            Scribe_Values.Look(ref RaidDownedCount, "raidDownedCount", 0);
+            Scribe_Values.Look(ref ColonistDeathCount, "colonistDeathCount", 0);
+            Scribe_Values.Look(ref ColonistDownedCount, "colonistDownedCount", 0);
             
             Scribe_Values.Look(ref CreatedTick, "createdTick");
             Scribe_Values.Look(ref CompletedTick, "completedTick");

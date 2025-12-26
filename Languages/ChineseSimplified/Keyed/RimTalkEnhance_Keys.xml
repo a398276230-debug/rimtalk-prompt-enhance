@@ -277,6 +277,8 @@
   <RTE_Settings_AI_IncludeResearch_Desc>将所有科技的完成状态发送给史官（约1000字以内）</RTE_Settings_AI_IncludeResearch_Desc>
   <RTE_Settings_AI_IncludeUnfinished>  └─ 包含未完成科技列表</RTE_Settings_AI_IncludeUnfinished>
   <RTE_Settings_AI_IncludeUnfinished_Desc>同时发送未完成的科技列表（会增加token消耗）</RTE_Settings_AI_IncludeUnfinished_Desc>
+  <RTE_Settings_AI_IncludePower>包含电力状态</RTE_Settings_AI_IncludePower>
+  <RTE_Settings_AI_IncludePower_Desc>将殖民地的电力供需情况发送给史官</RTE_Settings_AI_IncludePower_Desc>
   <RTE_Settings_AI_ContextInjection>上下文注入设置</RTE_Settings_AI_ContextInjection>
   <RTE_Settings_AI_InjectSnapshot>自动注入快照到 AI 对话</RTE_Settings_AI_InjectSnapshot>
   <RTE_Settings_AI_InjectSnapshot_Desc>启用后，AI 在对话时会自动看到最近的历史快照总结</RTE_Settings_AI_InjectSnapshot_Desc>
