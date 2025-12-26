@@ -137,6 +137,30 @@
   <RTE_Settings_Health_MaxDescLength>Max description length: {0} chars</RTE_Settings_Health_MaxDescLength>
   <RTE_Settings_Health_Note1>Note: You need to enable health info in RimTalk settings.</RTE_Settings_Health_Note1>
   <RTE_Settings_Health_Note2>This mod enhances the health context sent to AI by RimTalk.</RTE_Settings_Health_Note2>
+  <RTE_Settings_Health_Note3>Tip: Set to 0 for unlimited.</RTE_Settings_Health_Note3>
+  
+  <!-- Health Info - Category Filtering -->
+  <RTE_Settings_Health_FilterSection>━━ Category Filtering ━━</RTE_Settings_Health_FilterSection>
+  <RTE_Settings_Health_ShowBionics>Show Bionics/Prosthetics</RTE_Settings_Health_ShowBionics>
+  <RTE_Settings_Health_ShowBionics_Desc>Show bionics and prosthetics that replace body parts</RTE_Settings_Health_ShowBionics_Desc>
+  <RTE_Settings_Health_ShowImplants>Show Other Implants</RTE_Settings_Health_ShowImplants>
+  <RTE_Settings_Health_ShowImplants_Desc>Show implants that don't replace parts (e.g., psychic amplifier)</RTE_Settings_Health_ShowImplants_Desc>
+  <RTE_Settings_Health_ShowInjuries>Show Injuries</RTE_Settings_Health_ShowInjuries>
+  <RTE_Settings_Health_ShowInjuries_Desc>Show various injuries (gunshot wounds, cuts, etc.)</RTE_Settings_Health_ShowInjuries_Desc>
+  <RTE_Settings_Health_ShowMissingParts>Show Missing Parts</RTE_Settings_Health_ShowMissingParts>
+  <RTE_Settings_Health_ShowMissingParts_Desc>Show missing body parts</RTE_Settings_Health_ShowMissingParts_Desc>
+  <RTE_Settings_Health_ShowConditions>Show Conditions/Diseases</RTE_Settings_Health_ShowConditions>
+  <RTE_Settings_Health_ShowConditions_Desc>Show diseases, toxicity, buffs, and other conditions</RTE_Settings_Health_ShowConditions_Desc>
+  <RTE_Settings_Health_MaxToShow>Max to show: {0}</RTE_Settings_Health_MaxToShow>
+  
+  <!-- Health Info - Smart Consolidation -->
+  <RTE_Settings_Health_ConsolidationSection>━━ Smart Consolidation ━━</RTE_Settings_Health_ConsolidationSection>
+  <RTE_Settings_Health_EnableInjuryConsolidation>Enable Injury Consolidation</RTE_Settings_Health_EnableInjuryConsolidation>
+  <RTE_Settings_Health_EnableInjuryConsolidation_Desc>Merge multiple minor injuries on same body part (e.g., Left hand: 3 minor wounds)</RTE_Settings_Health_EnableInjuryConsolidation_Desc>
+  <RTE_Settings_Health_MinorInjuryThreshold>Minor injury threshold: {0}</RTE_Settings_Health_MinorInjuryThreshold>
+  <RTE_Settings_Health_MinorInjuryThreshold_Desc>Injuries below this severity will be consolidated</RTE_Settings_Health_MinorInjuryThreshold_Desc>
+  <RTE_Settings_Health_EnableBionicSummary>Enable Bionic Summary</RTE_Settings_Health_EnableBionicSummary>
+  <RTE_Settings_Health_EnableBionicSummary_Desc>When 3+ bionics present, show summary instead of listing each</RTE_Settings_Health_EnableBionicSummary_Desc>
   
   <!-- Settings - Item Descriptions -->
   <RTE_Settings_Items_Title>Item Description Enhancement Settings</RTE_Settings_Items_Title>

@@ -137,6 +137,30 @@
   <RTE_Settings_Health_MaxDescLength>描述最大长度: {0} 字符</RTE_Settings_Health_MaxDescLength>
   <RTE_Settings_Health_Note1>注意：需要在RimTalk设置中启用包含健康信息选项。</RTE_Settings_Health_Note1>
   <RTE_Settings_Health_Note2>此mod增强RimTalk发送给AI的健康上下文信息。</RTE_Settings_Health_Note2>
+  <RTE_Settings_Health_Note3>提示：设置为 0 表示不限制数量。</RTE_Settings_Health_Note3>
+  
+  <!-- 健康信息 - 分类过滤 -->
+  <RTE_Settings_Health_FilterSection>━━ 分类过滤 ━━</RTE_Settings_Health_FilterSection>
+  <RTE_Settings_Health_ShowBionics>显示仿生体/义肢</RTE_Settings_Health_ShowBionics>
+  <RTE_Settings_Health_ShowBionics_Desc>显示替换身体部位的仿生体和义肢</RTE_Settings_Health_ShowBionics_Desc>
+  <RTE_Settings_Health_ShowImplants>显示其他植入物</RTE_Settings_Health_ShowImplants>
+  <RTE_Settings_Health_ShowImplants_Desc>显示不替换部位的植入物（如心灵增幅器）</RTE_Settings_Health_ShowImplants_Desc>
+  <RTE_Settings_Health_ShowInjuries>显示伤口</RTE_Settings_Health_ShowInjuries>
+  <RTE_Settings_Health_ShowInjuries_Desc>显示各类伤口（枪伤、刀伤等）</RTE_Settings_Health_ShowInjuries_Desc>
+  <RTE_Settings_Health_ShowMissingParts>显示缺失部位</RTE_Settings_Health_ShowMissingParts>
+  <RTE_Settings_Health_ShowMissingParts_Desc>显示缺失的身体部位</RTE_Settings_Health_ShowMissingParts_Desc>
+  <RTE_Settings_Health_ShowConditions>显示疾病/状态</RTE_Settings_Health_ShowConditions>
+  <RTE_Settings_Health_ShowConditions_Desc>显示疾病、中毒、buff等状态</RTE_Settings_Health_ShowConditions_Desc>
+  <RTE_Settings_Health_MaxToShow>最多显示: {0} 个</RTE_Settings_Health_MaxToShow>
+  
+  <!-- 健康信息 - 智能整合 -->
+  <RTE_Settings_Health_ConsolidationSection>━━ 智能整合 ━━</RTE_Settings_Health_ConsolidationSection>
+  <RTE_Settings_Health_EnableInjuryConsolidation>启用伤口整合</RTE_Settings_Health_EnableInjuryConsolidation>
+  <RTE_Settings_Health_EnableInjuryConsolidation_Desc>将同一部位的多个轻伤合并显示（如：左手3处轻伤）</RTE_Settings_Health_EnableInjuryConsolidation_Desc>
+  <RTE_Settings_Health_MinorInjuryThreshold>轻伤阈值: {0}</RTE_Settings_Health_MinorInjuryThreshold>
+  <RTE_Settings_Health_MinorInjuryThreshold_Desc>低于此严重度的伤口会被整合显示</RTE_Settings_Health_MinorInjuryThreshold_Desc>
+  <RTE_Settings_Health_EnableBionicSummary>启用仿生体摘要</RTE_Settings_Health_EnableBionicSummary>
+  <RTE_Settings_Health_EnableBionicSummary_Desc>当仿生体数量≥3时，用摘要代替逐一列出</RTE_Settings_Health_EnableBionicSummary_Desc>
   
   <!-- 设置界面 - 物品描述 -->
   <RTE_Settings_Items_Title>物品描述增强设置</RTE_Settings_Items_Title>
