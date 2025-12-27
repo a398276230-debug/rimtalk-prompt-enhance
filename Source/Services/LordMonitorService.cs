@@ -109,18 +109,25 @@ namespace RimTalkHealthEnhance
             if (lord == null) return;
             
             // 检查是否为袭击类型的 Lord
-            if (!IsRaidLord(lord)) return;
+            if (IsRaidLord(lord))
+            {
+                int pawnCount = lord.ownedPawns?.Count ?? 0;
+                _raidLordPawnCounts[lord.loadID] = pawnCount;
+                
+                Log.Message($"[RimTalk Enhance] LordMonitorService: Raid Lord detected! " +
+                           $"Job: {lord.LordJob?.GetType().Name}, " +
+                           $"Faction: {lord.faction?.Name ?? "None"}, " +
+                           $"Initial Pawns: {pawnCount}");
+                
+                // 更新袭击初始计数
+                UpdateRaidInitialCount();
+            }
             
-            int pawnCount = lord.ownedPawns?.Count ?? 0;
-            _raidLordPawnCounts[lord.loadID] = pawnCount;
-            
-            Log.Message($"[RimTalk Enhance] LordMonitorService: Raid Lord detected! " +
-                       $"Job: {lord.LordJob?.GetType().Name}, " +
-                       $"Faction: {lord.faction?.Name ?? "None"}, " +
-                       $"Initial Pawns: {pawnCount}");
-            
-            // 更新袭击初始计数
-            UpdateRaidInitialCount();
+            // 检查是否为商队类型的 Lord
+            if (CaravanTrackingService.IsCaravanLord(lord))
+            {
+                CaravanTrackingService.OnLordAdded(lord);
+            }
         }
         
         /// <summary>

@@ -33,6 +33,9 @@ namespace RimTalkHealthEnhance
         
         // 延迟初始化袭击追踪的队列
         private List<(ColonyAnnouncement Event, int TargetTick)> _pendingRaidInitializations = new List<(ColonyAnnouncement, int)>();
+        
+        // 商队检测延迟标记
+        private int _pendingCaravanCheckTick = -1;
 
         public ColonyAnnouncementManager(Game game)
         {
@@ -97,6 +100,20 @@ namespace RimTalkHealthEnhance
             if (currentTick % 2000 == 0)
             {
                 CheckRaidCompletionFallback();
+            }
+            
+            // 检查延迟的商队检测
+            if (_pendingCaravanCheckTick > 0 && currentTick >= _pendingCaravanCheckTick)
+            {
+                Log.Message($"[RimTalk Enhance] Caravan check delay elapsed. CurrentTick: {currentTick}");
+                CaravanTrackingService.CheckCaravanDepartures();
+                _pendingCaravanCheckTick = -1;
+            }
+            
+            // 每2000 ticks 也检查一次商队离开状态
+            if (currentTick % 2000 == 0)
+            {
+                CaravanTrackingService.CheckCaravanDepartures();
             }
             
             // 处理延迟的袭击初始化
@@ -470,6 +487,18 @@ namespace RimTalkHealthEnhance
             // 每次敌人死亡时，重置延迟时间
             int delayTicks = (int)(settings.RaidCheckDelay * 60); // 秒转ticks
             _pendingRaidCheckTick = Find.TickManager.TicksGame + delayTicks;
+        }
+        
+        /// <summary>
+        /// 调度商队检测（由 Lord 移除事件触发）
+        /// </summary>
+        public void ScheduleCaravanCheck(int delayTicks)
+        {
+            var settings = RimTalkHealthEnhanceMod.Settings;
+            if (settings == null || !settings.AutoCompleteCaravanEvents) return;
+            
+            _pendingCaravanCheckTick = Find.TickManager.TicksGame + delayTicks;
+            Log.Message($"[RimTalk Enhance] Scheduled caravan check at tick {_pendingCaravanCheckTick}");
         }
 
         private void CheckRaidCompletion()

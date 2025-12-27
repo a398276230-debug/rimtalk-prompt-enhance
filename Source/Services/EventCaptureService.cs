@@ -122,10 +122,17 @@ namespace RimTalkHealthEnhance
             // 添加到管理器
             MergeOrAdd(announcement);
             
+            // 如果是商队事件，设置追踪
+            if (category == AnnouncementCategory.Event && CaravanTrackingService.IsCaravanEvent(title))
+            {
+                Log.Message($"[RimTalk Enhance] Caravan event detected: '{title}'. Setting up tracking...");
+                CaravanTrackingService.SetActiveCaravanEvent(announcement);
+            }
+            
             // 如果是袭击事件，标记并安排延迟初始化
             // 注意：事件信件发送时，敌人可能还未完全生成
             // 所以我们先标记事件，使用 GameComponent 的 tick 来延迟初始化
-            if (category == AnnouncementCategory.Event && RaidTrackingService.IsRaidEvent(title))
+            else if (category == AnnouncementCategory.Event && RaidTrackingService.IsRaidEvent(title))
             {
                 Log.Message($"[RimTalk Enhance] Raid event detected: '{title}'. Setting up tracking...");
                 

@@ -58,6 +58,9 @@ namespace RimTalkHealthEnhance
         public int InitialBlueprintCount = 0;  // 初始蓝图数量
         public bool AutoCalculateProgress = false; // 是否自动计算进度（(初始-剩余)/初始，0%→100%）
         
+        // === 商队事件 ===
+        public bool IsCaravanEvent = false;    // 是否为商队事件
+        
         // === 袭击事件统计 ===
         public bool IsRaidEvent = false;       // 是否为袭击事件
         public int RaidInitialCount = 0;       // 初始敌人数量
@@ -98,6 +101,9 @@ namespace RimTalkHealthEnhance
             Scribe_Values.Look(ref BlueprintAreaId, "blueprintAreaId");
             Scribe_Values.Look(ref InitialBlueprintCount, "initialBlueprintCount", 0);
             Scribe_Values.Look(ref AutoCalculateProgress, "autoCalculateProgress", false);
+            
+            // 商队事件
+            Scribe_Values.Look(ref IsCaravanEvent, "isCaravanEvent", false);
             
             // 袭击统计
             Scribe_Values.Look(ref IsRaidEvent, "isRaidEvent", false);

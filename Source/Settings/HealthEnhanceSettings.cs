@@ -102,6 +102,7 @@ namespace RimTalkHealthEnhance
         public float AutoCapturedDeleteDays = 0.5f;   // 自动捕获事件完成后删除时间（0-3天，0表示立即）
         public bool AutoCompleteRaidEvents = true;    // 自动完成袭击事件（当敌对单位被消灭时）
         public float RaidCheckDelay = 3f;             // 袭击检测延迟时间（秒）
+        public bool AutoCompleteCaravanEvents = true; // 自动完成商队事件（当商队离开时）
         
         // === 环境事件捕获 ===
         public bool AutoCaptureWeather = true;        // 自动捕获天气变化
@@ -240,6 +241,7 @@ namespace RimTalkHealthEnhance
             Scribe_Values.Look(ref AutoCapturedDeleteDays, "autoCapturedDeleteDays", 0.5f);
             Scribe_Values.Look(ref AutoCompleteRaidEvents, "autoCompleteRaidEvents", true);
             Scribe_Values.Look(ref RaidCheckDelay, "raidCheckDelay", 5f);
+            Scribe_Values.Look(ref AutoCompleteCaravanEvents, "autoCompleteCaravanEvents", true);
             
             // Environment Events
             Scribe_Values.Look(ref AutoCaptureWeather, "autoCaptureWeather", true);
@@ -334,7 +336,8 @@ namespace RimTalkHealthEnhance
         /// </summary>
         public void DoContextEnhancementWindowContents(Rect inRect)
         {
-            Rect viewRect = new Rect(0f, 0f, inRect.width - 16f, 2500f);
+            // 使用足够大的静态高度确保所有内容都能显示
+            Rect viewRect = new Rect(0f, 0f, inRect.width - 16f, 3500f);
             Widgets.BeginScrollView(inRect, ref _contextEnhancementScrollPosition, viewRect);
 
             Listing_Standard listing = new Listing_Standard();
@@ -403,7 +406,8 @@ namespace RimTalkHealthEnhance
         /// </summary>
         public void DoColonyStatusWindowContents(Rect inRect)
         {
-            Rect viewRect = new Rect(0f, 0f, inRect.width - 16f, 2000f);
+            // 使用足够大的静态高度确保所有内容都能显示
+            Rect viewRect = new Rect(0f, 0f, inRect.width - 16f, 5000f);
             Widgets.BeginScrollView(inRect, ref _colonyStatusScrollPosition, viewRect);
 
             Listing_Standard listing = new Listing_Standard();
@@ -928,6 +932,8 @@ namespace RimTalkHealthEnhance
                     Widgets.Label(listing.GetRect(22f), "RTE_Settings_AutoCapture_RaidDelay".Translate(RaidCheckDelay.ToString("F1")));
                     RaidCheckDelay = listing.Slider(RaidCheckDelay, 1f, 30f);
                 }
+                
+                listing.CheckboxLabeled("RTE_Settings_AutoCapture_AutoCompleteCaravan".Translate(), ref AutoCompleteCaravanEvents, "RTE_Settings_AutoCapture_AutoCompleteCaravan_Desc".Translate());
 
                 listing.Gap();
                 listing.GapLine();

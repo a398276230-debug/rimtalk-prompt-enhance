@@ -277,6 +277,8 @@
   <RTE_Settings_AutoCapture_AutoCompleteRaid>Auto-complete raid events</RTE_Settings_AutoCapture_AutoCompleteRaid>
   <RTE_Settings_AutoCapture_AutoCompleteRaid_Desc>Automatically mark raid events as completed when all hostiles are eliminated</RTE_Settings_AutoCapture_AutoCompleteRaid_Desc>
   <RTE_Settings_AutoCapture_RaidDelay>  └─ Check delay: {0} seconds</RTE_Settings_AutoCapture_RaidDelay>
+  <RTE_Settings_AutoCapture_AutoCompleteCaravan>Auto-complete caravan events</RTE_Settings_AutoCapture_AutoCompleteCaravan>
+  <RTE_Settings_AutoCapture_AutoCompleteCaravan_Desc>Automatically mark caravan events as completed when the caravan leaves the map</RTE_Settings_AutoCapture_AutoCompleteCaravan_Desc>
   <RTE_Settings_AutoCapture_DiscoveredTypes>Discovered Event Types ({0})</RTE_Settings_AutoCapture_DiscoveredTypes>
   <RTE_Settings_AutoCapture_NoTypes>No event types discovered. Please enter game and load a save, then refresh.</RTE_Settings_AutoCapture_NoTypes>
   <RTE_Settings_AutoCapture_ResetDefaults>Reset to Defaults</RTE_Settings_AutoCapture_ResetDefaults>

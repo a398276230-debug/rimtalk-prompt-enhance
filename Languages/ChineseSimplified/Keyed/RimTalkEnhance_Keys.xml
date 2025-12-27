@@ -277,6 +277,8 @@
   <RTE_Settings_AutoCapture_AutoCompleteRaid>自动完成袭击事件</RTE_Settings_AutoCapture_AutoCompleteRaid>
   <RTE_Settings_AutoCapture_AutoCompleteRaid_Desc>当所有敌对单位被消灭时，自动将袭击事件标记为完成</RTE_Settings_AutoCapture_AutoCompleteRaid_Desc>
   <RTE_Settings_AutoCapture_RaidDelay>  └─ 检测延迟: {0} 秒</RTE_Settings_AutoCapture_RaidDelay>
+  <RTE_Settings_AutoCapture_AutoCompleteCaravan>自动完成商队事件</RTE_Settings_AutoCapture_AutoCompleteCaravan>
+  <RTE_Settings_AutoCapture_AutoCompleteCaravan_Desc>当商队离开地图时，自动将商队事件标记为完成</RTE_Settings_AutoCapture_AutoCompleteCaravan_Desc>
   <RTE_Settings_AutoCapture_DiscoveredTypes>已发现的事件类型 ({0})</RTE_Settings_AutoCapture_DiscoveredTypes>
   <RTE_Settings_AutoCapture_NoTypes>未发现事件类型。请进入游戏加载存档后刷新。</RTE_Settings_AutoCapture_NoTypes>
   <RTE_Settings_AutoCapture_ResetDefaults>重置为默认</RTE_Settings_AutoCapture_ResetDefaults>
