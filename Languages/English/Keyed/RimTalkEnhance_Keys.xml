@@ -368,6 +368,9 @@
   <RTE_Announcement_AssignedTo_Display> [Assigned: {0}]</RTE_Announcement_AssignedTo_Display>
   <RTE_Area_CellCount_Display>Cells: {0}</RTE_Area_CellCount_Display>
   <RTE_Area_Status_Label>Status</RTE_Area_Status_Label>
+  <!-- Activity Status Enhancement -->
+  <RimTalkEnhance.TravelingPattern>Walking to → {0}</RimTalkEnhance.TravelingPattern>
+  
   <!-- Colony Center Point -->
   <RTE_ColonyCenter_Tooltip>Show/Adjust Colony Center Point</RTE_ColonyCenter_Tooltip>
   <RTE_ColonyCenter_Title>Colony Center Point Adjustment</RTE_ColonyCenter_Title>

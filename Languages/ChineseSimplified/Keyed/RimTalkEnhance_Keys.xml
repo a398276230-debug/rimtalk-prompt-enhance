@@ -368,6 +368,9 @@
   <RTE_Announcement_AssignedTo_Display> [负责人: {0}]</RTE_Announcement_AssignedTo_Display>
   <RTE_Area_CellCount_Display>格子数: {0}</RTE_Area_CellCount_Display>
   <RTE_Area_Status_Label>状态</RTE_Area_Status_Label>
+  <!-- 活动状态增强 -->
+  <RimTalkEnhance.TravelingPattern>正在前往 → {0}</RimTalkEnhance.TravelingPattern>
+  
   <!-- 殖民地中心点 -->
   <RTE_ColonyCenter_Tooltip>显示/调整殖民地中心点</RTE_ColonyCenter_Tooltip>
   <RTE_ColonyCenter_Title>殖民地中心点调整</RTE_ColonyCenter_Title>
