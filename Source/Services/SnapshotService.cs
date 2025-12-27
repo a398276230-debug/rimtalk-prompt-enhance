@@ -11,6 +11,7 @@ namespace RimTalkHealthEnhance
     public static class SnapshotService
     {
         private static FieldInfo allRoomsField;
+        private static FieldInfo reinstallationMapField;
 
         public static ColonySnapshot TakeSnapshot()
         {
@@ -126,6 +127,32 @@ namespace RimTalkHealthEnhance
                             
                         // 检查所属工程
                         CheckBlueprintProject(frame, key, projectAreas, snapshot);
+                    }
+                }
+                
+                // 统计正在重新安装的建筑 (使用反射访问 ListerBuildings.reinstallationMap)
+                if (reinstallationMapField == null)
+                {
+                    reinstallationMapField = AccessTools.Field(typeof(ListerBuildings), "reinstallationMap");
+                }
+                
+                if (reinstallationMapField != null)
+                {
+                    var reinstallMap = reinstallationMapField.GetValue(map.listerBuildings) as System.Collections.IDictionary;
+                    if (reinstallMap != null)
+                    {
+                        foreach (var key in reinstallMap.Keys)
+                        {
+                            var building = key as Thing;
+                            if (building?.def != null)
+                            {
+                                string defName = building.def.defName;
+                                if (snapshot.ReinstallingCounts.ContainsKey(defName))
+                                    snapshot.ReinstallingCounts[defName]++;
+                                else
+                                    snapshot.ReinstallingCounts[defName] = 1;
+                            }
+                        }
                     }
                 }
             }

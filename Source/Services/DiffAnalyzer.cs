@@ -119,32 +119,28 @@ namespace RimTalkHealthEnhance
             }
             
             // 检测重新安装/迁移中的建筑
-            // 特征：建筑数量不变，但有该类型的蓝图存在
-            var reinstalling = new List<string>();
-            foreach (var kvp in today.BlueprintCounts)
+            // 新逻辑：使用 RimWorld 内置的 reinstallationMap 精确检测
+            // 只有在 ReinstallingCounts 中记录的建筑才是真正的"重新安装"
+            var reinstallingDefNames = new HashSet<string>();
+            if (today.ReinstallingCounts != null && today.ReinstallingCounts.Count > 0)
             {
-                string defName = kvp.Key;
-                int blueprintCount = kvp.Value;
-                
-                // 检查该建筑类型的数量是否在昨天和今天相同
-                int yesterdayCount = yesterday.BuildingCounts.ContainsKey(defName)
-                    ? yesterday.BuildingCounts[defName] : 0;
-                int todayCount = today.BuildingCounts.ContainsKey(defName)
-                    ? today.BuildingCounts[defName] : 0;
-                
-                // 如果建筑数量相同且大于0，同时有蓝图，说明可能是重新安装
-                if (yesterdayCount == todayCount && todayCount > 0 && blueprintCount > 0)
+                var reinstallingItems = new List<string>();
+                foreach (var kvp in today.ReinstallingCounts)
                 {
+                    string defName = kvp.Key;
+                    int count = kvp.Value;
+                    reinstallingDefNames.Add(defName);
+                    
                     string label = DefDatabase<ThingDef>.GetNamed(defName, false)?.label ?? defName;
-                    reinstalling.Add($"{label} x{blueprintCount}（正在重新安装/迁移）");
+                    reinstallingItems.Add($"{label} x{count}（正在重新安装/迁移）");
                 }
-            }
-            
-            if (reinstalling.Count > 0)
-            {
-                sb.AppendLine("\n【重新安装/迁移中】");
-                foreach (var item in reinstalling)
-                    sb.AppendLine($"  {item}");
+                
+                if (reinstallingItems.Count > 0)
+                {
+                    sb.AppendLine("\n【重新安装/迁移中】");
+                    foreach (var item in reinstallingItems)
+                        sb.AppendLine($"  {item}");
+                }
             }
             
             // 进行中的蓝图（排除重新安装的）
@@ -173,14 +169,9 @@ namespace RimTalkHealthEnhance
                 foreach (var kvp in today.BlueprintCounts)
                 {
                     string defName = kvp.Key;
-                    int yesterdayBuildingCount = yesterday.BuildingCounts.ContainsKey(defName)
-                        ? yesterday.BuildingCounts[defName] : 0;
-                    int todayBuildingCount = today.BuildingCounts.ContainsKey(defName)
-                        ? today.BuildingCounts[defName] : 0;
                     
-                    // 只有不是"重新安装"的情况才显示在蓝图列表中
-                    bool isReinstalling = (yesterdayBuildingCount == todayBuildingCount && todayBuildingCount > 0);
-                    if (!isReinstalling)
+                    // 只有不在 reinstallingDefNames 中的才显示在蓝图列表中
+                    if (!reinstallingDefNames.Contains(defName))
                     {
                         newBlueprints[defName] = kvp.Value;
                     }

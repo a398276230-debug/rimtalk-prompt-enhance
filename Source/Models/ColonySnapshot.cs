@@ -17,6 +17,9 @@ namespace RimTalkHealthEnhance
         // 蓝图与工程的关联: DefName -> ProjectListWrapper
         public Dictionary<string, ProjectListWrapper> BlueprintToProjects = new Dictionary<string, ProjectListWrapper>();
         
+        // 正在重新安装的建筑: DefName -> Count (使用 RimWorld 内置的 reinstallationMap)
+        public Dictionary<string, int> ReinstallingCounts = new Dictionary<string, int>();
+        
         public int SnapshotTick;
         
         public void ExposeData()
@@ -25,12 +28,14 @@ namespace RimTalkHealthEnhance
             Scribe_Collections.Look(ref Rooms, "rooms", LookMode.Deep);
             Scribe_Collections.Look(ref BlueprintCounts, "blueprints", LookMode.Value, LookMode.Value);
             Scribe_Collections.Look(ref BlueprintToProjects, "blueprintToProjects", LookMode.Value, LookMode.Deep);
+            Scribe_Collections.Look(ref ReinstallingCounts, "reinstalling", LookMode.Value, LookMode.Value);
             Scribe_Values.Look(ref SnapshotTick, "tick");
             
             if (BuildingCounts == null) BuildingCounts = new Dictionary<string, int>();
             if (Rooms == null) Rooms = new List<RoomSnapshot>();
             if (BlueprintCounts == null) BlueprintCounts = new Dictionary<string, int>();
             if (BlueprintToProjects == null) BlueprintToProjects = new Dictionary<string, ProjectListWrapper>();
+            if (ReinstallingCounts == null) ReinstallingCounts = new Dictionary<string, int>();
         }
     }
 
