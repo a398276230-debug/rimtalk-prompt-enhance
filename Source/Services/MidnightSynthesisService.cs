@@ -378,16 +378,19 @@ namespace RimTalkHealthEnhance
                 int woundedEnemies = RaidTrackingService.GetWoundedEnemyCount();
                 int woundedColonists = RaidTrackingService.GetWoundedColonistCount();
                 
+                // 根据袭击类型智能选择措辞（与 FinishRaidTracking 保持一致）
+                var (threatName, unitName) = RaidTrackingService.GetRaidTypeDisplayNames(announcement.Title);
+                
                 // 如果有初始计数，显示详细统计
                 if (announcement.RaidInitialCount > 0)
                 {
-                    sb.Append($" (敌人{announcement.RaidInitialCount}人");
+                    sb.Append($" ({threatName}{announcement.RaidInitialCount}{unitName}");
                     
                     var stats = new List<string>();
                     if (announcement.RaidKillCount > 0)
                         stats.Add($"击杀{announcement.RaidKillCount}");
                     if (announcement.RaidDownedCount > 0)
-                        stats.Add($"俘虏{announcement.RaidDownedCount}");
+                        stats.Add($"击倒{announcement.RaidDownedCount}");
                     if (announcement.RaidFleeCount > 0)
                         stats.Add($"逃跑{announcement.RaidFleeCount}");
                     if (woundedEnemies > 0 && announcement.Status == AnnouncementStatus.Active)

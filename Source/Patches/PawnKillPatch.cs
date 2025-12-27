@@ -33,18 +33,22 @@ namespace RimTalkHealthEnhance
                 // 如果 Pawn 之前已被记录为倒地的敌人，那它肯定是敌人
                 bool wasDownedEnemy = RaidTrackingService.WasEnemyDowned(__instance.thingIDNumber);
                 
+                // 如果 Pawn 之前被记录为活跃敌对目标，那它肯定是敌人
+                // 这解决了发狂动物等直接死亡（一击必杀）时无法被识别的问题
+                bool wasActiveHostile = RaidTrackingService.WasActiveHostile(__instance.thingIDNumber);
+                
                 // 判断是否为敌对派系（用于倒地后死亡的情况）
                 bool isHostileFaction = __instance.Faction != null &&
                                         __instance.Faction != Faction.OfPlayer &&
                                         __instance.Faction.HostileTo(Faction.OfPlayer);
                 
-                // 综合判断：当前敌对 OR 之前倒地过 OR 属于敌对派系
-                bool isEnemy = isHostileNow || wasDownedEnemy || isHostileFaction;
+                // 综合判断：当前敌对 OR 之前倒地过 OR 曾是活跃敌对目标 OR 属于敌对派系
+                bool isEnemy = isHostileNow || wasDownedEnemy || wasActiveHostile || isHostileFaction;
                 
                 // 识别威胁类型用于日志
                 string raceType = isHumanlike ? "Humanlike" : (isAnimal ? "Animal" : (isMechanoid ? "Mechanoid" : "Other"));
                 
-                Log.Message($"[RimTalk Enhance] PawnKillPatch triggered for: {__instance.LabelShort}, Faction: {factionName}, Type: {raceType}, IsHostileNow: {isHostileNow}, WasDownedEnemy: {wasDownedEnemy}, IsHostileFaction: {isHostileFaction}");
+                Log.Message($"[RimTalk Enhance] PawnKillPatch triggered for: {__instance.LabelShort}, Faction: {factionName}, Type: {raceType}, IsHostileNow: {isHostileNow}, WasDownedEnemy: {wasDownedEnemy}, WasActiveHostile: {wasActiveHostile}, IsHostileFaction: {isHostileFaction}");
                 
                 // 敌对目标死亡（包括人类、动物、机械族等）
                 if (isEnemy)

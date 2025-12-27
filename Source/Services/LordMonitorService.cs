@@ -202,12 +202,8 @@ namespace RimTalkHealthEnhance
             var raidEvent = RaidTrackingService.GetActiveRaidEvent();
             if (raidEvent == null) return;
             
-            // 检查是否是动物袭击（动物袭击不使用 Lord，不需要持续监控）
-            if (RaidTrackingService.IsAnimalRaidEvent(raidEvent.Title))
-            {
-                return;
-            }
-            
+            // 动物袭击和其他袭击都需要更新初始计数
+            // 之前跳过动物袭击是错误的，因为动物也可能逐个生成
             // 更新计数
             UpdateRaidInitialCount();
         }

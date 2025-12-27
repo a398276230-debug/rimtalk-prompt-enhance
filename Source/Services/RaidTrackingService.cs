@@ -26,6 +26,14 @@ namespace RimTalkHealthEnhance
         // 追踪已倒地的敌人 Pawn（用于在击杀时正确调整计数）
         private static HashSet<int> _downedEnemyIds = new HashSet<int>();
         
+        // 追踪活跃敌对目标的 Pawn ID（用于识别直接死亡的敌人）
+        // 这解决了发狂动物等直接死亡时无法被识别的问题
+        private static HashSet<int> _activeHostileIds = new HashSet<int>();
+        
+        // 追踪已击杀的敌人 Pawn ID（用于防止死亡逃避导致的重复计算）
+        // 死亡逃避（Death Refusal）会让 Pawn 死亡后复活再死亡，触发多次 Kill 事件
+        private static HashSet<int> _killedEnemyIds = new HashSet<int>();
+        
         // 动物袭击关键词（用于智能识别袭击类型）
         private static readonly string[] AnimalRaidKeywords = {
             "manhunter", "animal", "猎杀", "动物", "发狂"
@@ -169,6 +177,8 @@ namespace RimTalkHealthEnhance
             _woundedEnemyIds.Clear();
             _woundedColonistIds.Clear();
             _downedEnemyIds.Clear();
+            _activeHostileIds.Clear();
+            _killedEnemyIds.Clear();
             
             // 计算初始敌人数量
             var map = Find.CurrentMap;
@@ -187,6 +197,7 @@ namespace RimTalkHealthEnhance
         /// 计算地图上的敌对威胁数量（只计算活着且站立的）
         /// 包括：人类敌人、机械族、发狂动物、虫群等所有敌对目标
         /// 使用 RimWorld 内置的 HostileTo 方法，自动处理派系敌对、精神状态（发狂）、掠食者等
+        /// 同时记录所有敌对目标的 ID 到 _activeHostileIds，用于后续识别直接死亡的敌人
         /// </summary>
         public static int CountHostileThreats(Map map)
         {
@@ -215,6 +226,9 @@ namespace RimTalkHealthEnhance
                     counted.Add(p.thingIDNumber);
                     count++;
                     
+                    // 记录到活跃敌对目标集合（用于识别直接死亡的敌人）
+                    _activeHostileIds.Add(p.thingIDNumber);
+                    
                     // 识别威胁类型用于日志
                     string raceType = p.RaceProps?.Humanlike == true ? "Humanlike" :
                                      (p.RaceProps?.Animal == true ? "Animal" :
@@ -223,7 +237,7 @@ namespace RimTalkHealthEnhance
                 }
             }
             
-            Log.Message($"[RimTalk Enhance] Total hostile threats counted (alive & standing): {count}");
+            Log.Message($"[RimTalk Enhance] Total hostile threats counted (alive & standing): {count}. Active hostile IDs tracked: {_activeHostileIds.Count}");
             return count;
         }
         
@@ -263,6 +277,19 @@ namespace RimTalkHealthEnhance
             
             // 通知 LordMonitorService 战斗已开始，锁定初始计数
             LordMonitorService.MarkCombatStarted();
+            
+            // 防止重复计算击杀（死亡逃避 Death Refusal 会导致同一个 Pawn 多次触发 Kill 事件）
+            if (enemy != null && _killedEnemyIds.Contains(enemy.thingIDNumber))
+            {
+                Log.Message($"[RimTalk Enhance] Enemy already killed (Death Refusal?): {enemy.LabelShort}. Skipping duplicate count.");
+                return;
+            }
+            
+            // 记录为已击杀
+            if (enemy != null)
+            {
+                _killedEnemyIds.Add(enemy.thingIDNumber);
+            }
             
             raidEvent.RaidKillCount++;
             
@@ -388,6 +415,15 @@ namespace RimTalkHealthEnhance
         }
         
         /// <summary>
+        /// 检查 Pawn 是否曾被记录为活跃敌对目标
+        /// 用于判断直接死亡的敌人（如发狂动物被一击必杀）
+        /// </summary>
+        public static bool WasActiveHostile(int pawnId)
+        {
+            return _activeHostileIds.Contains(pawnId);
+        }
+        
+        /// <summary>
         /// 获取受伤敌人数量
         /// </summary>
         public static int GetWoundedEnemyCount()
@@ -422,6 +458,8 @@ namespace RimTalkHealthEnhance
             _woundedEnemyIds.Clear();
             _woundedColonistIds.Clear();
             _downedEnemyIds.Clear();
+            _activeHostileIds.Clear();
+            _killedEnemyIds.Clear();
             
             // 生成战斗报告
             var report = new System.Text.StringBuilder();
@@ -478,6 +516,8 @@ namespace RimTalkHealthEnhance
             _woundedEnemyIds.Clear();
             _woundedColonistIds.Clear();
             _downedEnemyIds.Clear();
+            _activeHostileIds.Clear();
+            _killedEnemyIds.Clear();
         }
     }
 }
