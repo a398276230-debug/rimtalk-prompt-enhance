@@ -2,7 +2,7 @@
 <LanguageData>
   <!-- Main Window Tabs -->
   <RTE_Tab_CurrentStatus>Current Status</RTE_Tab_CurrentStatus>
-  <RTE_Tab_HistorySnapshots>History Snapshots</RTE_Tab_HistorySnapshots>
+  <RTE_Tab_HistorySnapshots>Daily Report</RTE_Tab_HistorySnapshots>
   <RTE_Tab_CustomAreas>Custom Areas</RTE_Tab_CustomAreas>
   
   <!-- Colony Overview -->

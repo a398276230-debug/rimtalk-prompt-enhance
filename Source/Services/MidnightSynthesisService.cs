@@ -119,14 +119,11 @@ namespace RimTalkHealthEnhance
             }
             
             // 6. 创建快照记录
-            // 注意：午夜触发时记录的是"昨天"的活动
-            // 使用当前tick减去一整天(60000 ticks)来获取昨天的日期
-            int yesterdayTick = Find.TickManager.TicksGame - 60000;
-            
+            // 快照记录当前时刻（即新一天的0点），但AI会总结"昨天"发生的事情
             var dailySnapshot = new DailySnapshot
             {
                 Day = GenDate.DaysPassed,  // 保留用于排序
-                Tick = yesterdayTick,  // 使用昨天的时间戳
+                Tick = Find.TickManager.TicksGame,  // 使用当前时间戳（记录时刻）
                 Snapshot = todaySnapshot,
                 PlayerActions = new List<string>(manager.Data.TodayActionLogs),
                 Events = todayEvents,
@@ -161,7 +158,7 @@ namespace RimTalkHealthEnhance
                 }
                 else
                 {
-                    dailySnapshot.AISummary = "（今日无事发生，岁月静好）";
+                    dailySnapshot.AISummary = "（昨日无事发生，岁月静好）";
                 }
             }
             else
@@ -196,12 +193,12 @@ namespace RimTalkHealthEnhance
         
         public static string GetDefaultPromptTemplate()
         {
-            return @"你是一个RimWorld（环世界）殖民地的史官。请根据提供的【今日数据】，为殖民地撰写一段今日的发展日志。
+            return @"你是一个RimWorld（环世界）殖民地的史官。请根据提供的【昨日数据】，为殖民地撰写一段昨日的发展日志。
 
 【参考风格与背景】
 {overview}
 
-【今日数据】
+【昨日数据】
 1. 建筑与发展变化：
 {diffReport}
 
@@ -240,7 +237,7 @@ namespace RimTalkHealthEnhance
    - 结合【科技研究】，描述殖民地的技术发展。
    - 结合【电力状态】，如果电力不足或盈余较大，可以简要提及。
    - 结合【事件】，描述殖民地遭遇的挑战或机遇。
-5. **篇幅**：控制在100-200字左右，精炼概括今日重点。
+5. **篇幅**：控制在100-200字左右，精炼概括昨日重点。
 6. **风格一致性**：如果【参考风格】是第一人称（我/我们），请保持；如果是第三人称，请保持。如果风格幽默，请保持幽默；如果严肃，请保持严肃。
 7. 不要写开头和结尾的套话，直接输出内容。";
         }
@@ -281,7 +278,7 @@ namespace RimTalkHealthEnhance
 
             // 使用默认提示词
             var sb = new StringBuilder();
-            sb.AppendLine("你是一个RimWorld（环世界）殖民地的史官。请根据提供的【今日数据】，为殖民地撰写一段今日的发展日志。");
+            sb.AppendLine("你是一个RimWorld（环世界）殖民地的史官。请根据提供的【昨日数据】，为殖民地撰写一段昨日的发展日志。");
             sb.AppendLine();
             
             if (hasOverview)
@@ -299,7 +296,7 @@ namespace RimTalkHealthEnhance
             }
 
             sb.AppendLine();
-            sb.AppendLine("【今日数据】");
+            sb.AppendLine("【昨日数据】");
             
             sb.AppendLine("1. 建筑与发展变化：");
             sb.AppendLine(string.IsNullOrWhiteSpace(diffReport) ? "（无明显建筑变化）" : diffReport);
@@ -445,7 +442,7 @@ namespace RimTalkHealthEnhance
         {
             // 无 AI 时的简单模板
             var sb = new StringBuilder();
-            sb.AppendLine("今日殖民地发生以下变化：");
+            sb.AppendLine("昨日殖民地发生以下变化：");
             
             if (!string.IsNullOrEmpty(diffReport))
                 sb.AppendLine(diffReport.Replace("【", "").Replace("】", ":"));
