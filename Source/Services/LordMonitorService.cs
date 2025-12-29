@@ -43,11 +43,24 @@ namespace RimTalkHealthEnhance
             // 取消订阅旧地图
             UnsubscribeFromCurrentMap();
             
-            // 订阅新地图
-            _subscribedMap = map;
-            map.events.LordAdded += OnLordAdded;
-            
-            Log.Message($"[RimTalk Enhance] LordMonitorService: Subscribed to map events.");
+            // 订阅新地图（添加 null 检查和异常保护）
+            try
+            {
+                if (map.events != null)
+                {
+                    _subscribedMap = map;
+                    map.events.LordAdded += OnLordAdded;
+                    Log.Message($"[RimTalk Enhance] LordMonitorService: Subscribed to map events.");
+                }
+                else
+                {
+                    Log.Warning($"[RimTalk Enhance] LordMonitorService: Cannot subscribe - map.events is null.");
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Warning($"[RimTalk Enhance] LordMonitorService: Error subscribing to map: {ex.Message}");
+            }
         }
         
         /// <summary>
@@ -57,8 +70,23 @@ namespace RimTalkHealthEnhance
         {
             if (_subscribedMap != null)
             {
-                _subscribedMap.events.LordAdded -= OnLordAdded;
-                _subscribedMap = null;
+                try
+                {
+                    // 添加 null 检查：_subscribedMap.events 可能在地图卸载后为 null
+                    if (_subscribedMap.events != null)
+                    {
+                        _subscribedMap.events.LordAdded -= OnLordAdded;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    // 安全处理，防止地图状态异常导致崩溃
+                    Log.Warning($"[RimTalk Enhance] LordMonitorService: Error unsubscribing from map: {ex.Message}");
+                }
+                finally
+                {
+                    _subscribedMap = null;
+                }
             }
             
             // 清理状态
