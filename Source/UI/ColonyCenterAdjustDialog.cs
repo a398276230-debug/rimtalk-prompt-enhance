@@ -8,12 +8,20 @@ namespace RimTalkHealthEnhance.UI
     /// <summary>
     /// 殖民地中心点调整窗口
     /// </summary>
+    [StaticConstructorOnStartup]
     public class ColonyCenterAdjustDialog : Window
     {
         private IntVec3 tempOffset;
-        private static Material markerMaterial;
+        private static readonly Material markerMaterial;
         
         public override Vector2 InitialSize => new Vector2(420f, 320f);
+        
+        // 静态构造函数 - 在主线程中初始化 Material
+        static ColonyCenterAdjustDialog()
+        {
+            markerMaterial = SolidColorMaterials.SimpleSolidColorMaterial(new Color(1f, 1f, 0f, 0.5f));
+            markerMaterial.shader = ShaderDatabase.MetaOverlay;
+        }
         
         public ColonyCenterAdjustDialog()
         {
@@ -24,13 +32,6 @@ namespace RimTalkHealthEnhance.UI
             this.absorbInputAroundWindow = false;
             this.draggable = true;
             this.preventCameraMotion = false;
-            
-            // 创建标记材质
-            if (markerMaterial == null)
-            {
-                markerMaterial = SolidColorMaterials.SimpleSolidColorMaterial(new Color(1f, 1f, 0f, 0.5f));
-                markerMaterial.shader = ShaderDatabase.MetaOverlay;
-            }
         }
         
         public override void DoWindowContents(Rect inRect)
