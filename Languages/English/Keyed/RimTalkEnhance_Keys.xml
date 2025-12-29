@@ -120,12 +120,12 @@
   <RTE_Settings_Tab_AIHistorian>AI Historian</RTE_Settings_Tab_AIHistorian>
   
   <!-- Settings - New Tabs -->
-  <RTE_Settings_Tab_ContextEnhancement>📊 Context Enhancement</RTE_Settings_Tab_ContextEnhancement>
-  <RTE_Settings_Tab_ColonyStatus>📢 Colony Status</RTE_Settings_Tab_ColonyStatus>
+  <RTE_Settings_Tab_ContextEnhancement>Context Enhancement</RTE_Settings_Tab_ContextEnhancement>
+  <RTE_Settings_Tab_ColonyStatus>Colony Status</RTE_Settings_Tab_ColonyStatus>
   
   <!-- Settings - Page Titles -->
-  <RTE_Settings_ContextEnhancement_PageTitle>📊 Context Enhancement Settings</RTE_Settings_ContextEnhancement_PageTitle>
-  <RTE_Settings_ColonyStatus_PageTitle>📢 Colony Status Settings</RTE_Settings_ColonyStatus_PageTitle>
+  <RTE_Settings_ContextEnhancement_PageTitle>Context Enhancement Settings</RTE_Settings_ContextEnhancement_PageTitle>
+  <RTE_Settings_ColonyStatus_PageTitle>Colony Status Settings</RTE_Settings_ColonyStatus_PageTitle>
   
   <!-- Settings - Health Info -->
   <RTE_Settings_Health_Title>RimTalk Enhanced Health Info Settings</RTE_Settings_Health_Title>
@@ -375,6 +375,7 @@
   <RTE_Announcement_AssignedTo_Display> [Assigned: {0}]</RTE_Announcement_AssignedTo_Display>
   <RTE_Area_CellCount_Display>Cells: {0}</RTE_Area_CellCount_Display>
   <RTE_Area_Status_Label>Status</RTE_Area_Status_Label>
+
   <!-- Activity Status Enhancement -->
   <RimTalkEnhance.TravelingPattern>Walking to → {0}</RimTalkEnhance.TravelingPattern>
   
@@ -387,7 +388,7 @@
   <RTE_ColonyCenter_FinalCenter>Final Center: ({0}, {1})</RTE_ColonyCenter_FinalCenter>
   <RTE_ColonyCenter_Reset>Reset Offset</RTE_ColonyCenter_Reset>
   <RTE_ColonyCenter_Apply>Apply</RTE_ColonyCenter_Apply>
-  <RTE_ColonyCenter_ApplyClose>Apply & Close</RTE_ColonyCenter_ApplyClose>
+  <RTE_ColonyCenter_ApplyClose>Apply and Close</RTE_ColonyCenter_ApplyClose>
   <RTE_ColonyCenter_Hint>Hint: The yellow marker on the map will move in real-time as you adjust the offset.\nEven if the home area expands, the offset will automatically apply to the new auto center.</RTE_ColonyCenter_Hint>
   <RTE_ColonyCenter_Updated>Colony center offset updated</RTE_ColonyCenter_Updated>
 
