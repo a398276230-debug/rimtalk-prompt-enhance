@@ -21,7 +21,12 @@
   <RTE_Snapshot_NoData>No snapshot records yet. Snapshots will be generated automatically at midnight.</RTE_Snapshot_NoData>
   <RTE_Snapshot_PrevDay>← Previous Day</RTE_Snapshot_PrevDay>
   <RTE_Snapshot_NextDay>Next Day →</RTE_Snapshot_NextDay>
+  <RTE_Snapshot_DateBack>-1 Day</RTE_Snapshot_DateBack>
+  <RTE_Snapshot_DateForward>+1 Day</RTE_Snapshot_DateForward>
+  <RTE_Snapshot_DateAdjusted>Snapshot date adjusted</RTE_Snapshot_DateAdjusted>
   <RTE_Snapshot_AISummary>【AI Summary】</RTE_Snapshot_AISummary>
+  <RTE_Snapshot_SaveSummary>Save</RTE_Snapshot_SaveSummary>
+  <RTE_Snapshot_SummarySaved>AI summary saved</RTE_Snapshot_SummarySaved>
   <RTE_Snapshot_DetailedChanges>📊 Detailed Changes</RTE_Snapshot_DetailedChanges>
   <RTE_Snapshot_PlayerActions>【Player Actions】</RTE_Snapshot_PlayerActions>
   <RTE_Snapshot_Events>【Event Records】</RTE_Snapshot_Events>

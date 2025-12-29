@@ -26,6 +26,10 @@ namespace RimTalkHealthEnhance
         // Height cache
         private Dictionary<string, float> heightCache = new Dictionary<string, float>();
         private int lastDataVersion = -1;
+        
+        // AI Summary editing state
+        private string editingSummary;
+        private int editingSnapshotDay = -1;
 
         public override Vector2 InitialSize => new Vector2(1000f, 700f);
 
@@ -231,7 +235,7 @@ namespace RimTalkHealthEnhance
             
             // 顶部：日期导航
             var navRect = new Rect(innerRect.x, innerRect.y, innerRect.width, 30f);
-            DrawSnapshotNavigation(navRect, snapshot, snapshots.Count);
+            DrawSnapshotNavigation(navRect, snapshot, snapshots.Count, manager);
             
             // 内容区域
             var contentRect = new Rect(innerRect.x, innerRect.y + 35f, innerRect.width, innerRect.height - 70f);
@@ -242,17 +246,37 @@ namespace RimTalkHealthEnhance
             float curY = 0f;
             float width = scrollRect.width;
             
-            // AI 总结区域
-            if (!string.IsNullOrEmpty(snapshot.AISummary))
+            // AI 总结区域 - 可编辑
+            Widgets.Label(new Rect(0, curY, width - 100f, 25f), "RTE_Snapshot_AISummary".Translate());
+            
+            // 保存按钮 - 在标题右侧
+            if (Widgets.ButtonText(new Rect(width - 90f, curY, 90f, 24f), "RTE_Snapshot_SaveSummary".Translate()))
             {
-                Widgets.Label(new Rect(0, curY, width, 25f), "RTE_Snapshot_AISummary".Translate());
-                curY += 30f;
-                
-                var summaryHeight = Text.CalcHeight(snapshot.AISummary, width - 20f);
-                Widgets.DrawBoxSolid(new Rect(0, curY, width, summaryHeight + 20f), new Color(0.2f, 0.3f, 0.4f, 0.3f));
-                Widgets.Label(new Rect(10f, curY + 10f, width - 20f, summaryHeight), snapshot.AISummary);
-                curY += summaryHeight + 30f;
+                if (editingSnapshotDay == snapshot.Day && editingSummary != null)
+                {
+                    snapshot.AISummary = editingSummary;
+                    manager.NotifyDataChanged();
+                    Messages.Message("RTE_Snapshot_SummarySaved".Translate(), MessageTypeDefOf.TaskCompletion, false);
+                }
             }
+            curY += 30f;
+            
+            // 初始化编辑状态
+            if (editingSnapshotDay != snapshot.Day)
+            {
+                editingSummary = snapshot.AISummary ?? "";
+                editingSnapshotDay = snapshot.Day;
+            }
+            
+            // 可编辑文本框
+            float summaryHeight = Mathf.Max(100f, Text.CalcHeight(editingSummary ?? "", width - 20f) + 20f);
+            Widgets.DrawBoxSolid(new Rect(0, curY, width, summaryHeight + 10f), new Color(0.2f, 0.3f, 0.4f, 0.3f));
+            string newSummary = Widgets.TextArea(new Rect(5f, curY + 5f, width - 10f, summaryHeight), editingSummary ?? "");
+            if (newSummary != editingSummary)
+            {
+                editingSummary = newSummary;
+            }
+            curY += summaryHeight + 20f;
             
             // 详细变化
             Widgets.Label(new Rect(0, curY, width, 25f), "RTE_Snapshot_DetailedChanges".Translate());
@@ -295,24 +319,54 @@ namespace RimTalkHealthEnhance
             DrawSnapshotButtons(buttonRect, snapshot);
         }
         
-        private void DrawSnapshotNavigation(Rect rect, DailySnapshot snapshot, int totalCount)
+        private void DrawSnapshotNavigation(Rect rect, DailySnapshot snapshot, int totalCount, ColonyAnnouncementManager manager)
         {
-            // 左箭头
-            if (Widgets.ButtonText(new Rect(rect.x, rect.y, 80f, rect.height), "RTE_Snapshot_PrevDay".Translate()))
+            float btnWidth = 70f;
+            float dateAdjustBtnWidth = 45f;
+            float gap = 5f;
+            
+            // 左箭头 - 切换到更早的快照
+            if (Widgets.ButtonText(new Rect(rect.x, rect.y, btnWidth, rect.height), "RTE_Snapshot_PrevDay".Translate()))
             {
                 currentSnapshotIndex = Mathf.Min(currentSnapshotIndex + 1, totalCount - 1);
+                // 切换快照时重置编辑状态
+                editingSnapshotDay = -1;
+            }
+            
+            // 日期后退按钮 (-1天) - 靠内侧
+            float dateBackX = rect.x + btnWidth + gap;
+            if (Widgets.ButtonText(new Rect(dateBackX, rect.y, dateAdjustBtnWidth, rect.height), "RTE_Snapshot_DateBack".Translate()))
+            {
+                snapshot.Day -= 1;
+                snapshot.Tick -= GenDate.TicksPerDay;
+                manager.NotifyDataChanged();
+                Messages.Message("RTE_Snapshot_DateAdjusted".Translate(), MessageTypeDefOf.TaskCompletion, false);
             }
             
             // 日期显示 - 使用游戏实际日期
+            float dateDisplayX = dateBackX + dateAdjustBtnWidth + gap;
+            float dateDisplayWidth = rect.width - (btnWidth * 2) - (dateAdjustBtnWidth * 2) - (gap * 4);
             string dateStr = GenDate.DateFullStringAt(snapshot.Tick, Vector2.zero);
             Text.Anchor = TextAnchor.MiddleCenter;
-            Widgets.Label(new Rect(rect.x + 90f, rect.y, rect.width - 180f, rect.height), dateStr);
+            Widgets.Label(new Rect(dateDisplayX, rect.y, dateDisplayWidth, rect.height), dateStr);
             Text.Anchor = TextAnchor.UpperLeft;
             
-            // 右箭头
-            if (Widgets.ButtonText(new Rect(rect.xMax - 80f, rect.y, 80f, rect.height), "RTE_Snapshot_NextDay".Translate()))
+            // 日期前进按钮 (+1天) - 靠内侧
+            float dateForwardX = dateDisplayX + dateDisplayWidth + gap;
+            if (Widgets.ButtonText(new Rect(dateForwardX, rect.y, dateAdjustBtnWidth, rect.height), "RTE_Snapshot_DateForward".Translate()))
+            {
+                snapshot.Day += 1;
+                snapshot.Tick += GenDate.TicksPerDay;
+                manager.NotifyDataChanged();
+                Messages.Message("RTE_Snapshot_DateAdjusted".Translate(), MessageTypeDefOf.TaskCompletion, false);
+            }
+            
+            // 右箭头 - 切换到更近的快照
+            if (Widgets.ButtonText(new Rect(rect.xMax - btnWidth, rect.y, btnWidth, rect.height), "RTE_Snapshot_NextDay".Translate()))
             {
                 currentSnapshotIndex = Mathf.Max(currentSnapshotIndex - 1, 0);
+                // 切换快照时重置编辑状态
+                editingSnapshotDay = -1;
             }
         }
         
@@ -387,6 +441,9 @@ namespace RimTalkHealthEnhance
                             if (!string.IsNullOrEmpty(result))
                             {
                                 snapshot.AISummary = result;
+                                // 重置编辑状态，强制编辑框重新加载新内容
+                                editingSnapshotDay = -1;
+                                editingSummary = null;
                                 manager.NotifyDataChanged();
                                 Messages.Message("RTE_Snapshot_RegenerateSuccess".Translate(), MessageTypeDefOf.PositiveEvent, false);
                             }

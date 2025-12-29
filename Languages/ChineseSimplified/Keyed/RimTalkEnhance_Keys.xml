@@ -21,7 +21,12 @@
   <RTE_Snapshot_NoData>暂无快照记录。每日 0 点将自动生成快照。</RTE_Snapshot_NoData>
   <RTE_Snapshot_PrevDay>← 前一天</RTE_Snapshot_PrevDay>
   <RTE_Snapshot_NextDay>后一天 →</RTE_Snapshot_NextDay>
+  <RTE_Snapshot_DateBack>-1天</RTE_Snapshot_DateBack>
+  <RTE_Snapshot_DateForward>+1天</RTE_Snapshot_DateForward>
+  <RTE_Snapshot_DateAdjusted>快照日期已调整</RTE_Snapshot_DateAdjusted>
   <RTE_Snapshot_AISummary>【AI 总结】</RTE_Snapshot_AISummary>
+  <RTE_Snapshot_SaveSummary>保存总结</RTE_Snapshot_SaveSummary>
+  <RTE_Snapshot_SummarySaved>AI总结已保存</RTE_Snapshot_SummarySaved>
   <RTE_Snapshot_DetailedChanges>📊 详细变化</RTE_Snapshot_DetailedChanges>
   <RTE_Snapshot_PlayerActions>【玩家操作】</RTE_Snapshot_PlayerActions>
   <RTE_Snapshot_Events>【事件记录】</RTE_Snapshot_Events>
