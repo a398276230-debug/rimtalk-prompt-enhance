@@ -16,7 +16,8 @@ namespace RimTalkHealthEnhance
         private static readonly string[] RaidKeywords = {
             "raid", "attack", "siege", "infestation", "manhunter", "ambush", "assault",
             "mechanoid", "mech cluster", "animal",
-            "袭击", "进攻", "围攻", "虫害", "猎杀", "伏击", "突袭"
+            "袭击", "进攻", "围攻", "虫害", "猎杀", "伏击", "突袭",
+            "机械族", "来袭"  // 支持 Milira 等 mod 的机械族袭击事件
         };
         
         // 追踪受伤的 Pawn（去重用，每个 Pawn 只计数一次）
@@ -203,37 +204,70 @@ namespace RimTalkHealthEnhance
         {
             if (map == null) return 0;
             
+            // 防止 Faction.OfPlayer 为 null 的情况（理论上不应该发生）
+            var playerFaction = Faction.OfPlayer;
+            if (playerFaction == null) return 0;
+            
             int count = 0;
             var counted = new HashSet<int>(); // 防止重复计数
             
-            foreach (var p in map.mapPawns.AllPawns)
+            // 复制列表以避免并发修改异常（某些 mod 可能在遍历时修改列表）
+            List<Pawn> allPawns;
+            try
             {
-                if (p == null) continue;
-                if (counted.Contains(p.thingIDNumber)) continue;
-                
-                // 跳过已死亡、未生成或已倒地的
-                if (p.Dead || !p.Spawned || p.Downed) continue;
-                
-                // 跳过玩家派系的 Pawn
-                if (p.Faction == Faction.OfPlayer) continue;
-                
-                // 使用 RimWorld 内置的 HostileTo 方法
-                // 这会自动处理：派系敌对、发狂动物（MentalState）、狂暴状态、掠食者等
-                bool isHostile = p.HostileTo(Faction.OfPlayer);
-                
-                if (isHostile)
+                allPawns = map.mapPawns.AllPawns.ToList();
+            }
+            catch (Exception ex)
+            {
+                Log.Warning($"[RimTalk Enhance] CountHostileThreats: Failed to get pawn list: {ex.Message}");
+                return 0;
+            }
+            
+            foreach (var p in allPawns)
+            {
+                try
                 {
-                    counted.Add(p.thingIDNumber);
-                    count++;
+                    if (p == null) continue;
+                    if (counted.Contains(p.thingIDNumber)) continue;
                     
-                    // 记录到活跃敌对目标集合（用于识别直接死亡的敌人）
-                    _activeHostileIds.Add(p.thingIDNumber);
+                    // 跳过已死亡、未生成或已倒地的
+                    if (p.Dead || !p.Spawned || p.Downed) continue;
                     
-                    // 识别威胁类型用于日志
-                    string raceType = p.RaceProps?.Humanlike == true ? "Humanlike" :
-                                     (p.RaceProps?.Animal == true ? "Animal" :
-                                     (p.RaceProps?.IsMechanoid == true ? "Mechanoid" : "Other"));
-                    Log.Message($"[RimTalk Enhance] Counted hostile threat: {p.LabelShort} (ID: {p.thingIDNumber}, Type: {raceType}, Faction: {p.Faction?.Name ?? "None"})");
+                    // 跳过玩家派系的 Pawn
+                    if (p.Faction == playerFaction) continue;
+                    
+                    // 使用 RimWorld 内置的 HostileTo 方法
+                    // 这会自动处理：派系敌对、发狂动物（MentalState）、狂暴状态、掠食者等
+                    bool isHostile = p.HostileTo(playerFaction);
+                    
+                    if (isHostile)
+                    {
+                        counted.Add(p.thingIDNumber);
+                        count++;
+                        
+                        // 记录到活跃敌对目标集合（用于识别直接死亡的敌人）
+                        _activeHostileIds.Add(p.thingIDNumber);
+                        
+                        // 识别威胁类型用于日志（带异常保护，防止某些 mod 的 Pawn 属性访问异常）
+                        try
+                        {
+                            string raceType = p.RaceProps?.Humanlike == true ? "Humanlike" :
+                                             (p.RaceProps?.Animal == true ? "Animal" :
+                                             (p.RaceProps?.IsMechanoid == true ? "Mechanoid" : "Other"));
+                            Log.Message($"[RimTalk Enhance] Counted hostile threat: {p.LabelShort} (ID: {p.thingIDNumber}, Type: {raceType}, Faction: {p.Faction?.Name ?? "None"})");
+                        }
+                        catch
+                        {
+                            // 日志失败不影响计数
+                            Log.Message($"[RimTalk Enhance] Counted hostile threat: ID {p.thingIDNumber} (details unavailable)");
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    // 单个 Pawn 处理失败不应影响整体计数
+                    Log.Warning($"[RimTalk Enhance] CountHostileThreats: Error processing pawn: {ex.Message}");
+                    continue;
                 }
             }
             
