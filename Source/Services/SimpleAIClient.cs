@@ -76,12 +76,34 @@ namespace RimTalkHealthEnhance
                 else
                 {
                     // Auto-complete URL for OpenAI compatible providers if user only provided base URL
-                    if (!url.EndsWith("/chat/completions"))
+                    // Skip auto-complete if user already specified a specific endpoint path
+                    // Supports: OpenAI, DeepSeek, OpenRouter, and other OpenAI-compatible APIs
+                    bool hasSpecificEndpoint = url.EndsWith("/chat/completions") ||
+                                               url.EndsWith("/api/chat") ||
+                                               url.EndsWith("/api/generate") ||
+                                               url.EndsWith("/completions") ||
+                                               url.Contains("/chat/completions?") ||   // with query params
+                                               url.Contains("/v1/chat/completions") || // full path already present
+                                               url.Contains("/api/v1/chat/completions"); // OpenRouter style
+                    
+                    if (!hasSpecificEndpoint)
                     {
-                        if (url.EndsWith("/v1"))
-                            url += "/chat/completions";
+                        // Normalize: remove trailing slash to avoid double slashes
+                        url = url.TrimEnd('/');
+                        
+                        // Check if URL already contains /v1 path segment
+                        if (url.EndsWith("/v1") || url.Contains("/v1/"))
+                        {
+                            // URL already has /v1, just append /chat/completions
+                            if (url.EndsWith("/v1"))
+                                url += "/chat/completions";
+                            // else: URL contains /v1/ but doesn't end with it - likely already complete, don't modify
+                        }
                         else
+                        {
+                            // URL doesn't have /v1, append full path
                             url += "/v1/chat/completions";
+                        }
                     }
                 }
             }
