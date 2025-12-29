@@ -14,8 +14,10 @@ namespace RimTalkHealthEnhance
         {
             var settings = RimTalkHealthEnhanceMod.Settings;
             
-            // Player2 doesn't require API key (uses local app or optional key)
-            if (settings.SynthesisProvider != AIProvider.Player2 && string.IsNullOrEmpty(settings.CustomApiKey))
+            // Player2 and Custom (local LLM like Ollama) don't require API key
+            if (settings.SynthesisProvider != AIProvider.Player2 &&
+                settings.SynthesisProvider != AIProvider.Custom &&
+                string.IsNullOrEmpty(settings.CustomApiKey))
             {
                 Log.Warning("[RimTalk Enhance] AI API Key not set.");
                 return null;
@@ -28,7 +30,11 @@ namespace RimTalkHealthEnhance
                 switch (settings.SynthesisProvider)
                 {
                     case AIProvider.OpenAI: url = "https://api.openai.com/v1/chat/completions"; break;
-                    case AIProvider.Google: url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent"; break;
+                    case AIProvider.Google:
+                        // Use CustomModelName to build dynamic Gemini URL
+                        string geminiModel = string.IsNullOrEmpty(settings.CustomModelName) ? "gemini-pro" : settings.CustomModelName;
+                        url = $"https://generativelanguage.googleapis.com/v1beta/models/{geminiModel}:generateContent";
+                        break;
                     case AIProvider.DeepSeek: url = "https://api.deepseek.com/chat/completions"; break;
                     case AIProvider.Player2: url = "https://api.player2.game/v1/chat/completions"; break;
                     default: url = "https://api.openai.com/v1/chat/completions"; break;
@@ -36,10 +42,40 @@ namespace RimTalkHealthEnhance
             }
             else
             {
-                // Auto-complete URL for OpenAI compatible providers if user only provided base URL
-                if (settings.SynthesisProvider != AIProvider.Google)
+                url = url.TrimEnd('/');
+                
+                if (settings.SynthesisProvider == AIProvider.Google)
                 {
-                    url = url.TrimEnd('/');
+                    // Auto-complete URL for Google Gemini
+                    // Support various base URL formats:
+                    // - https://generativelanguage.googleapis.com
+                    // - https://generativelanguage.googleapis.com/v1beta
+                    // - https://generativelanguage.googleapis.com/v1beta/models
+                    string geminiModel = string.IsNullOrEmpty(settings.CustomModelName) ? "gemini-pro" : settings.CustomModelName;
+                    
+                    if (!url.Contains(":generateContent"))
+                    {
+                        if (url.EndsWith("/models"))
+                        {
+                            // User entered: .../v1beta/models
+                            url = $"{url}/{geminiModel}:generateContent";
+                        }
+                        else if (url.EndsWith("/v1beta"))
+                        {
+                            // User entered: .../v1beta
+                            url = $"{url}/models/{geminiModel}:generateContent";
+                        }
+                        else if (url.Contains("generativelanguage.googleapis.com") && !url.Contains("/v1beta"))
+                        {
+                            // User entered just the base domain
+                            url = $"{url}/v1beta/models/{geminiModel}:generateContent";
+                        }
+                        // else: user entered full URL with model, use as-is
+                    }
+                }
+                else
+                {
+                    // Auto-complete URL for OpenAI compatible providers if user only provided base URL
                     if (!url.EndsWith("/chat/completions"))
                     {
                         if (url.EndsWith("/v1"))

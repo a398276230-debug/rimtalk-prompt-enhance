@@ -1059,7 +1059,7 @@ namespace RimTalkHealthEnhance
                     List<FloatMenuOption> options = new List<FloatMenuOption>
                     {
                         new FloatMenuOption("OpenAI", () => { SynthesisProvider = AIProvider.OpenAI; CustomModelName = "gpt-4o-mini"; }),
-                        new FloatMenuOption("Google (Gemini)", () => { SynthesisProvider = AIProvider.Google; CustomModelName = "gemini-pro"; }),
+                        new FloatMenuOption("Google (Gemini)", () => { SynthesisProvider = AIProvider.Google; CustomModelName = "gemini-2.5-flash"; }),
                         new FloatMenuOption("DeepSeek", () => { SynthesisProvider = AIProvider.DeepSeek; CustomModelName = "deepseek-chat"; }),
                         new FloatMenuOption("Player2", () => { SynthesisProvider = AIProvider.Player2; CustomModelName = ""; CustomApiKey = ""; }),
                         new FloatMenuOption("Custom (OpenAI Compatible)", () => SynthesisProvider = AIProvider.Custom)
