@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using UnityEngine;
 using Verse;
 using RimWorld;
+using RimTalkHealthEnhance.Services;
 
 namespace RimTalkHealthEnhance
 {
@@ -572,7 +573,7 @@ namespace RimTalkHealthEnhance
         private float CalculateItemHeight(ColonyAnnouncement item, float width)
         {
             float baseHeight = 34f; // 顶部标题行 + 间距
-            float rightWidth = 160f;
+            float rightWidth = 210f; // 增加宽度以容纳讨论按钮
             float textWidth = width - rightWidth - 20f; // 减去左侧颜色条和右侧按钮
             
             // 计算描述文本高度
@@ -640,7 +641,7 @@ namespace RimTalkHealthEnhance
             contentRect.xMin += 6f;
             
             // 布局：左侧信息，右侧按钮
-            float rightWidth = 160f;
+            float rightWidth = 210f; // 增加宽度以容纳讨论按钮
             Rect infoRect = new Rect(contentRect.x, contentRect.y, contentRect.width - rightWidth, contentRect.height);
             Rect btnRect = new Rect(contentRect.xMax - rightWidth, contentRect.y, rightWidth, contentRect.height);
             
@@ -693,9 +694,16 @@ namespace RimTalkHealthEnhance
             float btnW = 50f;
             float gap = 4f;
             
+            // 讨论按钮 - 最左边
+            Rect discussBtn = new Rect(btnRect.x, btnY, btnW, 24f);
+            if (Widgets.ButtonText(discussBtn, "RTE_Announcement_Discuss".Translate()))
+            {
+                ShowPawnSelectorMenu(item);
+            }
+            
             // 状态按钮
-            Rect statusBtn = new Rect(btnRect.x, btnY, btnW, 24f);
-            string statusLabel = item.Status == AnnouncementStatus.Active ? "RTE_Announcement_Complete".Translate() : 
+            Rect statusBtn = new Rect(discussBtn.xMax + gap, btnY, btnW, 24f);
+            string statusLabel = item.Status == AnnouncementStatus.Active ? "RTE_Announcement_Complete".Translate() :
                                  item.Status == AnnouncementStatus.Paused ? "RTE_Announcement_Resume".Translate() : "RTE_Announcement_Reopen".Translate();
             if (Widgets.ButtonText(statusBtn, statusLabel))
             {
@@ -849,6 +857,63 @@ namespace RimTalkHealthEnhance
                     }
                 ));
             }
+        }
+        
+        /// <summary>
+        /// 显示殖民者选择菜单，用于发起讨论
+        /// </summary>
+        private void ShowPawnSelectorMenu(ColonyAnnouncement item)
+        {
+            // 检查DiscussionService是否可用
+            if (!DiscussionService.IsAvailable())
+            {
+                Messages.Message("RTE_Announcement_Discuss_Failed".Translate(), MessageTypeDefOf.RejectInput, false);
+                return;
+            }
+            
+            List<FloatMenuOption> options = new List<FloatMenuOption>();
+            
+            // 随机选项
+            options.Add(new FloatMenuOption(
+                "RTE_Announcement_Discuss_Random".Translate(),
+                () =>
+                {
+                    var pawn = DiscussionService.SelectRandomColonist();
+                    if (pawn != null)
+                    {
+                        DiscussionService.StartDiscussion(pawn, item);
+                    }
+                    else
+                    {
+                        Messages.Message("RTE_Announcement_Discuss_NoColonist".Translate(), MessageTypeDefOf.RejectInput, false);
+                    }
+                }
+            ));
+            
+            // 获取可用的殖民者列表
+            var colonists = DiscussionService.GetAvailableColonists();
+            
+            if (!colonists.Any())
+            {
+                // 如果没有可用殖民者，仍显示菜单但只有随机选项
+                Find.WindowStack.Add(new FloatMenu(options));
+                return;
+            }
+            
+            // 添加分隔线（用一个禁用的选项模拟）
+            options.Add(new FloatMenuOption("---", null) { Disabled = true });
+            
+            // 具体殖民者选项
+            foreach (var pawn in colonists)
+            {
+                var p = pawn; // 避免闭包问题
+                options.Add(new FloatMenuOption(
+                    p.LabelShortCap,
+                    () => DiscussionService.StartDiscussion(p, item)
+                ));
+            }
+            
+            Find.WindowStack.Add(new FloatMenu(options));
         }
         
     }

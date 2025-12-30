@@ -391,4 +391,11 @@
   <RTE_ColonyCenter_Hint>提示：调整偏移量时，地图上的黄色标记会实时移动。\n即使居住区扩展，偏移量也会自动应用到新的自动中心点。</RTE_ColonyCenter_Hint>
   <RTE_ColonyCenter_Updated>殖民地中心点偏移已更新</RTE_ColonyCenter_Updated>
 
+  <!-- 讨论功能 -->
+  <RTE_Announcement_Discuss>讨论</RTE_Announcement_Discuss>
+  <RTE_Announcement_Discuss_Random>随机殖民者</RTE_Announcement_Discuss_Random>
+  <RTE_Announcement_Discuss_NoColonist>没有可用的殖民者来讨论此事</RTE_Announcement_Discuss_NoColonist>
+  <RTE_Announcement_Discuss_Started>{0}开始思考关于"{1}"的事情...</RTE_Announcement_Discuss_Started>
+  <RTE_Announcement_Discuss_Failed>无法发起讨论：RimTalk未正确加载</RTE_Announcement_Discuss_Failed>
+
 </LanguageData>
