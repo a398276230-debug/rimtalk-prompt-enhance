@@ -39,8 +39,9 @@ namespace RimTalkHealthEnhance
                 
                 foreach (var snapshot in recentSnapshots)
                 {
-                    string dateStr = GenDate.DateFullStringAt(snapshot.Tick, Vector2.zero);
-                    sb.AppendLine($"[{dateStr}] {snapshot.AISummary}");
+                    // 只显示游戏日期（年份/季节），节省tokens
+                    string gameDateStr = GenDate.DateFullStringAt(snapshot.Tick, Vector2.zero);
+                    sb.AppendLine($"[{gameDateStr}] {snapshot.AISummary}");
                 }
                 
                 // 追加到 Prompt

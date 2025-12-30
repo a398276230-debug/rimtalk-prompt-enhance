@@ -142,13 +142,15 @@ namespace RimTalkHealthEnhance
                 var map = Find.CurrentMap;
                 if (map != null && map.IsPlayerHome)
                 {
-                    Log.Message($"[RimTalk Enhance] Triggering daily synthesis. Day: {currentDay}, Last: {Data.LastSynthesisDay}");
+                    Log.Message($"[RimTalk Enhance] Triggering daily synthesis. GameDay: {currentDay}, LastSynthesisDay: {Data.LastSynthesisDay}, Offset: {Data.SnapshotDayOffset}");
+                    
+                    // 更新 LastSynthesisDay 为当前游戏天数
                     Data.LastSynthesisDay = currentDay;
                     
                     // 更新所有工程的自动进度
                     BlueprintProgressService.UpdateAllAutoProjects();
                     
-                    // 执行AI总结
+                    // 执行AI总结（MidnightSynthesisService 会使用 currentDay + SnapshotDayOffset 计算显示日期）
                     _ = MidnightSynthesisService.PerformSynthesis();
                 }
                 else

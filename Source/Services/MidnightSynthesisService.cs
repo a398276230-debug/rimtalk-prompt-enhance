@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using RimWorld;
+using UnityEngine;
 using Verse;
 
 namespace RimTalkHealthEnhance
@@ -119,11 +120,29 @@ namespace RimTalkHealthEnhance
             }
             
             // 6. 创建快照记录
-            // 快照记录当前时刻（即新一天的0点），但AI会总结"昨天"发生的事情
+            // 快照日期基于现有快照的最大Day值 + 1，确保日期连续
+            // 这样即使玩家手动调整了日期，新快照也会正确递增
+            int snapshotDay;
+            if (manager.Data.DailySnapshots.Any())
+            {
+                // 基于现有快照的最大Day值 + 1
+                snapshotDay = manager.Data.DailySnapshots.Max(s => s.Day) + 1;
+            }
+            else
+            {
+                // 没有现有快照时，使用 GenDate.DaysPassed + 1 来匹配游戏显示的"第X天"概念
+                // GenDate.DaysPassed 从0开始计数，但游戏显示"第1天"从第1天开始
+                // 第2天触发总结时，DaysPassed=1，快照应该显示"第2天"
+                snapshotDay = GenDate.DaysPassed + 1 + manager.Data.SnapshotDayOffset;
+            }
+            
+            // 计算对应的 Tick：基于当前时间 + 偏移量
+            int snapshotTick = Find.TickManager.TicksGame + (manager.Data.SnapshotDayOffset * GenDate.TicksPerDay);
+            
             var dailySnapshot = new DailySnapshot
             {
-                Day = GenDate.DaysPassed,  // 保留用于排序
-                Tick = Find.TickManager.TicksGame,  // 使用当前时间戳（记录时刻）
+                Day = snapshotDay,  // 使用逻辑日期（基于上次总结日期+1）
+                Tick = snapshotTick,  // 使用当前时间戳（记录时刻）
                 Snapshot = todaySnapshot,
                 PlayerActions = new List<string>(manager.Data.TodayActionLogs),
                 Events = todayEvents,
@@ -185,8 +204,9 @@ namespace RimTalkHealthEnhance
             
             Log.Message($"[RimTalk Enhance] Synthesis completed. Total snapshots: {manager.Data.DailySnapshots.Count}");
             
+            // 只使用逻辑日期，避免快速测试模式下的日期偏差
             Messages.Message(
-                $"[AI 史官] 第 {dailySnapshot.Day} 天快照已生成",
+                $"[AI 史官] 第 {snapshotDay} 天快照已生成",
                 MessageTypeDefOf.NeutralEvent
             );
         }
