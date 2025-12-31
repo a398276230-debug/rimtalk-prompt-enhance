@@ -120,29 +120,12 @@ namespace RimTalkHealthEnhance
             }
             
             // 6. 创建快照记录
-            // 快照日期基于现有快照的最大Day值 + 1，确保日期连续
-            // 这样即使玩家手动调整了日期，新快照也会正确递增
-            int snapshotDay;
-            if (manager.Data.DailySnapshots.Any())
-            {
-                // 基于现有快照的最大Day值 + 1
-                snapshotDay = manager.Data.DailySnapshots.Max(s => s.Day) + 1;
-            }
-            else
-            {
-                // 没有现有快照时，使用 GenDate.DaysPassed + 1 来匹配游戏显示的"第X天"概念
-                // GenDate.DaysPassed 从0开始计数，但游戏显示"第1天"从第1天开始
-                // 第2天触发总结时，DaysPassed=1，快照应该显示"第2天"
-                snapshotDay = GenDate.DaysPassed + 1 + manager.Data.SnapshotDayOffset;
-            }
-            
-            // 计算对应的 Tick：使用当前游戏时间（不加偏移量，偏移量只用于显示）
-            int snapshotTick = Find.TickManager.TicksGame;
+            // 使用 TicksAbs 作为唯一标识，不再手动计算 Day
+            long snapshotAbsTick = Find.TickManager.TicksAbs;
             
             var dailySnapshot = new DailySnapshot
             {
-                Day = snapshotDay,  // 使用逻辑日期（基于上次总结日期+1）
-                Tick = snapshotTick,  // 使用当前时间戳（记录时刻）
+                AbsTick = snapshotAbsTick,  // 使用绝对时间戳
                 Snapshot = todaySnapshot,
                 PlayerActions = new List<string>(manager.Data.TodayActionLogs),
                 Events = todayEvents,
@@ -191,11 +174,11 @@ namespace RimTalkHealthEnhance
             manager.Data.LastSnapshot = todaySnapshot;
             manager.Data.TodayActionLogs.Clear();
             
-            // 7. 清理过期快照
+            // 7. 清理过期快照（使用 AbsTick 排序）
             if (manager.Data.DailySnapshots.Count > manager.Data.MaxSnapshotDays)
             {
                 manager.Data.DailySnapshots = manager.Data.DailySnapshots
-                    .OrderByDescending(s => s.Day)
+                    .OrderByDescending(s => s.AbsTick)
                     .Take(manager.Data.MaxSnapshotDays)
                     .ToList();
             }
@@ -204,9 +187,10 @@ namespace RimTalkHealthEnhance
             
             Log.Message($"[RimTalk Enhance] Synthesis completed. Total snapshots: {manager.Data.DailySnapshots.Count}");
             
-            // 只使用逻辑日期，避免快速测试模式下的日期偏差
+            // 使用 GenDate API 获取显示日期
+            string displayDate = dailySnapshot.GetDateString(Vector2.zero);
             Messages.Message(
-                $"[AI 史官] 第 {snapshotDay} 天快照已生成",
+                $"[AI 史官] {displayDate} 快照已生成",
                 MessageTypeDefOf.NeutralEvent
             );
         }

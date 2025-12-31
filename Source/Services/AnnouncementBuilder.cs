@@ -59,28 +59,26 @@ namespace RimTalkHealthEnhance
                 && manager.Data.DailySnapshots.Count > 0)
             {
                 // 获取最近 N 天的快照
-                // 使用快照的逻辑 Day 值来过滤，参考点是最新快照的 Day
-                // 这样无论用户如何调整日期，过滤都会正确工作
+                // 使用 AbsTick 排序和过滤，更加可靠
                 var snapshotsWithSummary = manager.Data.DailySnapshots
                     .Where(s => !string.IsNullOrEmpty(s.AISummary))
+                    .OrderByDescending(s => s.AbsTick)
                     .ToList();
                 
                 if (snapshotsWithSummary.Count > 0)
                 {
-                    int maxDay = snapshotsWithSummary.Max(s => s.Day);
-                    float daysToInject = settings.SnapshotInjectDays;
+                    // 计算时间范围：最近 N 天 = N * TicksPerDay
+                    long maxAbsTick = snapshotsWithSummary.Max(s => s.AbsTick);
+                    long ticksToInject = (long)(settings.SnapshotInjectDays * GenDate.TicksPerDay);
                     
                     var recentSnapshots = snapshotsWithSummary
-                        .Where(s => maxDay - s.Day < daysToInject)
-                        .OrderByDescending(s => s.Day)
+                        .Where(s => maxAbsTick - s.AbsTick < ticksToInject)
                         .ToList();
                 
                     foreach (var snapshot in recentSnapshots)
                     {
-                        // 使用 GenDate 获取正确的日期字符串（与 UI 一致）
-                        // 应用全局 Tick 偏移量
-                        int displayTick = snapshot.Tick + manager.Data.SnapshotTickOffset;
-                        string dateStr = GenDate.DateFullStringAt(displayTick, Vector2.zero);
+                        // 使用 DailySnapshot 的方法获取显示日期（带偏移量）
+                        string dateStr = snapshot.GetDateStringWithOffset(manager.Data.DisplayTickOffset, Vector2.zero);
                         
                         parts.Add($"History Record ({dateStr}):\n{snapshot.AISummary}");
                     }

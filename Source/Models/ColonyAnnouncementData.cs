@@ -19,9 +19,18 @@ namespace RimTalkHealthEnhance
         // === 临时缓存（当日） ===
         public List<string> TodayActionLogs = new List<string>();
         public ColonySnapshot LastSnapshot;  // 昨日快照
-        public int LastSynthesisDay = -1;    // 上次总结的天数（基于游戏真实天数）
-        public int SnapshotDayOffset = 0;    // 快照日期偏移量（已弃用，保留兼容性）
-        public int SnapshotTickOffset = 0;   // 快照 Tick 偏移量（用于玩家手动调整游戏日期显示）
+        public int LastSynthesisDay = -1;    // 上次总结的天数（基于 GenDate.DaysPassed）
+        
+        // === 日期显示偏移量 ===
+        // 用于玩家手动调整日期显示（只影响显示，不影响排序和过滤）
+        // 存储为 AbsTick 偏移量
+        public long DisplayTickOffset = 0;
+        
+        // === 兼容旧版本（已弃用）===
+        [System.Obsolete("Use DisplayTickOffset instead")]
+        public int SnapshotDayOffset = 0;
+        [System.Obsolete("Use DisplayTickOffset instead")]
+        public int SnapshotTickOffset = 0;
         
         public void ExposeData()
         {
@@ -32,8 +41,28 @@ namespace RimTalkHealthEnhance
             Scribe_Collections.Look(ref TodayActionLogs, "todayActions", LookMode.Value);
             Scribe_Deep.Look(ref LastSnapshot, "lastSnapshot");
             Scribe_Values.Look(ref LastSynthesisDay, "lastSynthesisDay", -1);
+            
+            // 新版本：使用 DisplayTickOffset
+            Scribe_Values.Look(ref DisplayTickOffset, "displayTickOffset", 0L);
+            
+            // 兼容旧版本：读取旧字段并迁移
+            #pragma warning disable CS0612
             Scribe_Values.Look(ref SnapshotDayOffset, "snapshotDayOffset", 0);
             Scribe_Values.Look(ref SnapshotTickOffset, "snapshotTickOffset", 0);
+            
+            // 如果是加载旧存档且新字段为0，从旧字段迁移
+            if (Scribe.mode == LoadSaveMode.PostLoadInit && DisplayTickOffset == 0)
+            {
+                if (SnapshotTickOffset != 0)
+                {
+                    DisplayTickOffset = SnapshotTickOffset;
+                }
+                else if (SnapshotDayOffset != 0)
+                {
+                    DisplayTickOffset = SnapshotDayOffset * RimWorld.GenDate.TicksPerDay;
+                }
+            }
+            #pragma warning restore CS0612
             
             if (Announcements == null) Announcements = new List<ColonyAnnouncement>();
             if (DailySnapshots == null) DailySnapshots = new List<DailySnapshot>();

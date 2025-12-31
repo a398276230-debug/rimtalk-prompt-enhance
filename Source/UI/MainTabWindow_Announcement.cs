@@ -30,7 +30,7 @@ namespace RimTalkHealthEnhance
         
         // AI Summary editing state
         private string editingSummary;
-        private int editingSnapshotDay = -1;
+        private long editingSnapshotAbsTick = -1;  // 使用 AbsTick 作为标识
 
         public override Vector2 InitialSize => new Vector2(1000f, 700f);
 
@@ -221,7 +221,7 @@ namespace RimTalkHealthEnhance
             Rect innerRect = rect.ContractedBy(10f);
             
             var snapshots = manager.Data.DailySnapshots
-                .OrderByDescending(s => s.Day)
+                .OrderByDescending(s => s.AbsTick)
                 .ToList();
             
             if (!snapshots.Any())
@@ -253,7 +253,7 @@ namespace RimTalkHealthEnhance
             // 保存按钮 - 在标题右侧
             if (Widgets.ButtonText(new Rect(width - 90f, curY, 90f, 24f), "RTE_Snapshot_SaveSummary".Translate()))
             {
-                if (editingSnapshotDay == snapshot.Day && editingSummary != null)
+                if (editingSnapshotAbsTick == snapshot.AbsTick && editingSummary != null)
                 {
                     snapshot.AISummary = editingSummary;
                     manager.NotifyDataChanged();
@@ -263,10 +263,10 @@ namespace RimTalkHealthEnhance
             curY += 30f;
             
             // 初始化编辑状态
-            if (editingSnapshotDay != snapshot.Day)
+            if (editingSnapshotAbsTick != snapshot.AbsTick)
             {
                 editingSummary = snapshot.AISummary ?? "";
-                editingSnapshotDay = snapshot.Day;
+                editingSnapshotAbsTick = snapshot.AbsTick;
             }
             
             // 可编辑文本框
@@ -331,40 +331,31 @@ namespace RimTalkHealthEnhance
             {
                 currentSnapshotIndex = Mathf.Min(currentSnapshotIndex + 1, totalCount - 1);
                 // 切换快照时重置编辑状态
-                editingSnapshotDay = -1;
+                editingSnapshotAbsTick = -1;
             }
             
-            // 日期后退按钮 (-1天) - 靠内侧
-            // 调整全局 Tick 偏移量（影响游戏日期显示），不修改 Day（逻辑日期）
+            // 日期后退按钮 (-1天) - 调整全局偏移量（只影响显示）
             float dateBackX = rect.x + btnWidth + gap;
             if (Widgets.ButtonText(new Rect(dateBackX, rect.y, dateAdjustBtnWidth, rect.height), "RTE_Snapshot_DateBack".Translate()))
             {
-                // 调整全局偏移量
-                manager.Data.SnapshotTickOffset -= GenDate.TicksPerDay;
-                
+                manager.Data.DisplayTickOffset -= GenDate.TicksPerDay;
                 manager.NotifyDataChanged();
                 Messages.Message("RTE_Snapshot_DateAdjusted".Translate(), MessageTypeDefOf.TaskCompletion, false);
             }
             
-            // 日期显示 - 同时显示逻辑日期和游戏日期（年份/季节）
-            // 使用全局偏移量来计算显示的日期
+            // 日期显示 - 使用 DailySnapshot 的方法获取显示日期
             float dateDisplayX = dateBackX + dateAdjustBtnWidth + gap;
             float dateDisplayWidth = rect.width - (btnWidth * 2) - (dateAdjustBtnWidth * 2) - (gap * 4);
-            int displayTick = snapshot.Tick + manager.Data.SnapshotTickOffset;
-            string gameDateStr = GenDate.DateFullStringAt(displayTick, Vector2.zero);
-            string displayStr = $"第 {snapshot.Day} 天 ({gameDateStr})";
+            string gameDateStr = snapshot.GetDateStringWithOffset(manager.Data.DisplayTickOffset, Vector2.zero);
             Text.Anchor = TextAnchor.MiddleCenter;
-            Widgets.Label(new Rect(dateDisplayX, rect.y, dateDisplayWidth, rect.height), displayStr);
+            Widgets.Label(new Rect(dateDisplayX, rect.y, dateDisplayWidth, rect.height), gameDateStr);
             Text.Anchor = TextAnchor.UpperLeft;
             
-            // 日期前进按钮 (+1天) - 靠内侧
-            // 调整全局 Tick 偏移量（影响游戏日期显示），不修改 Day（逻辑日期）
+            // 日期前进按钮 (+1天) - 调整全局偏移量（只影响显示）
             float dateForwardX = dateDisplayX + dateDisplayWidth + gap;
             if (Widgets.ButtonText(new Rect(dateForwardX, rect.y, dateAdjustBtnWidth, rect.height), "RTE_Snapshot_DateForward".Translate()))
             {
-                // 调整全局偏移量
-                manager.Data.SnapshotTickOffset += GenDate.TicksPerDay;
-                
+                manager.Data.DisplayTickOffset += GenDate.TicksPerDay;
                 manager.NotifyDataChanged();
                 Messages.Message("RTE_Snapshot_DateAdjusted".Translate(), MessageTypeDefOf.TaskCompletion, false);
             }
@@ -374,7 +365,7 @@ namespace RimTalkHealthEnhance
             {
                 currentSnapshotIndex = Mathf.Max(currentSnapshotIndex - 1, 0);
                 // 切换快照时重置编辑状态
-                editingSnapshotDay = -1;
+                editingSnapshotAbsTick = -1;
             }
         }
         
@@ -393,9 +384,8 @@ namespace RimTalkHealthEnhance
                     manager.Data.ColonyOverview = editingOverview;
                 }
                 
-                // 使用游戏实际日期（应用偏移量）
-                int displayTick = snapshot.Tick + manager.Data.SnapshotTickOffset;
-                string dateHeader = $"[{GenDate.DateFullStringAt(displayTick, Vector2.zero)}]";
+                // 使用 DailySnapshot 的方法获取显示日期（带偏移量）
+                string dateHeader = $"[{snapshot.GetDateStringWithOffset(manager.Data.DisplayTickOffset, Vector2.zero)}]";
                 
                 // 追加新内容（带日期）
                 manager.Data.ColonyOverview += $"\n\n{dateHeader}\n{snapshot.AISummary}";
@@ -451,7 +441,7 @@ namespace RimTalkHealthEnhance
                             {
                                 snapshot.AISummary = result;
                                 // 重置编辑状态，强制编辑框重新加载新内容
-                                editingSnapshotDay = -1;
+                                editingSnapshotAbsTick = -1;
                                 editingSummary = null;
                                 manager.NotifyDataChanged();
                                 Messages.Message("RTE_Snapshot_RegenerateSuccess".Translate(), MessageTypeDefOf.PositiveEvent, false);
