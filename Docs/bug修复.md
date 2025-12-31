@@ -1,5 +1,114 @@
 # Bug 修复记录
 
+## 2025/12/31 - 修复快照日期调整和注入过滤逻辑问题
+
+### 问题描述
+1. **快照注入忽略设置**：设置中的"注入时间限制"（如设置为1天）不生效，所有快照都被注入到 AI 上下文中。
+2. **日期调整影响逻辑**：用户手动调整快照日期后，后续生成的新快照日期不正确（例如调整到第6天后，新快照变成第17天而不是第7天）。
+
+### 根本原因
+
+#### 问题1：快照注入过滤失效
+原过滤逻辑使用 `currentDay - s.Day <= daysToInject`（其中 `currentDay = GenDate.DaysPassed`）。当用户手动调整快照的 `Day` 值后，`s.Day` 可能大于 `currentDay`，导致差值为负数，负数始终小于等于设定值，所以所有快照都通过过滤。
+
+```csharp
+// 问题代码示例
+int currentDay = GenDate.DaysPassed; // 假设为 2
+float daysToInject = 1.0f;
+// 快照 s.Day = 6 (用户调整后)
+// currentDay - s.Day = 2 - 6 = -4
+// -4 <= 1.0 → true ❌ 错误地通过过滤
+```
+
+#### 问题2：日期概念混淆
+之前的修改同时更新了 `s.Day`（逻辑日期）和 `s.Tick`（游戏时间），导致：
+- 逻辑日期用于排序和过滤
+- 游戏时间用于显示（如"5500年赫象第6天"）
+两者不应同时修改，用户调整的应该只是显示日期，不影响逻辑顺序。
+
+### 解决方案
+
+#### 1. 分离显示日期和逻辑日期
+- **Day**：逻辑日期，用于排序和新快照生成（不随用户调整改变）
+- **Tick**：原始游戏时间戳（不随用户调整改变）
+- **SnapshotTickOffset**：新增全局偏移量，只影响显示
+
+```csharp
+// ColonyAnnouncementData.cs
+public int SnapshotTickOffset = 0;   // 快照 Tick 偏移量（用于玩家手动调整游戏日期显示）
+```
+
+#### 2. 修复注入过滤逻辑
+改用快照自身的 `Day` 值进行相对比较，而不是与游戏当前天数比较：
+
+```csharp
+// 正确的过滤逻辑
+var snapshotsWithSummary = manager.Data.DailySnapshots
+    .Where(s => !string.IsNullOrEmpty(s.AISummary))
+    .ToList();
+
+int maxDay = snapshotsWithSummary.Max(s => s.Day);
+float daysToInject = settings.SnapshotInjectDays;
+
+var recentSnapshots = snapshotsWithSummary
+    .Where(s => maxDay - s.Day < daysToInject)  // ✅ 基于最新快照的相对差值
+    .OrderByDescending(s => s.Day)
+    .ToList();
+```
+
+#### 3. 修改日期调整按钮
+只调整全局 `SnapshotTickOffset`，不修改单个快照的数据：
+
+```csharp
+// UI 调整按钮
+if (Widgets.ButtonText(..., "-1天"))
+{
+    manager.Data.SnapshotTickOffset -= GenDate.TicksPerDay;
+    manager.NotifyDataChanged();
+}
+```
+
+#### 4. 显示时应用偏移量
+在所有显示日期的地方应用偏移量：
+
+```csharp
+int displayTick = snapshot.Tick + manager.Data.SnapshotTickOffset;
+string gameDateStr = GenDate.DateFullStringAt(displayTick, Vector2.zero);
+```
+
+### 修改文件
+
+#### 1. `Source/Models/ColonyAnnouncementData.cs`
+- 添加 `SnapshotTickOffset` 字段
+- 添加序列化支持
+
+#### 2. `Source/UI/MainTabWindow_Announcement.cs`
+- 日期调整按钮改为修改全局偏移量
+- 日期显示时应用偏移量
+- 复制到概况时应用偏移量
+
+#### 3. `Source/Services/MidnightSynthesisService.cs`
+- 新快照 Tick 使用当前游戏时间（不加偏移量）
+
+#### 4. `Source/Services/AnnouncementBuilder.cs` (Context 模式)
+- 修复注入过滤逻辑（使用 maxDay 相对比较）
+- 显示日期时应用偏移量
+
+#### 5. `Source/Patches/PromptSnapshotPatch.cs` (Prompt 模式)
+- 修复注入过滤逻辑（使用 maxDay 相对比较）
+- 显示日期时应用偏移量
+
+### 效果
+- ✅ 注入时间限制正确生效（设置1天只注入1天的快照）
+- ✅ 用户调整日期只影响显示，不影响逻辑排序
+- ✅ 新生成的快照日期正确递增（基于逻辑日期）
+- ✅ 显示日期可自由调整，与游戏时间对齐
+
+### 编译状态
+✅ 编译成功，无错误
+
+---
+
 ## 2025/12/25 - 修复自定义区域UI卡顿问题
 
 ### 问题描述

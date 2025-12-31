@@ -20,7 +20,8 @@ namespace RimTalkHealthEnhance
         public List<string> TodayActionLogs = new List<string>();
         public ColonySnapshot LastSnapshot;  // 昨日快照
         public int LastSynthesisDay = -1;    // 上次总结的天数（基于游戏真实天数）
-        public int SnapshotDayOffset = 0;    // 快照日期偏移量（用于玩家手动调整日期）
+        public int SnapshotDayOffset = 0;    // 快照日期偏移量（已弃用，保留兼容性）
+        public int SnapshotTickOffset = 0;   // 快照 Tick 偏移量（用于玩家手动调整游戏日期显示）
         
         public void ExposeData()
         {
@@ -32,6 +33,7 @@ namespace RimTalkHealthEnhance
             Scribe_Deep.Look(ref LastSnapshot, "lastSnapshot");
             Scribe_Values.Look(ref LastSynthesisDay, "lastSynthesisDay", -1);
             Scribe_Values.Look(ref SnapshotDayOffset, "snapshotDayOffset", 0);
+            Scribe_Values.Look(ref SnapshotTickOffset, "snapshotTickOffset", 0);
             
             if (Announcements == null) Announcements = new List<ColonyAnnouncement>();
             if (DailySnapshots == null) DailySnapshots = new List<DailySnapshot>();

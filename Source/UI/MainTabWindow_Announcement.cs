@@ -335,51 +335,37 @@ namespace RimTalkHealthEnhance
             }
             
             // 日期后退按钮 (-1天) - 靠内侧
-            // 调整全局偏移量，同时更新所有快照的显示日期
+            // 调整全局 Tick 偏移量（影响游戏日期显示），不修改 Day（逻辑日期）
             float dateBackX = rect.x + btnWidth + gap;
             if (Widgets.ButtonText(new Rect(dateBackX, rect.y, dateAdjustBtnWidth, rect.height), "RTE_Snapshot_DateBack".Translate()))
             {
                 // 调整全局偏移量
-                manager.Data.SnapshotDayOffset -= 1;
-                
-                // 同时更新所有快照的 Day 和 Tick，保持显示一致
-                foreach (var s in manager.Data.DailySnapshots)
-                {
-                    s.Day -= 1;
-                    s.Tick -= GenDate.TicksPerDay;
-                }
+                manager.Data.SnapshotTickOffset -= GenDate.TicksPerDay;
                 
                 manager.NotifyDataChanged();
-                Log.Message($"[RimTalk Enhance] Snapshot date offset adjusted to {manager.Data.SnapshotDayOffset}");
                 Messages.Message("RTE_Snapshot_DateAdjusted".Translate(), MessageTypeDefOf.TaskCompletion, false);
             }
             
             // 日期显示 - 同时显示逻辑日期和游戏日期（年份/季节）
+            // 使用全局偏移量来计算显示的日期
             float dateDisplayX = dateBackX + dateAdjustBtnWidth + gap;
             float dateDisplayWidth = rect.width - (btnWidth * 2) - (dateAdjustBtnWidth * 2) - (gap * 4);
-            string gameDateStr = GenDate.DateFullStringAt(snapshot.Tick, Vector2.zero);
+            int displayTick = snapshot.Tick + manager.Data.SnapshotTickOffset;
+            string gameDateStr = GenDate.DateFullStringAt(displayTick, Vector2.zero);
             string displayStr = $"第 {snapshot.Day} 天 ({gameDateStr})";
             Text.Anchor = TextAnchor.MiddleCenter;
             Widgets.Label(new Rect(dateDisplayX, rect.y, dateDisplayWidth, rect.height), displayStr);
             Text.Anchor = TextAnchor.UpperLeft;
             
             // 日期前进按钮 (+1天) - 靠内侧
-            // 调整全局偏移量，同时更新所有快照的显示日期
+            // 调整全局 Tick 偏移量（影响游戏日期显示），不修改 Day（逻辑日期）
             float dateForwardX = dateDisplayX + dateDisplayWidth + gap;
             if (Widgets.ButtonText(new Rect(dateForwardX, rect.y, dateAdjustBtnWidth, rect.height), "RTE_Snapshot_DateForward".Translate()))
             {
                 // 调整全局偏移量
-                manager.Data.SnapshotDayOffset += 1;
-                
-                // 同时更新所有快照的 Day 和 Tick，保持显示一致
-                foreach (var s in manager.Data.DailySnapshots)
-                {
-                    s.Day += 1;
-                    s.Tick += GenDate.TicksPerDay;
-                }
+                manager.Data.SnapshotTickOffset += GenDate.TicksPerDay;
                 
                 manager.NotifyDataChanged();
-                Log.Message($"[RimTalk Enhance] Snapshot date offset adjusted to {manager.Data.SnapshotDayOffset}");
                 Messages.Message("RTE_Snapshot_DateAdjusted".Translate(), MessageTypeDefOf.TaskCompletion, false);
             }
             
@@ -407,8 +393,9 @@ namespace RimTalkHealthEnhance
                     manager.Data.ColonyOverview = editingOverview;
                 }
                 
-                // 使用游戏实际日期
-                string dateHeader = $"[{GenDate.DateFullStringAt(snapshot.Tick, Vector2.zero)}]";
+                // 使用游戏实际日期（应用偏移量）
+                int displayTick = snapshot.Tick + manager.Data.SnapshotTickOffset;
+                string dateHeader = $"[{GenDate.DateFullStringAt(displayTick, Vector2.zero)}]";
                 
                 // 追加新内容（带日期）
                 manager.Data.ColonyOverview += $"\n\n{dateHeader}\n{snapshot.AISummary}";

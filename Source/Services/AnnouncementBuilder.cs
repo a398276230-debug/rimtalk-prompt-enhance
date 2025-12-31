@@ -54,25 +54,33 @@ namespace RimTalkHealthEnhance
             }
 
             // === 3. AI 史官总结 ===
-            if (settings.EnableAISynthesis && settings.InjectSnapshotToContext 
+            if (settings.EnableAISynthesis && settings.InjectSnapshotToContext
                 && settings.SnapshotInjectionTarget == SnapshotInjectionMode.Context
                 && manager.Data.DailySnapshots.Count > 0)
             {
                 // 获取最近 N 天的快照
-                int currentDay = GenDate.DaysPassed;
-                float daysToInject = settings.SnapshotInjectDays;
-                
-                var recentSnapshots = manager.Data.DailySnapshots
-                    .Where(s => currentDay - s.Day <= daysToInject)
-                    .OrderByDescending(s => s.Day)
+                // 使用快照的逻辑 Day 值来过滤，参考点是最新快照的 Day
+                // 这样无论用户如何调整日期，过滤都会正确工作
+                var snapshotsWithSummary = manager.Data.DailySnapshots
+                    .Where(s => !string.IsNullOrEmpty(s.AISummary))
                     .ToList();
                 
-                foreach (var snapshot in recentSnapshots)
+                if (snapshotsWithSummary.Count > 0)
                 {
-                    if (!string.IsNullOrEmpty(snapshot.AISummary))
+                    int maxDay = snapshotsWithSummary.Max(s => s.Day);
+                    float daysToInject = settings.SnapshotInjectDays;
+                    
+                    var recentSnapshots = snapshotsWithSummary
+                        .Where(s => maxDay - s.Day < daysToInject)
+                        .OrderByDescending(s => s.Day)
+                        .ToList();
+                
+                    foreach (var snapshot in recentSnapshots)
                     {
                         // 使用 GenDate 获取正确的日期字符串（与 UI 一致）
-                        string dateStr = GenDate.DateFullStringAt(snapshot.Tick, Vector2.zero);
+                        // 应用全局 Tick 偏移量
+                        int displayTick = snapshot.Tick + manager.Data.SnapshotTickOffset;
+                        string dateStr = GenDate.DateFullStringAt(displayTick, Vector2.zero);
                         
                         parts.Add($"History Record ({dateStr}):\n{snapshot.AISummary}");
                     }

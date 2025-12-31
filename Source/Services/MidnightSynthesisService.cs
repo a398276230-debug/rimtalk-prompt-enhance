@@ -136,8 +136,8 @@ namespace RimTalkHealthEnhance
                 snapshotDay = GenDate.DaysPassed + 1 + manager.Data.SnapshotDayOffset;
             }
             
-            // 计算对应的 Tick：基于当前时间 + 偏移量
-            int snapshotTick = Find.TickManager.TicksGame + (manager.Data.SnapshotDayOffset * GenDate.TicksPerDay);
+            // 计算对应的 Tick：使用当前游戏时间（不加偏移量，偏移量只用于显示）
+            int snapshotTick = Find.TickManager.TicksGame;
             
             var dailySnapshot = new DailySnapshot
             {
