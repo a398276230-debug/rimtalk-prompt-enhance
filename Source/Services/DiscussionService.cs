@@ -386,7 +386,108 @@ namespace RimTalkHealthEnhance.Services
         }
         
         /// <summary>
-        /// 构建讨论提示词
+        /// 发起小人自己的讨论（不是玩家对小人说话，而是小人主动发起公开讨论）
+        /// </summary>
+        /// <param name="initiator">发起讨论的殖民者</param>
+        /// <param name="item">要讨论的通告条目</param>
+        /// <returns>是否成功发起讨论</returns>
+        public static bool StartPawnSelfDiscussion(Pawn initiator, ColonyAnnouncement item)
+        {
+            if (initiator == null || item == null)
+            {
+                Log.Warning("[RimTalk Enhance] StartPawnSelfDiscussion: initiator or item is null");
+                return false;
+            }
+            
+            if (!IsAvailable())
+            {
+                Messages.Message("RTE_Announcement_Discuss_Failed".Translate(), MessageTypeDefOf.RejectInput, false);
+                return false;
+            }
+            
+            try
+            {
+                // 获取发起者的PawnState
+                var initiatorState = _cacheGetMethod.Invoke(null, new object[] { initiator });
+                if (initiatorState == null)
+                {
+                    Log.Warning($"[RimTalk Enhance] Could not get PawnState for {initiator.LabelShort}");
+                    Messages.Message("RTE_Announcement_Discuss_Failed".Translate(), MessageTypeDefOf.RejectInput, false);
+                    return false;
+                }
+                
+                // 检查发起者是否可以说话
+                var canGenerateResult = _canGenerateTalkMethod.Invoke(initiatorState, null);
+                if (canGenerateResult == null || !(bool)canGenerateResult)
+                {
+                    Log.Warning($"[RimTalk Enhance] {initiator.LabelShort} cannot generate talk");
+                    Messages.Message("RTE_Announcement_Discuss_NoColonist".Translate(), MessageTypeDefOf.RejectInput, false);
+                    return false;
+                }
+                
+                // 构建小人自己发起讨论的提示词（与玩家发起的不同）
+                string prompt = BuildPawnSelfDiscussionPrompt(item);
+                
+                // 对发起者添加TalkRequest，不指定接收者（null），这样会触发公开讨论
+                // RimTalk 会自动让附近的小人参与讨论
+                _addTalkRequestMethod.Invoke(initiatorState, new object[] { prompt, null, _talkTypeUser });
+                
+                // 显示成功消息
+                Messages.Message("RTE_Announcement_Discuss_PawnStarted".Translate(initiator.LabelShortCap, item.Title), MessageTypeDefOf.TaskCompletion, false);
+                
+                Log.Message($"[RimTalk Enhance] Pawn self-discussion started: {initiator.LabelShort} discussing '{item.Title}'");
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Log.Error($"[RimTalk Enhance] Failed to start pawn self-discussion: {ex}");
+                Messages.Message("RTE_Announcement_Discuss_Failed".Translate(), MessageTypeDefOf.RejectInput, false);
+                return false;
+            }
+        }
+        
+        /// <summary>
+        /// 构建小人自己发起讨论的提示词
+        /// </summary>
+        private static string BuildPawnSelfDiscussionPrompt(ColonyAnnouncement item)
+        {
+            string categoryLabel = GetCategoryLabel(item.Category);
+            
+            var sb = new System.Text.StringBuilder();
+            sb.AppendLine($"[公开讨论] 关于{categoryLabel}「{item.Title}」");
+            
+            if (!string.IsNullOrWhiteSpace(item.Description))
+            {
+                sb.AppendLine($"详情: {item.Description}");
+            }
+            
+            // 添加额外信息
+            if (item.Category == AnnouncementCategory.Project && item.Progress > 0)
+            {
+                sb.AppendLine($"当前进度: {item.Progress:P0}");
+            }
+            
+            if (!string.IsNullOrWhiteSpace(item.AssignedPawnName))
+            {
+                sb.AppendLine($"负责人: {item.AssignedPawnName}");
+            }
+            
+            if (item.Status == AnnouncementStatus.Completed)
+            {
+                sb.AppendLine("状态: 已完成");
+            }
+            else if (item.Status == AnnouncementStatus.Paused)
+            {
+                sb.AppendLine("状态: 已暂停");
+            }
+            
+            sb.AppendLine("请公开发表你对这件事的看法，与附近的同伴一起讨论。");
+            
+            return sb.ToString();
+        }
+        
+        /// <summary>
+        /// 构建讨论提示词（玩家发起）
         /// </summary>
         private static string BuildDiscussionPrompt(ColonyAnnouncement item)
         {

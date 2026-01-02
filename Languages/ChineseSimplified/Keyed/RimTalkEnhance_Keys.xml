@@ -397,5 +397,17 @@
   <RTE_Announcement_Discuss_NoColonist>没有可用的殖民者来讨论此事</RTE_Announcement_Discuss_NoColonist>
   <RTE_Announcement_Discuss_Started>{0}开始思考关于"{1}"的事情...</RTE_Announcement_Discuss_Started>
   <RTE_Announcement_Discuss_Failed>无法发起讨论：RimTalk未正确加载</RTE_Announcement_Discuss_Failed>
+  <RTE_Announcement_Discuss_PlayerMode>玩家发起讨论</RTE_Announcement_Discuss_PlayerMode>
+  <RTE_Announcement_Discuss_PawnMode>小人自己讨论</RTE_Announcement_Discuss_PawnMode>
+  <RTE_Announcement_Discuss_SelectPawn>选择殖民者</RTE_Announcement_Discuss_SelectPawn>
+  <RTE_Announcement_Discuss_PawnStarted>{0} 开始讨论「{1}」...</RTE_Announcement_Discuss_PawnStarted>
+
+  <!-- 快照日期重置 -->
+  <RTE_Snapshot_ResetOffset>重置日期</RTE_Snapshot_ResetOffset>
+  <RTE_Snapshot_OffsetReset>日期偏移已重置</RTE_Snapshot_OffsetReset>
+
+  <!-- 通告全局属性 -->
+  <RTE_TaskEditor_IsGlobal>全局生效</RTE_TaskEditor_IsGlobal>
+  <RTE_TaskEditor_IsGlobal_Tip>开启后，此通告将在所有地图生效（包括进攻其他派系时）</RTE_TaskEditor_IsGlobal_Tip>
 
 </LanguageData>

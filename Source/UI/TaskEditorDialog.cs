@@ -25,6 +25,7 @@ namespace RimTalkHealthEnhance
         // Optional fields
         private float editProgress;
         private string editAssignedPawn;
+        private bool editIsGlobal;
         
         // 施工区域相关
         private bool isGeneratingAISummary = false;
@@ -51,6 +52,7 @@ namespace RimTalkHealthEnhance
                 editStatus = AnnouncementStatus.Active;
                 editProgress = 0f;
                 editAssignedPawn = "";
+                editIsGlobal = false;
             }
             else
             {
@@ -62,6 +64,7 @@ namespace RimTalkHealthEnhance
                 editStatus = announcement.Status;
                 editProgress = announcement.Progress;
                 editAssignedPawn = announcement.AssignedPawnName;
+                editIsGlobal = announcement.IsGlobal;
                 
                 // 如果有施工区域，重新扫描蓝图数量
                 if (!string.IsNullOrEmpty(announcement.BlueprintAreaId))
@@ -170,6 +173,12 @@ namespace RimTalkHealthEnhance
                 Find.WindowStack.Add(new FloatMenu(options));
             }
             GUI.color = Color.white;
+            listing.Gap();
+            
+            // 全局生效复选框
+            Rect globalRect = listing.GetRect(24f);
+            Widgets.CheckboxLabeled(globalRect, "RTE_TaskEditor_IsGlobal".Translate(), ref editIsGlobal);
+            TooltipHandler.TipRegion(globalRect, "RTE_TaskEditor_IsGlobal_Tip".Translate());
             listing.Gap();
             
             // 状态
@@ -346,6 +355,7 @@ namespace RimTalkHealthEnhance
             announcement.Status = editStatus;
             announcement.Progress = editProgress;
             announcement.AssignedPawnName = editAssignedPawn;
+            announcement.IsGlobal = editIsGlobal;
             
             if (isNew)
             {

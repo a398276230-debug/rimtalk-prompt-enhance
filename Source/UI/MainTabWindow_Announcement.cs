@@ -238,8 +238,8 @@ namespace RimTalkHealthEnhance
             var navRect = new Rect(innerRect.x, innerRect.y, innerRect.width, 30f);
             DrawSnapshotNavigation(navRect, snapshot, snapshots.Count, manager);
             
-            // 内容区域
-            var contentRect = new Rect(innerRect.x, innerRect.y + 35f, innerRect.width, innerRect.height - 70f);
+            // 内容区域（预留重置按钮的空间）
+            var contentRect = new Rect(innerRect.x, innerRect.y + 65f, innerRect.width, innerRect.height - 100f);
             var scrollRect = new Rect(0, 0, contentRect.width - 20f, 1500f); // 估算高度，或者动态计算
             
             Widgets.BeginScrollView(contentRect, ref snapshotScrollPos, scrollRect);
@@ -366,6 +366,34 @@ namespace RimTalkHealthEnhance
                 currentSnapshotIndex = Mathf.Max(currentSnapshotIndex - 1, 0);
                 // 切换快照时重置编辑状态
                 editingSnapshotAbsTick = -1;
+            }
+            
+            // 重置日期偏移按钮 - 单独一行居中（仅当偏移量不为0时显示，也检查旧版本字段）
+            #pragma warning disable CS0612
+            bool hasOffset = manager.Data.DisplayTickOffset != 0 ||
+                             manager.Data.SnapshotDayOffset != 0 ||
+                             manager.Data.SnapshotTickOffset != 0;
+            #pragma warning restore CS0612
+            
+            if (hasOffset)
+            {
+                var resetRect = new Rect(rect.x, rect.y + rect.height + 5f, rect.width, 24f);
+                float resetBtnWidth = 100f;
+                Rect resetButtonRect = new Rect(resetRect.x + (resetRect.width - resetBtnWidth) / 2f, resetRect.y, resetBtnWidth, resetRect.height);
+                if (Widgets.ButtonText(resetButtonRect, "RTE_Snapshot_ResetOffset".Translate()))
+                {
+                    // 重置新版本字段
+                    manager.Data.DisplayTickOffset = 0;
+                    
+                    // 同时重置旧版本字段，防止下次加载时再次迁移
+                    #pragma warning disable CS0612
+                    manager.Data.SnapshotDayOffset = 0;
+                    manager.Data.SnapshotTickOffset = 0;
+                    #pragma warning restore CS0612
+                    
+                    manager.NotifyDataChanged();
+                    Messages.Message("RTE_Snapshot_OffsetReset".Translate(), MessageTypeDefOf.TaskCompletion, false);
+                }
             }
         }
         
@@ -837,7 +865,7 @@ namespace RimTalkHealthEnhance
         }
         
         /// <summary>
-        /// 显示殖民者选择菜单，用于发起讨论
+        /// 显示殖民者选择菜单，用于发起讨论（带模式选择）
         /// </summary>
         private void ShowPawnSelectorMenu(ColonyAnnouncement item)
         {
@@ -848,6 +876,28 @@ namespace RimTalkHealthEnhance
                 return;
             }
             
+            List<FloatMenuOption> options = new List<FloatMenuOption>();
+            
+            // 模式一：玩家发起讨论
+            options.Add(new FloatMenuOption(
+                "RTE_Announcement_Discuss_PlayerMode".Translate(),
+                () => ShowPawnSelectorForPlayerMode(item)
+            ));
+            
+            // 模式二：小人自己讨论
+            options.Add(new FloatMenuOption(
+                "RTE_Announcement_Discuss_PawnMode".Translate(),
+                () => ShowPawnSelectorForPawnMode(item)
+            ));
+            
+            Find.WindowStack.Add(new FloatMenu(options));
+        }
+        
+        /// <summary>
+        /// 显示殖民者选择菜单 - 玩家发起讨论模式
+        /// </summary>
+        private void ShowPawnSelectorForPlayerMode(ColonyAnnouncement item)
+        {
             List<FloatMenuOption> options = new List<FloatMenuOption>();
             
             // 随机选项
@@ -870,24 +920,66 @@ namespace RimTalkHealthEnhance
             // 获取可用的殖民者列表
             var colonists = DiscussionService.GetAvailableColonists();
             
-            if (!colonists.Any())
+            if (colonists.Any())
             {
-                // 如果没有可用殖民者，仍显示菜单但只有随机选项
-                Find.WindowStack.Add(new FloatMenu(options));
-                return;
+                // 添加分隔线（用一个禁用的选项模拟）
+                options.Add(new FloatMenuOption("---", null) { Disabled = true });
+                
+                // 具体殖民者选项
+                foreach (var pawn in colonists)
+                {
+                    var p = pawn; // 避免闭包问题
+                    options.Add(new FloatMenuOption(
+                        p.LabelShortCap,
+                        () => DiscussionService.StartDiscussion(p, item)
+                    ));
+                }
             }
             
-            // 添加分隔线（用一个禁用的选项模拟）
-            options.Add(new FloatMenuOption("---", null) { Disabled = true });
+            Find.WindowStack.Add(new FloatMenu(options));
+        }
+        
+        /// <summary>
+        /// 显示殖民者选择菜单 - 小人自己讨论模式
+        /// </summary>
+        private void ShowPawnSelectorForPawnMode(ColonyAnnouncement item)
+        {
+            List<FloatMenuOption> options = new List<FloatMenuOption>();
             
-            // 具体殖民者选项
-            foreach (var pawn in colonists)
+            // 随机选项
+            options.Add(new FloatMenuOption(
+                "RTE_Announcement_Discuss_Random".Translate(),
+                () =>
+                {
+                    var pawn = DiscussionService.SelectRandomColonist();
+                    if (pawn != null)
+                    {
+                        DiscussionService.StartPawnSelfDiscussion(pawn, item);
+                    }
+                    else
+                    {
+                        Messages.Message("RTE_Announcement_Discuss_NoColonist".Translate(), MessageTypeDefOf.RejectInput, false);
+                    }
+                }
+            ));
+            
+            // 获取可用的殖民者列表
+            var colonists = DiscussionService.GetAvailableColonists();
+            
+            if (colonists.Any())
             {
-                var p = pawn; // 避免闭包问题
-                options.Add(new FloatMenuOption(
-                    p.LabelShortCap,
-                    () => DiscussionService.StartDiscussion(p, item)
-                ));
+                // 添加分隔线（用一个禁用的选项模拟）
+                options.Add(new FloatMenuOption("---", null) { Disabled = true });
+                
+                // 具体殖民者选项
+                foreach (var pawn in colonists)
+                {
+                    var p = pawn; // 避免闭包问题
+                    options.Add(new FloatMenuOption(
+                        p.LabelShortCap,
+                        () => DiscussionService.StartPawnSelfDiscussion(p, item)
+                    ));
+                }
             }
             
             Find.WindowStack.Add(new FloatMenu(options));

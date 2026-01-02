@@ -13,84 +13,91 @@ namespace RimTalkHealthEnhance
             var settings = RimTalkHealthEnhanceMod.Settings;
             if (!settings.ShowColonyAnnouncements) return null;
             
-            // 检查当前地图是否属于玩家殖民地
-            var map = Find.CurrentMap;
-            if (map == null || !map.IsPlayerHome)
-            {
-                return null;
-            }
-            
             var manager = Current.Game.GetComponent<ColonyAnnouncementManager>();
             if (manager?.Data == null) return null;
             
+            // 检查当前地图是否属于玩家殖民地
+            var map = Find.CurrentMap;
+            bool isPlayerHome = map != null && map.IsPlayerHome;
+            
             List<string> parts = new List<string>();
             
-            // === 1. 派系关系 ===
-            string factionContext = FactionInfoBuilder.BuildFactionContext();
-            if (!string.IsNullOrEmpty(factionContext))
+            // === 以下内容仅在主地图显示 ===
+            if (isPlayerHome)
             {
-                parts.Add(factionContext);
-            }
-
-            // === 1.5 全局地图布局 ===
-            if (settings.EnableGlobalLayout)
-            {
-                string layoutInfo = ColonyLayoutBuilder.GetColonyLayout(map);
-                if (!string.IsNullOrEmpty(layoutInfo))
+                // === 1. 派系关系 ===
+                string factionContext = FactionInfoBuilder.BuildFactionContext();
+                if (!string.IsNullOrEmpty(factionContext))
                 {
-                    parts.Add(layoutInfo);
+                    parts.Add(factionContext);
                 }
-            }
 
-            // === 2. 自由文本概况 ===
-            if (settings.ShowColonyOverview && !string.IsNullOrWhiteSpace(manager.Data.ColonyOverview))
-            {
-                string overview = manager.Data.ColonyOverview;
-                if (overview.Length > settings.MaxOverviewLength)
+                // === 1.5 全局地图布局 ===
+                if (settings.EnableGlobalLayout)
                 {
-                    overview = overview.Substring(0, settings.MaxOverviewLength) + "...";
-                }
-                parts.Add($"Colony Overview:\n{overview}");
-            }
-
-            // === 3. AI 史官总结 ===
-            if (settings.EnableAISynthesis && settings.InjectSnapshotToContext
-                && settings.SnapshotInjectionTarget == SnapshotInjectionMode.Context
-                && manager.Data.DailySnapshots.Count > 0)
-            {
-                // 获取最近 N 天的快照
-                // 使用 AbsTick 排序和过滤，更加可靠
-                var snapshotsWithSummary = manager.Data.DailySnapshots
-                    .Where(s => !string.IsNullOrEmpty(s.AISummary))
-                    .OrderByDescending(s => s.AbsTick)
-                    .ToList();
-                
-                if (snapshotsWithSummary.Count > 0)
-                {
-                    // 计算时间范围：最近 N 天 = N * TicksPerDay
-                    long maxAbsTick = snapshotsWithSummary.Max(s => s.AbsTick);
-                    long ticksToInject = (long)(settings.SnapshotInjectDays * GenDate.TicksPerDay);
-                    
-                    var recentSnapshots = snapshotsWithSummary
-                        .Where(s => maxAbsTick - s.AbsTick < ticksToInject)
-                        .ToList();
-                
-                    foreach (var snapshot in recentSnapshots)
+                    string layoutInfo = ColonyLayoutBuilder.GetColonyLayout(map);
+                    if (!string.IsNullOrEmpty(layoutInfo))
                     {
-                        // 使用 DailySnapshot 的方法获取显示日期（带偏移量）
-                        string dateStr = snapshot.GetDateStringWithOffset(manager.Data.DisplayTickOffset, Vector2.zero);
+                        parts.Add(layoutInfo);
+                    }
+                }
+
+                // === 2. 自由文本概况 ===
+                if (settings.ShowColonyOverview && !string.IsNullOrWhiteSpace(manager.Data.ColonyOverview))
+                {
+                    string overview = manager.Data.ColonyOverview;
+                    if (overview.Length > settings.MaxOverviewLength)
+                    {
+                        overview = overview.Substring(0, settings.MaxOverviewLength) + "...";
+                    }
+                    parts.Add($"Colony Overview:\n{overview}");
+                }
+
+                // === 3. AI 史官总结 ===
+                if (settings.EnableAISynthesis && settings.InjectSnapshotToContext
+                    && settings.SnapshotInjectionTarget == SnapshotInjectionMode.Context
+                    && manager.Data.DailySnapshots.Count > 0)
+                {
+                    // 获取最近 N 天的快照
+                    // 使用 AbsTick 排序和过滤，更加可靠
+                    var snapshotsWithSummary = manager.Data.DailySnapshots
+                        .Where(s => !string.IsNullOrEmpty(s.AISummary))
+                        .OrderByDescending(s => s.AbsTick)
+                        .ToList();
+                    
+                    if (snapshotsWithSummary.Count > 0)
+                    {
+                        // 计算时间范围：最近 N 天 = N * TicksPerDay
+                        long maxAbsTick = snapshotsWithSummary.Max(s => s.AbsTick);
+                        long ticksToInject = (long)(settings.SnapshotInjectDays * GenDate.TicksPerDay);
                         
-                        parts.Add($"History Record ({dateStr}):\n{snapshot.AISummary}");
+                        var recentSnapshots = snapshotsWithSummary
+                            .Where(s => maxAbsTick - s.AbsTick < ticksToInject)
+                            .ToList();
+                    
+                        foreach (var snapshot in recentSnapshots)
+                        {
+                            // 使用 DailySnapshot 的方法获取显示日期（带偏移量）
+                            string dateStr = snapshot.GetDateStringWithOffset(manager.Data.DisplayTickOffset, Vector2.zero);
+                            
+                            parts.Add($"History Record ({dateStr}):\n{snapshot.AISummary}");
+                        }
                     }
                 }
             }
             
-            // === 4. 结构化公告 ===
+            // === 4. 结构化公告（支持全局通告） ===
             if (settings.ShowStructuredTasks)
             {
                 var activeAnnouncements = manager.Data.Announcements
-                    .Where(t => 
+                    .Where(t =>
                     {
+                        // 如果不在主地图，只显示全局通告
+                        if (!isPlayerHome && !t.IsGlobal)
+                        {
+                            return false;
+                        }
+                        
                         if (t.Status == AnnouncementStatus.Active) return true;
                         
                         // 如果是最近完成的，也包含进来

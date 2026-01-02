@@ -398,5 +398,17 @@
   <RTE_Announcement_Discuss_NoColonist>No colonist available to discuss this</RTE_Announcement_Discuss_NoColonist>
   <RTE_Announcement_Discuss_Started>{0} starts thinking about "{1}"...</RTE_Announcement_Discuss_Started>
   <RTE_Announcement_Discuss_Failed>Unable to start discussion: RimTalk not properly loaded</RTE_Announcement_Discuss_Failed>
+  <RTE_Announcement_Discuss_PlayerMode>Player initiates discussion</RTE_Announcement_Discuss_PlayerMode>
+  <RTE_Announcement_Discuss_PawnMode>Colonists discuss among themselves</RTE_Announcement_Discuss_PawnMode>
+  <RTE_Announcement_Discuss_SelectPawn>Select Colonist</RTE_Announcement_Discuss_SelectPawn>
+  <RTE_Announcement_Discuss_PawnStarted>{0} starts discussing "{1}"...</RTE_Announcement_Discuss_PawnStarted>
+
+  <!-- Snapshot Date Reset -->
+  <RTE_Snapshot_ResetOffset>Reset Date</RTE_Snapshot_ResetOffset>
+  <RTE_Snapshot_OffsetReset>Date offset has been reset</RTE_Snapshot_OffsetReset>
+
+  <!-- Announcement Global Property -->
+  <RTE_TaskEditor_IsGlobal>Global Effect</RTE_TaskEditor_IsGlobal>
+  <RTE_TaskEditor_IsGlobal_Tip>When enabled, this announcement will take effect on all maps (including when attacking other factions)</RTE_TaskEditor_IsGlobal_Tip>
 
 </LanguageData>
