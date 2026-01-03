@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Verse;
 
 namespace RimTalkHealthEnhance
@@ -67,6 +68,32 @@ namespace RimTalkHealthEnhance
             if (Announcements == null) Announcements = new List<ColonyAnnouncement>();
             if (DailySnapshots == null) DailySnapshots = new List<DailySnapshot>();
             if (TodayActionLogs == null) TodayActionLogs = new List<string>();
+            
+            // 加载后处理：清理无效的快照
+            if (Scribe.mode == LoadSaveMode.PostLoadInit && DailySnapshots != null)
+            {
+                int beforeCount = DailySnapshots.Count;
+                
+                // 移除无效的快照（AbsTick <= 0）
+                DailySnapshots.RemoveAll(s => s == null || !s.IsValid);
+                
+                int removedCount = beforeCount - DailySnapshots.Count;
+                if (removedCount > 0)
+                {
+                    Log.Warning($"[RimTalk Enhance] Removed {removedCount} invalid snapshots from old save. Remaining: {DailySnapshots.Count}");
+                }
+                
+                // 检查并修复重复的 AbsTick
+                var duplicateGroups = DailySnapshots.GroupBy(s => s.AbsTick).Where(g => g.Count() > 1).ToList();
+                if (duplicateGroups.Any())
+                {
+                    Log.Warning($"[RimTalk Enhance] Found {duplicateGroups.Count} groups of duplicate AbsTick. Keeping only the first of each.");
+                    var seenAbsTicks = new HashSet<long>();
+                    DailySnapshots.RemoveAll(s => !seenAbsTicks.Add(s.AbsTick));
+                }
+                
+                Log.Message($"[RimTalk Enhance] Loaded {DailySnapshots.Count} valid daily snapshots.");
+            }
         }
     }
 
