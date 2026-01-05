@@ -403,6 +403,23 @@
   <RTE_Announcement_Discuss_SelectPawn>Select Colonist</RTE_Announcement_Discuss_SelectPawn>
   <RTE_Announcement_Discuss_PawnStarted>{0} starts discussing "{1}"...</RTE_Announcement_Discuss_PawnStarted>
 
+  <!-- Group Discussion Feature -->
+  <RTE_GroupDiscussion>Group Discussion</RTE_GroupDiscussion>
+  <RTE_GroupDiscussion_Title>Group Discussion - About "{0}"</RTE_GroupDiscussion_Title>
+  <RTE_GroupDiscussion_Warning>⚠️ Warning: More participants means more tokens consumed. Choose carefully!</RTE_GroupDiscussion_Warning>
+  <RTE_GroupDiscussion_Leader>Leader (Single Select)</RTE_GroupDiscussion_Leader>
+  <RTE_GroupDiscussion_Participants>Participants (Multi Select)</RTE_GroupDiscussion_Participants>
+  <RTE_GroupDiscussion_Selected>Selected: {0} colonists</RTE_GroupDiscussion_Selected>
+  <RTE_GroupDiscussion_SelectAll>Select All</RTE_GroupDiscussion_SelectAll>
+  <RTE_GroupDiscussion_DeselectAll>Deselect All</RTE_GroupDiscussion_DeselectAll>
+  <RTE_GroupDiscussion_Confirm>Start Discussion</RTE_GroupDiscussion_Confirm>
+  <RTE_GroupDiscussion_Cancel>Cancel</RTE_GroupDiscussion_Cancel>
+  <RTE_GroupDiscussion_NoLeader>Please select a leader</RTE_GroupDiscussion_NoLeader>
+  <RTE_GroupDiscussion_NoParticipants>Please select at least one participant</RTE_GroupDiscussion_NoParticipants>
+  <RTE_GroupDiscussion_NotEnough>At least two colonists are required for a group discussion. Please gather them together.</RTE_GroupDiscussion_NotEnough>
+  <RTE_GroupDiscussion_Started>{0} initiated a group discussion about "{1}"</RTE_GroupDiscussion_Started>
+  <RTE_GroupDiscussion_AIBusy>AI is processing, please try again later</RTE_GroupDiscussion_AIBusy>
+
   <!-- Snapshot Date Reset -->
   <RTE_Snapshot_ResetOffset>Reset Date</RTE_Snapshot_ResetOffset>
   <RTE_Snapshot_OffsetReset>Date offset has been reset</RTE_Snapshot_OffsetReset>

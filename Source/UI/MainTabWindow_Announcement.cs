@@ -6,6 +6,7 @@ using UnityEngine;
 using Verse;
 using RimWorld;
 using RimTalkHealthEnhance.Services;
+using RimTalkHealthEnhance.UI;
 
 namespace RimTalkHealthEnhance
 {
@@ -890,7 +891,40 @@ namespace RimTalkHealthEnhance
                 () => ShowPawnSelectorForPawnMode(item)
             ));
             
+            // 模式三：群体讨论
+            if (GroupDiscussionService.IsAvailable())
+            {
+                options.Add(new FloatMenuOption(
+                    "RTE_GroupDiscussion".Translate(),
+                    () => ShowGroupDiscussionDialog(item)
+                ));
+            }
+            
             Find.WindowStack.Add(new FloatMenu(options));
+        }
+        
+        /// <summary>
+        /// 显示群体讨论选择对话框
+        /// </summary>
+        private void ShowGroupDiscussionDialog(ColonyAnnouncement item)
+        {
+            // 检查是否有足够的殖民者
+            var colonists = GroupDiscussionService.GetAvailableColonists();
+            if (colonists.Count < 2)
+            {
+                Messages.Message("RTE_GroupDiscussion_NotEnough".Translate(), MessageTypeDefOf.RejectInput, false);
+                return;
+            }
+            
+            // 检查AI是否繁忙
+            if (GroupDiscussionService.IsAIBusy())
+            {
+                Messages.Message("RTE_GroupDiscussion_AIBusy".Translate(), MessageTypeDefOf.RejectInput, false);
+                return;
+            }
+            
+            // 打开群体讨论选择对话框
+            Find.WindowStack.Add(new GroupDiscussionDialog(item));
         }
         
         /// <summary>

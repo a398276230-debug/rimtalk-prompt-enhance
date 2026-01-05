@@ -402,6 +402,23 @@
   <RTE_Announcement_Discuss_SelectPawn>选择殖民者</RTE_Announcement_Discuss_SelectPawn>
   <RTE_Announcement_Discuss_PawnStarted>{0} 开始讨论「{1}」...</RTE_Announcement_Discuss_PawnStarted>
 
+  <!-- 群体讨论功能 -->
+  <RTE_GroupDiscussion>群体讨论</RTE_GroupDiscussion>
+  <RTE_GroupDiscussion_Title>群体讨论 - 关于「{0}」</RTE_GroupDiscussion_Title>
+  <RTE_GroupDiscussion_Warning>⚠️ 警告：参与人数越多，消耗的tokens越多，请谨慎选择！</RTE_GroupDiscussion_Warning>
+  <RTE_GroupDiscussion_Leader>发起者 (单选)</RTE_GroupDiscussion_Leader>
+  <RTE_GroupDiscussion_Participants>参与者 (多选)</RTE_GroupDiscussion_Participants>
+  <RTE_GroupDiscussion_Selected>已选择: {0} 人</RTE_GroupDiscussion_Selected>
+  <RTE_GroupDiscussion_SelectAll>全选</RTE_GroupDiscussion_SelectAll>
+  <RTE_GroupDiscussion_DeselectAll>取消全选</RTE_GroupDiscussion_DeselectAll>
+  <RTE_GroupDiscussion_Confirm>确认开始</RTE_GroupDiscussion_Confirm>
+  <RTE_GroupDiscussion_Cancel>取消</RTE_GroupDiscussion_Cancel>
+  <RTE_GroupDiscussion_NoLeader>请选择一个发起者</RTE_GroupDiscussion_NoLeader>
+  <RTE_GroupDiscussion_NoParticipants>请至少选择一个参与者</RTE_GroupDiscussion_NoParticipants>
+  <RTE_GroupDiscussion_NotEnough>需要至少2名殖民者才能进行群体讨论，请将小人们聚在一起</RTE_GroupDiscussion_NotEnough>
+  <RTE_GroupDiscussion_Started>{0}发起了关于「{1}」的群体讨论</RTE_GroupDiscussion_Started>
+  <RTE_GroupDiscussion_AIBusy>AI正在处理中，请稍后再试</RTE_GroupDiscussion_AIBusy>
+
   <!-- 快照日期重置 -->
   <RTE_Snapshot_ResetOffset>重置日期</RTE_Snapshot_ResetOffset>
   <RTE_Snapshot_OffsetReset>日期偏移已重置</RTE_Snapshot_OffsetReset>

@@ -36,6 +36,8 @@ namespace RimTalkHealthEnhance.Services
         private static PropertyInfo _playerNameProperty;
         
         private static object _talkTypeUser;
+        private static object _talkTypeOther;
+        private static object _talkTypeEvent;
         
         /// <summary>
         /// 初始化反射缓存
@@ -151,8 +153,10 @@ namespace RimTalkHealthEnhance.Services
                     _settingsGetMethod = _settingsType.GetMethod("Get", BindingFlags.Public | BindingFlags.Static);
                 }
                 
-                // 获取TalkType.User枚举值
+                // 获取TalkType枚举值
                 _talkTypeUser = Enum.Parse(_talkTypeEnum, "User");
+                _talkTypeOther = Enum.Parse(_talkTypeEnum, "Other");
+                _talkTypeEvent = Enum.Parse(_talkTypeEnum, "Event");
                 
                 _available = true;
                 Log.Message("[RimTalk Enhance] DiscussionService initialized successfully.");
@@ -430,7 +434,9 @@ namespace RimTalkHealthEnhance.Services
                 
                 // 对发起者添加TalkRequest，不指定接收者（null），这样会触发公开讨论
                 // RimTalk 会自动让附近的小人参与讨论
-                _addTalkRequestMethod.Invoke(initiatorState, new object[] { prompt, null, _talkTypeUser });
+                // 使用 TalkType.Event 而不是 Other，因为 Event 会被添加到队列前面优先处理
+                // Other 会被添加到队列末尾，可能因过期或其他原因不被处理
+                _addTalkRequestMethod.Invoke(initiatorState, new object[] { prompt, null, _talkTypeEvent });
                 
                 // 显示成功消息
                 Messages.Message("RTE_Announcement_Discuss_PawnStarted".Translate(initiator.LabelShortCap, item.Title), MessageTypeDefOf.TaskCompletion, false);
