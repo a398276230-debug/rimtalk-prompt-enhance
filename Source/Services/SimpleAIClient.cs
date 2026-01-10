@@ -1,6 +1,7 @@
 using System;
 using System.Net.Http;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -10,6 +11,13 @@ namespace RimTalkHealthEnhance
 {
     public static class SimpleAIClient
     {
+        // 默认超时时间（秒）
+        private const int DEFAULT_TIMEOUT_SECONDS = 120;
+        // 最大重试次数
+        private const int MAX_RETRY_COUNT = 2;
+        // 重试延迟（毫秒）
+        private const int RETRY_DELAY_MS = 2000;
+        
         public static async Task<string> CallAI(string prompt)
         {
             var settings = RimTalkHealthEnhanceMod.Settings;
@@ -125,6 +133,9 @@ namespace RimTalkHealthEnhance
 
             using (var client = new HttpClient(handler))
             {
+                // 设置超时时间
+                client.Timeout = TimeSpan.FromSeconds(DEFAULT_TIMEOUT_SECONDS);
+                
                 // Clear default headers to avoid auto-injection of system info
                 client.DefaultRequestHeaders.Clear();
                 client.DefaultRequestHeaders.Add("User-Agent", "RimTalk-Enhance/1.0");
@@ -183,53 +194,104 @@ namespace RimTalkHealthEnhance
                     requestJson = JsonConvert.SerializeObject(request);
                 }
                 
-                var content = new StringContent(requestJson, Encoding.UTF8, "application/json");
+                // 使用重试机制
+                Exception lastException = null;
+                for (int attempt = 0; attempt <= MAX_RETRY_COUNT; attempt++)
+                {
+                    if (attempt > 0)
+                    {
+                        Log.Warning($"[RimTalk Enhance] Retrying AI call (attempt {attempt + 1}/{MAX_RETRY_COUNT + 1})...");
+                        await Task.Delay(RETRY_DELAY_MS);
+                    }
+                    
+                    try
+                    {
+                        // 每次重试需要创建新的 content，因为它可能已被消耗
+                        var content = new StringContent(requestJson, Encoding.UTF8, "application/json");
+                        
+                        // 使用 CancellationToken 进行超时控制
+                        using (var cts = new CancellationTokenSource(TimeSpan.FromSeconds(DEFAULT_TIMEOUT_SECONDS)))
+                        {
+                            var response = await client.PostAsync(url, content, cts.Token);
+                            var responseJson = await response.Content.ReadAsStringAsync();
+                            
+                            if (!response.IsSuccessStatusCode)
+                            {
+                                Log.Error($"[RimTalk Enhance] AI Call Failed: {response.StatusCode}\nResponse: {responseJson}");
+                                // 4xx 错误不重试（客户端错误）
+                                if ((int)response.StatusCode >= 400 && (int)response.StatusCode < 500)
+                                {
+                                    return null;
+                                }
+                                // 5xx 错误可以重试（服务器错误）
+                                lastException = new Exception($"HTTP {response.StatusCode}: {responseJson}");
+                                continue;
+                            }
+                            
+                            var json = JObject.Parse(responseJson);
+                            
+                            if (settings.SynthesisProvider == AIProvider.Google)
+                            {
+                                // Parse Gemini Response
+                                // candidates[0].content.parts[0].text
+                                var text = json["candidates"]?[0]?["content"]?["parts"]?[0]?["text"]?.ToString();
+                                if (attempt > 0)
+                                {
+                                    Log.Message($"[RimTalk Enhance] AI call succeeded after {attempt + 1} attempts.");
+                                }
+                                return text;
+                            }
+                            else
+                            {
+                                // Parse OpenAI Response
+                                // choices[0].message.content
+                                var text = json["choices"]?[0]?["message"]?["content"]?.ToString();
+                                if (attempt > 0)
+                                {
+                                    Log.Message($"[RimTalk Enhance] AI call succeeded after {attempt + 1} attempts.");
+                                }
+                                return text;
+                            }
+                        }
+                    }
+                    catch (TaskCanceledException ex)
+                    {
+                        // 超时
+                        lastException = ex;
+                        Log.Warning($"[RimTalk Enhance] AI call timed out (attempt {attempt + 1}/{MAX_RETRY_COUNT + 1}).");
+                    }
+                    catch (HttpRequestException ex)
+                    {
+                        // 网络错误
+                        lastException = ex;
+                        Log.Warning($"[RimTalk Enhance] Network error (attempt {attempt + 1}/{MAX_RETRY_COUNT + 1}): {ex.Message}");
+                    }
+                    catch (Exception ex)
+                    {
+                        // 其他错误
+                        lastException = ex;
+                        
+                        // Enhanced error handling for encoding issues
+                        if (ex is System.Text.DecoderFallbackException ||
+                            ex.Message.Contains("Illegal byte sequence") ||
+                            ex.Message.Contains("encounted in the input"))
+                        {
+                            Log.Error("[RimTalk Enhance] Character encoding error detected.");
+                            Log.Warning($"[RimTalk Enhance] This is likely caused by non-ASCII characters in your computer name: {System.Environment.MachineName}");
+                            Log.Warning("[RimTalk Enhance] Possible solutions:");
+                            Log.Warning("[RimTalk Enhance] 1. Change your computer name to English characters (Control Panel > System > Rename this PC)");
+                            Log.Warning("[RimTalk Enhance] 2. Try using a different AI provider");
+                            // 编码错误不重试
+                            break;
+                        }
+                        
+                        Log.Warning($"[RimTalk Enhance] AI call error (attempt {attempt + 1}/{MAX_RETRY_COUNT + 1}): {ex.Message}");
+                    }
+                }
                 
-                try
-                {
-                    var response = await client.PostAsync(url, content);
-                    var responseJson = await response.Content.ReadAsStringAsync();
-                    
-                    if (!response.IsSuccessStatusCode)
-                    {
-                        Log.Error($"[RimTalk Enhance] AI Call Failed: {response.StatusCode}\nResponse: {responseJson}");
-                        return null;
-                    }
-                    
-                    var json = JObject.Parse(responseJson);
-                    
-                    if (settings.SynthesisProvider == AIProvider.Google)
-                    {
-                        // Parse Gemini Response
-                        // candidates[0].content.parts[0].text
-                        var text = json["candidates"]?[0]?["content"]?["parts"]?[0]?["text"]?.ToString();
-                        return text;
-                    }
-                    else
-                    {
-                        // Parse OpenAI Response
-                        // choices[0].message.content
-                        var text = json["choices"]?[0]?["message"]?["content"]?.ToString();
-                        return text;
-                    }
-                }
-                catch (Exception ex)
-                {
-                    // Enhanced error handling for encoding issues
-                    if (ex is System.Text.DecoderFallbackException || 
-                        ex.Message.Contains("Illegal byte sequence") ||
-                        ex.Message.Contains("encounted in the input"))
-                    {
-                        Log.Error("[RimTalk Enhance] Character encoding error detected.");
-                        Log.Warning($"[RimTalk Enhance] This is likely caused by non-ASCII characters in your computer name: {System.Environment.MachineName}");
-                        Log.Warning("[RimTalk Enhance] Possible solutions:");
-                        Log.Warning("[RimTalk Enhance] 1. Change your computer name to English characters (Control Panel > System > Rename this PC)");
-                        Log.Warning("[RimTalk Enhance] 2. Try using a different AI provider");
-                    }
-
-                    Log.Error($"[RimTalk Enhance] AI Call Exception: {ex.Message}");
-                    return null;
-                }
+                // 所有重试都失败
+                Log.Error($"[RimTalk Enhance] AI Call Exception: All {MAX_RETRY_COUNT + 1} attempts failed. Last error: {lastException?.Message}");
+                return null;
             }
         }
     }

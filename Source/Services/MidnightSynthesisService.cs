@@ -150,12 +150,25 @@ namespace RimTalkHealthEnhance
                         string prompt = BuildSynthesisPrompt(diffReport, dailySnapshot, projectInfo, researchInfo, powerInfo);
                         Log.Message($"[RimTalk Enhance] Sending prompt to AI ({prompt.Length} chars)...");
                         dailySnapshot.AISummary = await SimpleAIClient.CallAI(prompt);
-                        Log.Message($"[RimTalk Enhance] AI response received ({dailySnapshot.AISummary?.Length ?? 0} chars)");
+                        
+                        if (string.IsNullOrEmpty(dailySnapshot.AISummary))
+                        {
+                            // AI 调用返回空结果，使用简单模板作为备选
+                            Log.Warning("[RimTalk Enhance] AI returned empty response, using fallback template.");
+                            dailySnapshot.AISummary = GenerateSimpleSummary(diffReport, todayEvents, projectInfo, researchInfo, powerInfo);
+                            dailySnapshot.AISummary = "[AI 调用失败，以下为自动生成摘要]\n" + dailySnapshot.AISummary;
+                        }
+                        else
+                        {
+                            Log.Message($"[RimTalk Enhance] AI response received ({dailySnapshot.AISummary.Length} chars)");
+                        }
                     }
                     catch (Exception ex)
                     {
                         Log.Warning($"[RimTalk Enhance] AI Synthesis Failed: {ex.Message}");
-                        dailySnapshot.AISummary = "[AI 总结失败，请查看详细变化]";
+                        // 使用简单模板作为备选，而不是只显示失败消息
+                        dailySnapshot.AISummary = GenerateSimpleSummary(diffReport, todayEvents, projectInfo, researchInfo, powerInfo);
+                        dailySnapshot.AISummary = "[AI 总结失败，以下为自动生成摘要]\n" + dailySnapshot.AISummary;
                     }
                 }
                 else
