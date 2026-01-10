@@ -40,7 +40,8 @@ namespace RimTalkHealthEnhance
                     case AIProvider.OpenAI: url = "https://api.openai.com/v1/chat/completions"; break;
                     case AIProvider.Google:
                         // Use CustomModelName to build dynamic Gemini URL
-                        string geminiModel = string.IsNullOrEmpty(settings.CustomModelName) ? "gemini-pro" : settings.CustomModelName;
+                        // 默认使用 gemini-2.5-flash，这是目前最新的免费模型
+                        string geminiModel = string.IsNullOrEmpty(settings.CustomModelName) ? "gemini-2.5-flash" : settings.CustomModelName;
                         url = $"https://generativelanguage.googleapis.com/v1beta/models/{geminiModel}:generateContent";
                         break;
                     case AIProvider.DeepSeek: url = "https://api.deepseek.com/chat/completions"; break;
@@ -59,7 +60,7 @@ namespace RimTalkHealthEnhance
                     // - https://generativelanguage.googleapis.com
                     // - https://generativelanguage.googleapis.com/v1beta
                     // - https://generativelanguage.googleapis.com/v1beta/models
-                    string geminiModel = string.IsNullOrEmpty(settings.CustomModelName) ? "gemini-pro" : settings.CustomModelName;
+                    string geminiModel = string.IsNullOrEmpty(settings.CustomModelName) ? "gemini-2.5-flash" : settings.CustomModelName;
                     
                     if (!url.Contains(":generateContent"))
                     {
@@ -161,18 +162,34 @@ namespace RimTalkHealthEnhance
                 
                 if (settings.SynthesisProvider == AIProvider.Google)
                 {
-                    // Gemini Format
+                    // Gemini Format - 使用正确的 system_instruction 和 contents 分离结构
+                    // 参考 RimTalk 的 GeminiClient 实现
                     var request = new
                     {
+                        system_instruction = new
+                        {
+                            parts = new[]
+                            {
+                                new { text = "你是 RimWorld 殖民地的史官，负责记录殖民地发展。" }
+                            }
+                        },
                         contents = new[]
                         {
                             new
                             {
+                                role = "user",
                                 parts = new[]
                                 {
-                                    new { text = $"System: 你是 RimWorld 殖民地的史官，负责记录殖民地发展。\n\nUser: {prompt}" }
+                                    new { text = prompt }
                                 }
                             }
+                        },
+                        generationConfig = new
+                        {
+                            temperature = 0.7f,
+                            topK = 40,
+                            topP = 0.95f,
+                            maxOutputTokens = 2000
                         }
                     };
                     requestJson = JsonConvert.SerializeObject(request);
@@ -194,6 +211,10 @@ namespace RimTalkHealthEnhance
                     requestJson = JsonConvert.SerializeObject(request);
                 }
                 
+                // 输出请求 URL 以便调试
+                Log.Message($"[RimTalk Enhance] AI Request URL: {url}");
+                Log.Message($"[RimTalk Enhance] AI Request Model: {settings.CustomModelName ?? "(default)"}");
+                
                 // 使用重试机制
                 Exception lastException = null;
                 for (int attempt = 0; attempt <= MAX_RETRY_COUNT; attempt++)
@@ -212,12 +233,14 @@ namespace RimTalkHealthEnhance
                         // 使用 CancellationToken 进行超时控制
                         using (var cts = new CancellationTokenSource(TimeSpan.FromSeconds(DEFAULT_TIMEOUT_SECONDS)))
                         {
+                            Log.Message($"[RimTalk Enhance] Sending request (attempt {attempt + 1})...");
                             var response = await client.PostAsync(url, content, cts.Token);
+                            Log.Message($"[RimTalk Enhance] Response status: {(int)response.StatusCode} {response.StatusCode}");
                             var responseJson = await response.Content.ReadAsStringAsync();
                             
                             if (!response.IsSuccessStatusCode)
                             {
-                                Log.Error($"[RimTalk Enhance] AI Call Failed: {response.StatusCode}\nResponse: {responseJson}");
+                                Log.Error($"[RimTalk Enhance] AI Call Failed: {(int)response.StatusCode} {response.StatusCode}\nURL: {url}\nResponse: {responseJson}");
                                 // 4xx 错误不重试（客户端错误）
                                 if ((int)response.StatusCode >= 400 && (int)response.StatusCode < 500)
                                 {
@@ -258,13 +281,22 @@ namespace RimTalkHealthEnhance
                     {
                         // 超时
                         lastException = ex;
-                        Log.Warning($"[RimTalk Enhance] AI call timed out (attempt {attempt + 1}/{MAX_RETRY_COUNT + 1}).");
+                        Log.Warning($"[RimTalk Enhance] AI call timed out (attempt {attempt + 1}/{MAX_RETRY_COUNT + 1}). URL: {url}");
+                        if (ex.InnerException != null)
+                        {
+                            Log.Warning($"[RimTalk Enhance] Inner exception: {ex.InnerException.GetType().Name}: {ex.InnerException.Message}");
+                        }
                     }
                     catch (HttpRequestException ex)
                     {
                         // 网络错误
                         lastException = ex;
                         Log.Warning($"[RimTalk Enhance] Network error (attempt {attempt + 1}/{MAX_RETRY_COUNT + 1}): {ex.Message}");
+                        Log.Warning($"[RimTalk Enhance] URL: {url}");
+                        if (ex.InnerException != null)
+                        {
+                            Log.Warning($"[RimTalk Enhance] Inner exception: {ex.InnerException.GetType().Name}: {ex.InnerException.Message}");
+                        }
                     }
                     catch (Exception ex)
                     {
