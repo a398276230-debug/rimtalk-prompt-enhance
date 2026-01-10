@@ -151,7 +151,14 @@ namespace RimTalkHealthEnhance
                     BlueprintProgressService.UpdateAllAutoProjects();
                     
                     // 执行AI总结（MidnightSynthesisService 会使用 currentDay + SnapshotDayOffset 计算显示日期）
-                    _ = MidnightSynthesisService.PerformSynthesis();
+                    // 使用 fire-and-forget 模式，但添加异常捕获防止静默失败
+                    _ = MidnightSynthesisService.PerformSynthesis().ContinueWith(task =>
+                    {
+                        if (task.IsFaulted && task.Exception != null)
+                        {
+                            Log.Error($"[RimTalk Enhance] Midnight synthesis failed with exception: {task.Exception.InnerException?.Message ?? task.Exception.Message}");
+                        }
+                    });
                 }
                 else
                 {

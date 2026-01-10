@@ -12,6 +12,12 @@ namespace RimTalkHealthEnhance
     /// </summary>
     public static class RaidTrackingService
     {
+        // 日志防抖：避免相同日志短时间内重复输出
+        private static string _lastLogMessage = null;
+        private static int _lastLogTick = 0;
+        private static int _logRepeatCount = 0;
+        private const int LOG_DEBOUNCE_TICKS = 60; // 1秒内相同日志不重复输出
+        
         // 袭击关键词（用于识别袭击事件）
         private static readonly string[] RaidKeywords = {
             "raid", "attack", "siege", "infestation", "manhunter", "ambush", "assault",
@@ -118,6 +124,31 @@ namespace RimTalkHealthEnhance
         }
         
         /// <summary>
+        /// 输出防抖日志（相同内容短时间内不重复输出）
+        /// </summary>
+        private static void LogWithDebounce(string message)
+        {
+            int currentTick = Find.TickManager?.TicksGame ?? 0;
+            
+            if (message == _lastLogMessage && currentTick - _lastLogTick < LOG_DEBOUNCE_TICKS)
+            {
+                _logRepeatCount++;
+                return; // 跳过重复日志
+            }
+            
+            // 如果之前有重复的日志被跳过，输出一条汇总
+            if (_logRepeatCount > 0 && _lastLogMessage != null)
+            {
+                Log.Message($"[RimTalk Enhance] (上述日志重复 {_logRepeatCount} 次，已省略)");
+            }
+            
+            Log.Message(message);
+            _lastLogMessage = message;
+            _lastLogTick = currentTick;
+            _logRepeatCount = 0;
+        }
+        
+        /// <summary>
         /// 获取当前活跃的袭击事件
         /// </summary>
         public static ColonyAnnouncement GetActiveRaidEvent()
@@ -137,8 +168,8 @@ namespace RimTalkHealthEnhance
                 {
                     return cached;
                 }
-                // 缓存失效，清除
-                Log.Message($"[RimTalk Enhance] GetActiveRaidEvent: Cached raid ID '{_activeRaidEventId}' is no longer valid, clearing.");
+                // 缓存失效，清除（使用防抖日志）
+                LogWithDebounce($"[RimTalk Enhance] GetActiveRaidEvent: Cached raid ID '{_activeRaidEventId}' is no longer valid, clearing.");
                 _activeRaidEventId = null;
             }
             
@@ -157,7 +188,8 @@ namespace RimTalkHealthEnhance
                     
                 if (activeEvents.Count > 0)
                 {
-                    Log.Message($"[RimTalk Enhance] GetActiveRaidEvent: No active raid found, but {activeEvents.Count} active events exist. Titles: {string.Join(", ", activeEvents.Select(e => $"'{e.Title}' (IsRaid:{e.IsRaidEvent})"))}");
+                    // 使用防抖日志，避免频繁重复输出
+                    LogWithDebounce($"[RimTalk Enhance] GetActiveRaidEvent: No active raid found, but {activeEvents.Count} active events exist. Titles: {string.Join(", ", activeEvents.Select(e => $"'{e.Title}' (IsRaid:{e.IsRaidEvent})"))}");
                 }
             }
             
@@ -211,6 +243,9 @@ namespace RimTalkHealthEnhance
             int count = 0;
             var counted = new HashSet<int>(); // 防止重复计数
             
+            // 用于汇总日志的统计字典：按类型和派系分组
+            var threatSummary = new Dictionary<string, int>();
+            
             // 复制列表以避免并发修改异常（某些 mod 可能在遍历时修改列表）
             List<Pawn> allPawns;
             try
@@ -248,18 +283,26 @@ namespace RimTalkHealthEnhance
                         // 记录到活跃敌对目标集合（用于识别直接死亡的敌人）
                         _activeHostileIds.Add(p.thingIDNumber);
                         
-                        // 识别威胁类型用于日志（带异常保护，防止某些 mod 的 Pawn 属性访问异常）
+                        // 汇总统计（按名称分组，而不是每个敌人单独输出日志）
                         try
                         {
-                            string raceType = p.RaceProps?.Humanlike == true ? "Humanlike" :
-                                             (p.RaceProps?.Animal == true ? "Animal" :
-                                             (p.RaceProps?.IsMechanoid == true ? "Mechanoid" : "Other"));
-                            Log.Message($"[RimTalk Enhance] Counted hostile threat: {p.LabelShort} (ID: {p.thingIDNumber}, Type: {raceType}, Faction: {p.Faction?.Name ?? "None"})");
+                            string label = p.LabelShort ?? p.def?.label ?? "Unknown";
+                            string faction = p.Faction?.Name ?? "None";
+                            string key = $"{label}({faction})";
+                            
+                            if (threatSummary.ContainsKey(key))
+                                threatSummary[key]++;
+                            else
+                                threatSummary[key] = 1;
                         }
                         catch
                         {
-                            // 日志失败不影响计数
-                            Log.Message($"[RimTalk Enhance] Counted hostile threat: ID {p.thingIDNumber} (details unavailable)");
+                            // 统计失败不影响计数
+                            string key = "Unknown";
+                            if (threatSummary.ContainsKey(key))
+                                threatSummary[key]++;
+                            else
+                                threatSummary[key] = 1;
                         }
                     }
                 }
@@ -271,7 +314,17 @@ namespace RimTalkHealthEnhance
                 }
             }
             
-            Log.Message($"[RimTalk Enhance] Total hostile threats counted (alive & standing): {count}. Active hostile IDs tracked: {_activeHostileIds.Count}");
+            // 只输出一条汇总日志，而不是每个敌人单独输出
+            if (count > 0)
+            {
+                var summaryParts = threatSummary.Select(kv => kv.Value > 1 ? $"{kv.Key}x{kv.Value}" : kv.Key);
+                Log.Message($"[RimTalk Enhance] Hostile threats counted: {count} total. [{string.Join(", ", summaryParts)}]");
+            }
+            else
+            {
+                Log.Message($"[RimTalk Enhance] No hostile threats found on map.");
+            }
+            
             return count;
         }
         

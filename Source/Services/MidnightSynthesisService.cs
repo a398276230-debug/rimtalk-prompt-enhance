@@ -200,12 +200,20 @@ namespace RimTalkHealthEnhance
             
             Log.Message($"[RimTalk Enhance] Synthesis completed. Total snapshots: {manager.Data.DailySnapshots.Count}");
             
-            // 使用 GenDate API 获取显示日期
-            string displayDate = dailySnapshot.GetDateString(Vector2.zero);
-            Messages.Message(
-                $"[AI 史官] {displayDate} 快照已生成",
-                MessageTypeDefOf.NeutralEvent
-            );
+            // 在主线程显示消息（添加异常保护避免整个方法因小问题失败）
+            try
+            {
+                string displayDate = dailySnapshot.GetDateString(Vector2.zero);
+                Messages.Message(
+                    $"[AI 史官] {displayDate} 快照已生成",
+                    MessageTypeDefOf.NeutralEvent
+                );
+            }
+            catch (Exception ex)
+            {
+                // 消息显示失败不影响主流程，只记录警告
+                Log.Warning($"[RimTalk Enhance] Failed to show synthesis message: {ex.Message}");
+            }
         }
         
         public static string GetDefaultPromptTemplate()
