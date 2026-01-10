@@ -123,14 +123,24 @@ namespace RimTalkHealthEnhance
                 url += $"?key={settings.CustomApiKey}";
             }
             
-            // Configure HttpClientHandler to minimize system environment interference
+            // Configure HttpClientHandler to use system proxy settings
+            // This allows users behind proxies (especially in China) to access Google APIs
             var handler = new HttpClientHandler
             {
                 UseDefaultCredentials = false,
                 PreAuthenticate = false,
                 UseCookies = false,
-                AutomaticDecompression = System.Net.DecompressionMethods.GZip | System.Net.DecompressionMethods.Deflate
+                AutomaticDecompression = System.Net.DecompressionMethods.GZip | System.Net.DecompressionMethods.Deflate,
+                // 使用系统默认代理设置，有代理就走代理，没有就直连
+                UseProxy = true,
+                Proxy = System.Net.WebRequest.GetSystemWebProxy()
             };
+            
+            // 让代理使用默认凭据（如果代理需要认证）
+            if (handler.Proxy != null)
+            {
+                handler.Proxy.Credentials = System.Net.CredentialCache.DefaultCredentials;
+            }
 
             using (var client = new HttpClient(handler))
             {
