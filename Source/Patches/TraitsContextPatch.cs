@@ -52,7 +52,7 @@ namespace RimTalkHealthEnhance
                 if (degreeData != null)
                 {
                     var traitText = infoLevel == PromptService.InfoLevel.Full
-                        ? $"{degreeData.label}:{ContextHelper.Sanitize(degreeData.description, pawn)}"
+                        ? $"{degreeData.label}:{CommonUtil.Sanitize(degreeData.description, pawn)}"
                         : degreeData.label;
                     traits.Add(traitText);
                 }
