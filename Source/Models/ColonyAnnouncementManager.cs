@@ -130,10 +130,18 @@ namespace RimTalkHealthEnhance
             // 使用天数判断，避免跳过时间导致错过触发
             int currentDay = GenDate.DaysPassed;
             
-            // Debug log every hour to check status
+            // 安全检查：如果 LastSynthesisDay 超过当前天数，这是异常情况，需要重置
+            // 这可能发生在存档加载异常或时间倒流的情况
+            if (Data.LastSynthesisDay > currentDay + 1)
+            {
+                Log.Warning($"[RimTalk Enhance] LastSynthesisDay ({Data.LastSynthesisDay}) is abnormally ahead of current day ({currentDay}). Resetting to current day.");
+                Data.LastSynthesisDay = currentDay;
+            }
+            
+            // Debug log every hour to check status（每小时输出一次状态，方便诊断）
             if (currentTick % 2500 == 0)
             {
-                // Log.Message($"[RimTalk Debug] Tick: {currentTick}, Day: {currentDay}, LastSynthesisDay: {Data.LastSynthesisDay}");
+                Log.Message($"[RimTalk Enhance] Synthesis status check - CurrentDay: {currentDay}, LastSynthesisDay: {Data.LastSynthesisDay}, ShouldTrigger: {currentDay > Data.LastSynthesisDay}");
             }
 
             if (currentDay > Data.LastSynthesisDay)

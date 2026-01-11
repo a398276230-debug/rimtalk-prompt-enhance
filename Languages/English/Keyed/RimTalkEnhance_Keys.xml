@@ -424,6 +424,11 @@
   <RTE_Snapshot_ResetOffset>Reset Date</RTE_Snapshot_ResetOffset>
   <RTE_Snapshot_OffsetReset>Date offset has been reset</RTE_Snapshot_OffsetReset>
 
+  <!-- AI Historian Reset -->
+  <RTE_Snapshot_ResetAll>Reset AI Historian</RTE_Snapshot_ResetAll>
+  <RTE_Snapshot_ConfirmResetAll>Are you sure you want to reset the AI Historian?\n\nThis will:\n• Clear all historical snapshots\n• Reset date offset\n• Take a new baseline snapshot\n\nThis action cannot be undone!</RTE_Snapshot_ConfirmResetAll>
+  <RTE_Snapshot_ResetComplete>AI Historian has been reset, new baseline snapshot taken</RTE_Snapshot_ResetComplete>
+
   <!-- Announcement Global Property -->
   <RTE_TaskEditor_IsGlobal>Global Effect</RTE_TaskEditor_IsGlobal>
   <RTE_TaskEditor_IsGlobal_Tip>When enabled, this announcement will take effect on all maps (including when attacking other factions)</RTE_TaskEditor_IsGlobal_Tip>

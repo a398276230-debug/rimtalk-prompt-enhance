@@ -423,6 +423,11 @@
   <RTE_Snapshot_ResetOffset>重置日期</RTE_Snapshot_ResetOffset>
   <RTE_Snapshot_OffsetReset>日期偏移已重置</RTE_Snapshot_OffsetReset>
 
+  <!-- AI 史官重置 -->
+  <RTE_Snapshot_ResetAll>重置AI史官</RTE_Snapshot_ResetAll>
+  <RTE_Snapshot_ConfirmResetAll>确定要重置 AI 史官吗？\n\n此操作将：\n• 清空所有历史快照\n• 重置日期偏移\n• 重新拍摄基准快照\n\n此操作不可撤销！</RTE_Snapshot_ConfirmResetAll>
+  <RTE_Snapshot_ResetComplete>AI 史官已重置，基准快照已重新拍摄</RTE_Snapshot_ResetComplete>
+
   <!-- 通告全局属性 -->
   <RTE_TaskEditor_IsGlobal>全局生效</RTE_TaskEditor_IsGlobal>
   <RTE_TaskEditor_IsGlobal_Tip>开启后，此通告将在所有地图生效（包括进攻其他派系时）</RTE_TaskEditor_IsGlobal_Tip>

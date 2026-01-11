@@ -203,7 +203,15 @@ namespace RimTalkHealthEnhance
             // 在主线程显示消息（添加异常保护避免整个方法因小问题失败）
             try
             {
-                string displayDate = dailySnapshot.GetDateString(Vector2.zero);
+                // 使用当前地图的经纬度来获取正确的日期/季节显示（南半球会有不同季节）
+                Vector2 location = Vector2.zero;
+                var map = Find.CurrentMap;
+                if (map != null)
+                {
+                    location = Find.WorldGrid.LongLatOf(map.Tile);
+                }
+                
+                string displayDate = dailySnapshot.GetDateString(location);
                 Messages.Message(
                     $"[AI 史官] {displayDate} 快照已生成",
                     MessageTypeDefOf.NeutralEvent

@@ -221,13 +221,49 @@ namespace RimTalkHealthEnhance
             Widgets.DrawMenuSection(rect);
             Rect innerRect = rect.ContractedBy(10f);
             
+            // 顶部工具栏：重置按钮
+            Rect toolbarRect = new Rect(innerRect.x, innerRect.y, innerRect.width, 24f);
+            
+            // 重置 AI 史官按钮
+            if (Widgets.ButtonText(new Rect(toolbarRect.xMax - 120f, toolbarRect.y, 120f, toolbarRect.height), "RTE_Snapshot_ResetAll".Translate()))
+            {
+                Find.WindowStack.Add(Dialog_MessageBox.CreateConfirmation(
+                    "RTE_Snapshot_ConfirmResetAll".Translate(),
+                    () =>
+                    {
+                        // 清空所有快照数据
+                        manager.Data.DailySnapshots.Clear();
+                        manager.Data.LastSnapshot = null;
+                        manager.Data.LastSynthesisDay = GenDate.DaysPassed;
+                        manager.Data.DisplayTickOffset = 0;
+                        
+                        // 重置旧版本字段
+                        #pragma warning disable CS0612
+                        manager.Data.SnapshotDayOffset = 0;
+                        manager.Data.SnapshotTickOffset = 0;
+                        #pragma warning restore CS0612
+                        
+                        manager.NotifyDataChanged();
+                        
+                        // 重新拍摄基准快照
+                        manager.Data.LastSnapshot = SnapshotService.TakeSnapshot();
+                        
+                        Messages.Message("RTE_Snapshot_ResetComplete".Translate(), MessageTypeDefOf.NeutralEvent, false);
+                        Log.Message($"[RimTalk Enhance] AI Historian reset. New baseline snapshot taken. Day: {manager.Data.LastSynthesisDay}");
+                    }
+                ));
+            }
+            
+            // 调整内容区域起始位置
+            Rect contentRect = new Rect(innerRect.x, toolbarRect.yMax + 10f, innerRect.width, innerRect.height - toolbarRect.height - 10f);
+            
             var snapshots = manager.Data.DailySnapshots
                 .OrderByDescending(s => s.AbsTick)
                 .ToList();
             
             if (!snapshots.Any())
             {
-                Widgets.Label(innerRect, "RTE_Snapshot_NoData".Translate());
+                Widgets.Label(contentRect, "RTE_Snapshot_NoData".Translate());
                 return;
             }
             
@@ -235,15 +271,15 @@ namespace RimTalkHealthEnhance
             currentSnapshotIndex = Mathf.Clamp(currentSnapshotIndex, 0, snapshots.Count - 1);
             var snapshot = snapshots[currentSnapshotIndex];
             
-            // 顶部：日期导航
-            var navRect = new Rect(innerRect.x, innerRect.y, innerRect.width, 30f);
+            // 顶部：日期导航（在工具栏下方）
+            var navRect = new Rect(contentRect.x, contentRect.y, contentRect.width, 30f);
             DrawSnapshotNavigation(navRect, snapshot, snapshots.Count, manager);
             
-            // 内容区域（预留重置按钮的空间）
-            var contentRect = new Rect(innerRect.x, innerRect.y + 65f, innerRect.width, innerRect.height - 100f);
-            var scrollRect = new Rect(0, 0, contentRect.width - 20f, 1500f); // 估算高度，或者动态计算
+            // 滚动区域（预留导航和日期重置按钮的空间）
+            var scrollAreaRect = new Rect(contentRect.x, contentRect.y + 65f, contentRect.width, contentRect.height - 100f);
+            var scrollRect = new Rect(0, 0, scrollAreaRect.width - 20f, 1500f); // 估算高度，或者动态计算
             
-            Widgets.BeginScrollView(contentRect, ref snapshotScrollPos, scrollRect);
+            Widgets.BeginScrollView(scrollAreaRect, ref snapshotScrollPos, scrollRect);
             
             float curY = 0f;
             float width = scrollRect.width;
@@ -345,9 +381,16 @@ namespace RimTalkHealthEnhance
             }
             
             // 日期显示 - 使用 DailySnapshot 的方法获取显示日期
+            // 使用当前地图的经纬度来获取正确的季节显示（南半球会有不同季节）
             float dateDisplayX = dateBackX + dateAdjustBtnWidth + gap;
             float dateDisplayWidth = rect.width - (btnWidth * 2) - (dateAdjustBtnWidth * 2) - (gap * 4);
-            string gameDateStr = snapshot.GetDateStringWithOffset(manager.Data.DisplayTickOffset, Vector2.zero);
+            Vector2 mapLocation = Vector2.zero;
+            var currentMap = Find.CurrentMap;
+            if (currentMap != null)
+            {
+                mapLocation = Find.WorldGrid.LongLatOf(currentMap.Tile);
+            }
+            string gameDateStr = snapshot.GetDateStringWithOffset(manager.Data.DisplayTickOffset, mapLocation);
             Text.Anchor = TextAnchor.MiddleCenter;
             Widgets.Label(new Rect(dateDisplayX, rect.y, dateDisplayWidth, rect.height), gameDateStr);
             Text.Anchor = TextAnchor.UpperLeft;
@@ -413,8 +456,16 @@ namespace RimTalkHealthEnhance
                     manager.Data.ColonyOverview = editingOverview;
                 }
                 
+                // 使用当前地图的经纬度来获取正确的季节显示（南半球会有不同季节）
+                Vector2 mapLocation = Vector2.zero;
+                var currentMap = Find.CurrentMap;
+                if (currentMap != null)
+                {
+                    mapLocation = Find.WorldGrid.LongLatOf(currentMap.Tile);
+                }
+                
                 // 使用 DailySnapshot 的方法获取显示日期（带偏移量）
-                string dateHeader = $"[{snapshot.GetDateStringWithOffset(manager.Data.DisplayTickOffset, Vector2.zero)}]";
+                string dateHeader = $"[{snapshot.GetDateStringWithOffset(manager.Data.DisplayTickOffset, mapLocation)}]";
                 
                 // 追加新内容（带日期）
                 manager.Data.ColonyOverview += $"\n\n{dateHeader}\n{snapshot.AISummary}";

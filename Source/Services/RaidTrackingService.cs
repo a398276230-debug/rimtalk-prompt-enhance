@@ -178,20 +178,8 @@ namespace RimTalkHealthEnhance
                 .Where(a => a.Status == AnnouncementStatus.Active && a.IsRaidEvent)
                 .OrderByDescending(a => a.CreatedTick)
                 .FirstOrDefault();
-                
-            if (result == null)
-            {
-                // 尝试查找所有活跃的事件类公告，看看是否有未标记为袭击的
-                var activeEvents = manager.Data.Announcements
-                    .Where(a => a.Status == AnnouncementStatus.Active && a.Category == AnnouncementCategory.Event)
-                    .ToList();
-                    
-                if (activeEvents.Count > 0)
-                {
-                    // 使用防抖日志，避免频繁重复输出
-                    LogWithDebounce($"[RimTalk Enhance] GetActiveRaidEvent: No active raid found, but {activeEvents.Count} active events exist. Titles: {string.Join(", ", activeEvents.Select(e => $"'{e.Title}' (IsRaid:{e.IsRaidEvent})"))}");
-                }
-            }
+            
+            // 注意：不再输出"No active raid found"日志，因为这是正常情况，不需要频繁记录
             
             return result;
         }
