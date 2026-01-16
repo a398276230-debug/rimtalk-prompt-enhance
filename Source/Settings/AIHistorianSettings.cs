@@ -225,14 +225,7 @@ namespace RimTalkHealthEnhance
                 listing.Gap();
                 
                 Text.Font = GameFont.Tiny;
-                Widgets.Label(listing.GetRect(120f), 
-                    "说明：\n" +
-                    "1. 每日 0 点系统会自动拍摄殖民地快照（建筑、房间、蓝图）。\n" +
-                    "2. AI 将对比昨日快照，结合玩家操作日志、工程进度、科技状态和事件，生成一段简短的总结。\n" +
-                    "3. 总结结果将显示在'每日快照'标签页中，不会直接修改概况。\n" +
-                    "4. 如果启用'自动注入'，AI 在对话时会自动看到最近的历史记录（含日期）。\n" +
-                    "5. 工程信息：从状况板读取进行中和已完成的工程项目。\n" +
-                    "6. 科技状态：包含当前研究、已完成科技，可选包含未完成科技（默认关闭以节省token）。");
+                Widgets.Label(listing.GetRect(120f), "RTE_Settings_AI_Note".Translate());
                 Text.Font = GameFont.Small;
             }
         }

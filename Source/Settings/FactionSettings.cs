@@ -94,12 +94,7 @@ namespace RimTalkHealthEnhance
             listing.Gap();
 
             Text.Font = GameFont.Tiny;
-            Widgets.Label(listing.GetRect(80f), 
-                "说明：\n" +
-                "1. 此功能只显示当前地图上实际存在的派系（有成员在场）。\n" +
-                "2. 使用游戏原生的关系状态\n" +
-                "3. 信息会自动注入到 AI 的上下文中，让 AI 了解当前的外交状况。\n" +
-                "4. 当地图上没有其他派系时，不会显示任何信息。");
+            Widgets.Label(listing.GetRect(80f), "RTE_Settings_Factions_Note".Translate());
             Text.Font = GameFont.Small;
         }
     }
