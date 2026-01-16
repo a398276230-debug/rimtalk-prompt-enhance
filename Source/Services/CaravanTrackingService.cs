@@ -13,7 +13,7 @@ namespace RimTalkHealthEnhance
     /// </summary>
     public static class CaravanTrackingService
     {
-        // 商队关键词（用于识别商队事件）
+        // 商队关键词（用于识别商队事件，作为降级匹配）
         private static readonly string[] CaravanKeywords = {
             "caravan", "trader", "visitor", "traveler", "merchant",
             "商队", "商人", "访客", "旅行者", "贸易"
@@ -31,12 +31,37 @@ namespace RimTalkHealthEnhance
         private static HashSet<string> _activeCaravanEventIds = new HashSet<string>();
         
         /// <summary>
-        /// 判断事件标题是否为商队事件
+        /// 判断事件是否为商队事件（支持 LetterDef 和 Lord 判断）
+        /// </summary>
+        public static bool IsCaravanEvent(string title, LetterDef def = null)
+        {
+            // 优先检查地图上是否有商队 Lord（最准确的判断）
+            var map = Find.CurrentMap;
+            if (map != null)
+            {
+                bool hasCaravanLord = map.lordManager.lords.Any(l => IsCaravanLord(l));
+                if (hasCaravanLord)
+                {
+                    // 再检查 LetterDef 是否是正面或中立事件（排除威胁类型）
+                    if (def != null)
+                    {
+                        if (def == LetterDefOf.PositiveEvent || def == LetterDefOf.NeutralEvent)
+                            return true;
+                    }
+                }
+            }
+            
+            // 降级使用标题关键词匹配
+            if (string.IsNullOrEmpty(title)) return false;
+            return CaravanKeywords.Any(k => title.IndexOf(k, StringComparison.OrdinalIgnoreCase) >= 0);
+        }
+
+        /// <summary>
+        /// 兼容旧代码的方法重载
         /// </summary>
         public static bool IsCaravanEvent(string title)
         {
-            if (string.IsNullOrEmpty(title)) return false;
-            return CaravanKeywords.Any(k => title.IndexOf(k, StringComparison.OrdinalIgnoreCase) >= 0);
+            return IsCaravanEvent(title, null);
         }
         
         /// <summary>

@@ -60,12 +60,28 @@ namespace RimTalkHealthEnhance
         private static string _activeRaidEventId = null;
         
         /// <summary>
-        /// 判断事件标题是否为袭击事件
+        /// 判断事件是否为袭击事件（支持 LetterDef 判断）
+        /// </summary>
+        public static bool IsRaidEvent(string title, LetterDef def = null)
+        {
+            // 优先使用 LetterDef 判断（更准确，不依赖语言）
+            if (def != null)
+            {
+                if (def == LetterDefOf.ThreatBig || def == LetterDefOf.ThreatSmall)
+                    return true;
+            }
+            
+            // 降级使用标题关键词匹配
+            if (string.IsNullOrEmpty(title)) return false;
+            return RaidKeywords.Any(k => title.IndexOf(k, StringComparison.OrdinalIgnoreCase) >= 0);
+        }
+
+        /// <summary>
+        /// 兼容旧代码的方法重载
         /// </summary>
         public static bool IsRaidEvent(string title)
         {
-            if (string.IsNullOrEmpty(title)) return false;
-            return RaidKeywords.Any(k => title.IndexOf(k, StringComparison.OrdinalIgnoreCase) >= 0);
+            return IsRaidEvent(title, null);
         }
         
         /// <summary>
@@ -156,7 +172,7 @@ namespace RimTalkHealthEnhance
             var manager = ColonyAnnouncementManager.Instance;
             if (manager?.Data?.Announcements == null)
             {
-                Log.Warning("[RimTalk Enhance] GetActiveRaidEvent: Manager or Data is null!");
+                // Manager 或 Data 为 null 是正常的（游戏刚加载时），无需报错
                 return null;
             }
             
@@ -345,7 +361,7 @@ namespace RimTalkHealthEnhance
                 
                 if (raidEvent == null)
                 {
-                    Log.Warning($"[RimTalk Enhance] RecordEnemyKill: No active raid event found! Enemy: {enemy?.LabelShort ?? "Unknown"}");
+                    // 找不到活跃的袭击事件是正常的（可能只是普通的打猎或小冲突），无需报错
                     return;
                 }
             }

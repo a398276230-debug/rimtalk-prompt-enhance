@@ -447,8 +447,7 @@ namespace RimTalkHealthEnhance
                 }
                 else
                 {
-                    // 没有初始计数，但仍然是袭击事件
-                    Log.Warning($"[RimTalk Enhance] Raid event '{announcement.Title}' has no initial count!");
+                    // 没有初始计数，但仍然是袭击事件（可能是旧存档或检测时机问题），静默处理
                 }
             }
             
