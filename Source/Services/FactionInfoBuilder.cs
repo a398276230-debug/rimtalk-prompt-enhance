@@ -39,6 +39,7 @@ namespace RimTalkHealthEnhance
             if (!factionsOnMap.Any()) return null;
             
             var sb = new StringBuilder();
+            sb.AppendLine("## Factions on Map");
             
             // 全局身份摘要（如果启用）
             if (settings.ShowGlobalSummary)
@@ -50,13 +51,13 @@ namespace RimTalkHealthEnhance
                 
                 if (totalEnemies > 0 || totalPrisoners > 0 || totalTraders > 0 || totalVisitors > 0)
                 {
-                    sb.AppendLine("=== Map Population Summary ===");
+                    sb.AppendLine("### Population Summary");
                     
                     if (totalEnemies > 0)
-                        sb.AppendLine($"Threats: {totalEnemies} active enem{(totalEnemies > 1 ? "ies" : "y")}");
+                        sb.AppendLine($"- Threats: {totalEnemies} active enem{(totalEnemies > 1 ? "ies" : "y")}");
                     
                     if (totalPrisoners > 0)
-                        sb.AppendLine($"Detained: {totalPrisoners} prisoner{(totalPrisoners > 1 ? "s" : "")}");
+                        sb.AppendLine($"- Detained: {totalPrisoners} prisoner{(totalPrisoners > 1 ? "s" : "")}");
                     
                     if (totalTraders > 0 || totalVisitors > 0)
                     {
@@ -65,14 +66,12 @@ namespace RimTalkHealthEnhance
                             visitorParts.Add($"{totalVisitors} visitor{(totalVisitors > 1 ? "s" : "")}");
                         if (totalTraders > 0)
                             visitorParts.Add($"{totalTraders} trader{(totalTraders > 1 ? "s" : "")}");
-                        sb.AppendLine($"Visitors: {string.Join(", ", visitorParts)}");
+                        sb.AppendLine($"- Visitors: {string.Join(", ", visitorParts)}");
                     }
                     
                     sb.AppendLine();
                 }
             }
-            
-            sb.AppendLine("=== Factions on Map ===");
             
             // 按游戏实际关系分组
             var allies = new List<FactionInfo>();
@@ -101,27 +100,29 @@ namespace RimTalkHealthEnhance
             // 输出盟友
             if (allies.Any())
             {
-                sb.AppendLine("Allies:");
+                sb.AppendLine("### Allies");
                 foreach (var info in allies.OrderByDescending(f => f.Faction.GoodwillWith(Faction.OfPlayer)))
                 {
                     sb.AppendLine(FormatFactionInfo(info));
                 }
+                sb.AppendLine();
             }
             
             // 输出中立派系
             if (settings.ShowNeutralFactions && neutrals.Any())
             {
-                sb.AppendLine("Neutral:");
+                sb.AppendLine("### Neutral");
                 foreach (var info in neutrals.OrderByDescending(f => f.Faction.GoodwillWith(Faction.OfPlayer)))
                 {
                     sb.AppendLine(FormatFactionInfo(info));
                 }
+                sb.AppendLine();
             }
             
             // 输出敌对派系
             if (enemies.Any())
             {
-                sb.AppendLine("Hostile:");
+                sb.AppendLine("### Hostile");
                 foreach (var info in enemies.OrderBy(f => f.Faction.GoodwillWith(Faction.OfPlayer)))
                 {
                     sb.AppendLine(FormatFactionInfo(info));

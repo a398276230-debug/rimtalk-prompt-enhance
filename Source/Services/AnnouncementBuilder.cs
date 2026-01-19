@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using UnityEngine;
 using Verse;
 using RimWorld;
@@ -8,6 +9,10 @@ namespace RimTalkHealthEnhance
 {
     public static class AnnouncementBuilder
     {
+        /// <summary>
+        /// 构建殖民地状态上下文（用于 {{colony_status}} 变量）
+        /// 不包含 AI 史官总结（那部分由 colony_history 提供）
+        /// </summary>
         public static string BuildAnnouncementContext()
         {
             var settings = RimTalkHealthEnhanceMod.Settings;
@@ -20,29 +25,18 @@ namespace RimTalkHealthEnhance
             var map = Find.CurrentMap;
             bool isPlayerHome = map != null && map.IsPlayerHome;
             
-            List<string> parts = new List<string>();
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine("## Colony Status");
+            
+            bool hasContent = false;
             
             // === 以下内容仅在主地图显示 ===
             if (isPlayerHome)
             {
-                // === 1. 派系关系 ===
-                string factionContext = FactionInfoBuilder.BuildFactionContext();
-                if (!string.IsNullOrEmpty(factionContext))
-                {
-                    parts.Add(factionContext);
-                }
+                // 注意：派系关系已移至 {{colony_factions}} 胡子变量
+                // 注意：地图布局已移至 {{colony_layout}} 胡子变量
 
-                // === 1.5 全局地图布局 ===
-                if (settings.EnableGlobalLayout)
-                {
-                    string layoutInfo = ColonyLayoutBuilder.GetColonyLayout(map);
-                    if (!string.IsNullOrEmpty(layoutInfo))
-                    {
-                        parts.Add(layoutInfo);
-                    }
-                }
-
-                // === 2. 自由文本概况 ===
+                // === 1. 自由文本概况（Colony Overview） ===
                 if (settings.ShowColonyOverview && !string.IsNullOrWhiteSpace(manager.Data.ColonyOverview))
                 {
                     string overview = manager.Data.ColonyOverview;
@@ -50,43 +44,16 @@ namespace RimTalkHealthEnhance
                     {
                         overview = overview.Substring(0, settings.MaxOverviewLength) + "...";
                     }
-                    parts.Add($"Colony Overview:\n{overview}");
+                    sb.AppendLine("### Overview");
+                    sb.AppendLine(overview);
+                    sb.AppendLine();
+                    hasContent = true;
                 }
-
-                // === 3. AI 史官总结 ===
-                if (settings.EnableAISynthesis && settings.InjectSnapshotToContext
-                    && settings.SnapshotInjectionTarget == SnapshotInjectionMode.Context
-                    && manager.Data.DailySnapshots.Count > 0)
-                {
-                    // 获取最近 N 天的快照
-                    // 使用 AbsTick 排序和过滤，更加可靠
-                    var snapshotsWithSummary = manager.Data.DailySnapshots
-                        .Where(s => !string.IsNullOrEmpty(s.AISummary))
-                        .OrderByDescending(s => s.AbsTick)
-                        .ToList();
-                    
-                    if (snapshotsWithSummary.Count > 0)
-                    {
-                        // 计算时间范围：最近 N 天 = N * TicksPerDay
-                        long maxAbsTick = snapshotsWithSummary.Max(s => s.AbsTick);
-                        long ticksToInject = (long)(settings.SnapshotInjectDays * GenDate.TicksPerDay);
-                        
-                        var recentSnapshots = snapshotsWithSummary
-                            .Where(s => maxAbsTick - s.AbsTick < ticksToInject)
-                            .ToList();
-                    
-                        foreach (var snapshot in recentSnapshots)
-                        {
-                            // 使用 DailySnapshot 的方法获取显示日期（带偏移量）
-                            string dateStr = snapshot.GetDateStringWithOffset(manager.Data.DisplayTickOffset, Vector2.zero);
-                            
-                            parts.Add($"History Record ({dateStr}):\n{snapshot.AISummary}");
-                        }
-                    }
-                }
+                
+                // 注意：AI 史官总结已移至 colony_history 变量，不再在此处添加
             }
             
-            // === 4. 结构化公告（支持全局通告） ===
+            // === 2. 结构化公告（支持全局通告） ===
             if (settings.ShowStructuredTasks)
             {
                 var activeAnnouncements = manager.Data.Announcements
@@ -131,16 +98,21 @@ namespace RimTalkHealthEnhance
                         
                         if (items.Any())
                         {
-                            var lines = items.Select(a => FormatAnnouncement(a));
-                            parts.Add($"{categoryName}s:\n{string.Join("\n", lines)}");
+                            sb.AppendLine($"### {categoryName}");
+                            foreach (var item in items)
+                            {
+                                sb.AppendLine(FormatAnnouncement(item));
+                            }
+                            sb.AppendLine();
+                            hasContent = true;
                         }
                     }
                 }
             }
             
-            if (parts.Any())
+            if (hasContent)
             {
-                return "=== Colony Status ===\n" + string.Join("\n\n", parts);
+                return sb.ToString().TrimEnd();
             }
             
             return null;

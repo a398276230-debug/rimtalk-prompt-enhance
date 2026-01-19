@@ -119,7 +119,7 @@ namespace RimTalkHealthEnhance
             // Relations Hook (Override) - 解除关系数量限制
             RimTalkPromptAPI.RegisterPawnHook(
                 MOD_ID,
-                ContextCategories.Pawn.Relations,
+                ContextCategories.Pawn.Social,
                 ContextHookRegistry.HookOperation.Override,
                 (pawn, original) =>
                 {
@@ -214,6 +214,39 @@ namespace RimTalkHealthEnhance
                 description: "RTE_API_ColonyHistory_Desc".Translate(),
                 priority: 100
             );
+
+            // 注册殖民地布局变量 {{colony_layout}}
+            RimTalkPromptAPI.RegisterContextVariable(
+                MOD_ID,
+                "colony_layout",
+                (ctx) =>
+                {
+                    var settings = RimTalkHealthEnhanceMod.Settings;
+                    if (!settings.EnableGlobalLayout) return "";
+
+                    var map = Find.CurrentMap;
+                    if (map == null || !map.IsPlayerHome) return "";
+
+                    return ColonyLayoutBuilder.GetColonyLayout(map) ?? "";
+                },
+                description: "RTE_API_ColonyLayout_Desc".Translate(),
+                priority: 100
+            );
+
+            // 注册派系信息变量 {{colony_factions}}
+            RimTalkPromptAPI.RegisterContextVariable(
+                MOD_ID,
+                "colony_factions",
+                (ctx) =>
+                {
+                    var settings = RimTalkHealthEnhanceMod.Settings;
+                    if (!settings.ShowFactionRelations) return "";
+
+                    return FactionInfoBuilder.BuildFactionContext() ?? "";
+                },
+                description: "RTE_API_ColonyFactions_Desc".Translate(),
+                priority: 100
+            );
         }
 
         #endregion
@@ -239,32 +272,61 @@ namespace RimTalkHealthEnhance
 
         private const string COLONY_STATUS_ENTRY_NAME = "Colony Status (RimTalk Enhance)";
 
+        /// <summary>
+        /// 获取当前 Entry 的内容（用于更新）
+        /// </summary>
+        private static string GetColonyStatusEntryContent()
+        {
+            return "{{colony_status}}\n{{colony_history}}\n{{colony_layout}}\n{{colony_factions}}";
+        }
+
         private static void RegisterPromptEntries()
         {
-            // 预先计算确定性 ID（用于清理时移除）
+            // 预先计算确定性 ID（用于清理时移除和更新时查找）
             _colonyStatusEntryId = GetDeterministicEntryId(MOD_ID, COLONY_STATUS_ENTRY_NAME);
             
-            // 创建殖民地状况 Entry，包含两个胡子变量
+            // ⭐ 首先检查是否已存在该条目，如果存在则更新内容（确保 Mod 更新后内容同步到玩家预设）
+            try
+            {
+                var preset = RimTalkPromptAPI.GetActivePreset();
+                if (preset != null)
+                {
+                    var existingEntry = preset.GetEntry(_colonyStatusEntryId);
+                    if (existingEntry != null)
+                    {
+                        // ⭐ 条目已存在 → 直接更新 Content
+                        existingEntry.Content = GetColonyStatusEntryContent();
+                        Log.Message($"[RimTalk Enhance] ✓ Updated existing PromptEntry: {COLONY_STATUS_ENTRY_NAME}");
+                        return;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Message($"[RimTalk Enhance] Failed to check/update existing entry: {ex.Message}");
+            }
+            
+            // 创建殖民地状况 Entry，包含所有胡子变量
             // 注意：PromptEntry 会根据 SourceModId 和 Name 自动生成确定性 ID
             // 这样即使 Mod 重新加载也不会重复添加
             var entry = RimTalkPromptAPI.CreatePromptEntry(
                 name: COLONY_STATUS_ENTRY_NAME,
-                content: "{{colony_status}}\n{{colony_history}}",
+                content: GetColonyStatusEntryContent(),
                 role: PromptRole.System,
                 position: PromptPosition.Relative,
                 inChatDepth: 0,
                 sourceModId: MOD_ID
             );
 
-            // 添加到 preset 末尾
-            // AddPromptEntry 会自动检查是否已存在相同 ID 的条目，避免重复添加
-            if (RimTalkPromptAPI.AddPromptEntry(entry))
+            // 插入到 "Chat History" 之前（即 "Pawn Profiles" 之后，第四位）
+            // 如果找不到 "Chat History"，则回退到添加到末尾
+            if (RimTalkPromptAPI.InsertPromptEntryBeforeName(entry, "Chat History"))
             {
-                Log.Message("[RimTalk Enhance] Colony status entry added to prompt");
+                Log.Message("[RimTalk Enhance] Colony status entry inserted before Chat History");
             }
             else
             {
-                Log.Message("[RimTalk Enhance] Colony status entry already exists (skipped)");
+                Log.Message("[RimTalk Enhance] Chat History not found, colony status entry added at end");
             }
         }
 
@@ -584,7 +646,8 @@ namespace RimTalkHealthEnhance
         #region Helper Methods - Colony History
 
         /// <summary>
-        /// 构建殖民地历史快照上下文
+        /// 构建殖民地历史快照上下文（用于 {{colony_history}} 变量）
+        /// 使用 Markdown 格式
         /// </summary>
         private static string BuildColonyHistoryContext()
         {
@@ -613,7 +676,7 @@ namespace RimTalkHealthEnhance
                 return null;
 
             StringBuilder sb = new StringBuilder();
-            sb.AppendLine("=== Recent Colony History ===");
+            sb.AppendLine("## Recent Colony History");
 
             foreach (var snapshot in recentSnapshots)
             {

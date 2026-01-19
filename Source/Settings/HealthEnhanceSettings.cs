@@ -119,7 +119,6 @@ namespace RimTalkHealthEnhance
         #region AIHistorian Settings Proxies
         public bool EnableAISynthesis { get => AIHistorian.EnableAISynthesis; set => AIHistorian.EnableAISynthesis = value; }
         public bool InjectSnapshotToContext { get => AIHistorian.InjectSnapshotToContext; set => AIHistorian.InjectSnapshotToContext = value; }
-        public SnapshotInjectionMode SnapshotInjectionTarget { get => AIHistorian.SnapshotInjectionTarget; set => AIHistorian.SnapshotInjectionTarget = value; }
         public float SnapshotInjectDays { get => AIHistorian.SnapshotInjectDays; set => AIHistorian.SnapshotInjectDays = value; }
         public bool IncludeProjectsInSnapshot { get => AIHistorian.IncludeProjectsInSnapshot; set => AIHistorian.IncludeProjectsInSnapshot = value; }
         public bool IncludeResearchInSnapshot { get => AIHistorian.IncludeResearchInSnapshot; set => AIHistorian.IncludeResearchInSnapshot = value; }

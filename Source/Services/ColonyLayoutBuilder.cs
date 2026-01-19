@@ -73,7 +73,7 @@ namespace RimTalkHealthEnhance
         private static string GenerateLayoutText(Map map, HealthEnhanceSettings settings)
         {
             var sb = new StringBuilder();
-            sb.AppendLine("=== Colony Layout ===");
+            sb.AppendLine("## Colony Layout");
 
             // 显示殖民地大小（居住区格数）
             var homeArea = map.areaManager.Home;
