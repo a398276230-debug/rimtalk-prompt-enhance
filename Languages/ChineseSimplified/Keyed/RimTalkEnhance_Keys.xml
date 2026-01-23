@@ -437,6 +437,7 @@
   <RTE_API_ColonyHistory_Desc>殖民地历史快照摘要</RTE_API_ColonyHistory_Desc>
   <RTE_API_ColonyLayout_Desc>殖民地布局信息（房间、区域、方位）</RTE_API_ColonyLayout_Desc>
   <RTE_API_ColonyFactions_Desc>地图上的派系关系信息</RTE_API_ColonyFactions_Desc>
+  <RTE_API_LocalSocial_Desc>本地图所有 pawn 的社交关系（不含世界 pawns）</RTE_API_LocalSocial_Desc>
 
   <!-- 杂项设置说明 -->
   <RTE_Settings_Misc_Note>说明：\n1. 解除关系数量限制：显示所有关系，不再受 RimTalk 设置中的 MaxPawnContextCount 限制。\n2. 解除配角特质限制：在 Short 模式下显示所有特质，不再只显示前 3 个。\n注意：开启这些选项可能会增加 Token 消耗。</RTE_Settings_Misc_Note>
