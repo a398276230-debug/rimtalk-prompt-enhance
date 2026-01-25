@@ -319,14 +319,11 @@ namespace RimTalkHealthEnhance
             }
             
             // 只输出一条汇总日志，而不是每个敌人单独输出
+            // 注意：当没有敌对威胁时不输出日志，避免日志刷屏
             if (count > 0)
             {
                 var summaryParts = threatSummary.Select(kv => kv.Value > 1 ? $"{kv.Key}x{kv.Value}" : kv.Key);
                 Log.Message($"[RimTalk Enhance] Hostile threats counted: {count} total. [{string.Join(", ", summaryParts)}]");
-            }
-            else
-            {
-                Log.Message($"[RimTalk Enhance] No hostile threats found on map.");
             }
             
             return count;

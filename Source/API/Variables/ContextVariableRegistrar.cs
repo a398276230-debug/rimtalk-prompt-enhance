@@ -1,4 +1,5 @@
 using RimTalk.API;
+using RimTalk.Util;
 using Verse;
 
 namespace RimTalkHealthEnhance.API.Variables
@@ -18,6 +19,7 @@ namespace RimTalkHealthEnhance.API.Variables
             RegisterColonyLayoutVariable(modId);
             RegisterColonyFactionsVariable(modId);
             RegisterLocalSocialVariable(modId);
+            RegisterMapWealthVariable(modId);
         }
 
         /// <summary>
@@ -115,6 +117,27 @@ namespace RimTalkHealthEnhance.API.Variables
                 "local_social",
                 (pawn) => LocalSocialBuilder.GetLocalMapSocialString(pawn),
                 description: "RTE_API_LocalSocial_Desc".Translate(),
+                priority: 100
+            );
+        }
+
+        /// <summary>
+        /// 注册地图财富等级变量 {{map.wealth}}
+        /// 使用RimTalk的Describer.Wealth方法返回财富分级描述
+        /// </summary>
+        private static void RegisterMapWealthVariable(string modId)
+        {
+            RimTalkPromptAPI.RegisterEnvironmentVariable(
+                modId,
+                "wealth",
+                (map) =>
+                {
+                    if (map == null) return "";
+
+                    float wealthTotal = map.wealthWatcher.WealthTotal;
+                    return Describer.Wealth(wealthTotal);
+                },
+                description: "RTE_API_MapWealth_Desc".Translate(),
                 priority: 100
             );
         }
