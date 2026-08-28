@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using RimWorld;
 using UnityEngine;
 using Verse;
 
@@ -226,6 +227,46 @@ namespace RimTalkHealthEnhance
                         bool defaultEnabled = !typeName.Equals("Verse.Message", StringComparison.OrdinalIgnoreCase);
                         EnabledEventTypes[typeName] = defaultEnabled;
                     }
+                }
+            }
+            
+            // === 强制重置按钮（始终显示，不依赖 EnableAutoEventCapture） ===
+            listing.Gap();
+            listing.GapLine();
+            listing.Gap();
+            
+            Text.Font = GameFont.Medium;
+            GUI.color = new Color(1f, 0.7f, 0.3f);
+            Widgets.Label(listing.GetRect(26f), "RTE_Settings_AutoCapture_MaintenanceTitle".Translate());
+            GUI.color = Color.white;
+            Text.Font = GameFont.Small;
+            listing.Gap(4f);
+            
+            Text.Font = GameFont.Tiny;
+            GUI.color = Color.gray;
+            Widgets.Label(listing.GetRect(36f), "RTE_Settings_AutoCapture_ForceReset_Desc".Translate());
+            GUI.color = Color.white;
+            Text.Font = GameFont.Small;
+            listing.Gap(4f);
+            
+            if (listing.ButtonText("RTE_Settings_AutoCapture_ForceReset".Translate()))
+            {
+                if (Current.Game != null)
+                {
+                    var manager = ColonyAnnouncementManager.Instance;
+                    if (manager != null)
+                    {
+                        string report = manager.ForceResetEventDeadlines();
+                        Messages.Message("RTE_Settings_AutoCapture_ForceReset_Result".Translate(report), MessageTypeDefOf.TaskCompletion, false);
+                    }
+                    else
+                    {
+                        Messages.Message("RTE_Settings_AutoCapture_ForceReset_NoManager".Translate(), MessageTypeDefOf.RejectInput, false);
+                    }
+                }
+                else
+                {
+                    Messages.Message("RTE_Settings_AutoCapture_ForceReset_NoGame".Translate(), MessageTypeDefOf.RejectInput, false);
                 }
             }
         }

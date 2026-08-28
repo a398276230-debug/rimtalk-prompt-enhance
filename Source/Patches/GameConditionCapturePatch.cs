@@ -49,9 +49,10 @@ namespace RimTalkHealthEnhance
                 };
 
                 // 如果不是永久状况，设置预计结束时间
+                // 注意：统一使用 TicksGame 体系，避免 cond.startTick 可能与 TicksGame 不一致的问题
                 if (!cond.Permanent && cond.Duration > 0)
                 {
-                    announcement.DeadlineTicks = cond.startTick + cond.Duration;
+                    announcement.DeadlineTicks = Find.TickManager.TicksGame + cond.Duration;
                 }
                 else if (settings.GameConditionExpireHours > 0)
                 {

@@ -298,6 +298,14 @@
   <RTE_Settings_AutoCapture_ConditionExpire>Condition event expire: {0} hours</RTE_Settings_AutoCapture_ConditionExpire>
   <RTE_Settings_AutoCapture_ConditionExpire_Desc>    Permanent conditions use this expire time, temporary conditions auto-complete when ended</RTE_Settings_AutoCapture_ConditionExpire_Desc>
   
+  <!-- Maintenance Tools -->
+  <RTE_Settings_AutoCapture_MaintenanceTitle>━━ Maintenance Tools ━━</RTE_Settings_AutoCapture_MaintenanceTitle>
+  <RTE_Settings_AutoCapture_ForceReset>Force Reset Event Deadlines</RTE_Settings_AutoCapture_ForceReset>
+  <RTE_Settings_AutoCapture_ForceReset_Desc>If auto-captured events are not expiring or deleting properly, click this button to recalculate all event deadlines based on current settings and immediately clean up expired events. Must be used in-game.</RTE_Settings_AutoCapture_ForceReset_Desc>
+  <RTE_Settings_AutoCapture_ForceReset_Result>Reset complete: {0}</RTE_Settings_AutoCapture_ForceReset_Result>
+  <RTE_Settings_AutoCapture_ForceReset_NoManager>Cannot execute: Event manager not loaded</RTE_Settings_AutoCapture_ForceReset_NoManager>
+  <RTE_Settings_AutoCapture_ForceReset_NoGame>Cannot execute: Please load a save first</RTE_Settings_AutoCapture_ForceReset_NoGame>
+  
   <!-- Settings - AI Historian -->
   <RTE_Settings_AI_Title>AI Historian Settings</RTE_Settings_AI_Title>
   <RTE_Settings_AI_Enable>Enable AI daily summary</RTE_Settings_AI_Enable>

@@ -298,6 +298,14 @@
   <RTE_Settings_AutoCapture_ConditionExpire>状况事件过期时间: {0} 小时</RTE_Settings_AutoCapture_ConditionExpire>
   <RTE_Settings_AutoCapture_ConditionExpire_Desc>    永久性状况使用此过期时间，临时状况会在结束时自动完成</RTE_Settings_AutoCapture_ConditionExpire_Desc>
   
+  <!-- 维护工具 -->
+  <RTE_Settings_AutoCapture_MaintenanceTitle>━━ 维护工具 ━━</RTE_Settings_AutoCapture_MaintenanceTitle>
+  <RTE_Settings_AutoCapture_ForceReset>强制重置事件过期时间</RTE_Settings_AutoCapture_ForceReset>
+  <RTE_Settings_AutoCapture_ForceReset_Desc>如果自动捕获的事件不过期或不自动删除，点击此按钮可以根据当前设置重新计算所有事件的过期时间，并立即清理已过期的事件。需要在游戏中使用。</RTE_Settings_AutoCapture_ForceReset_Desc>
+  <RTE_Settings_AutoCapture_ForceReset_Result>重置完成: {0}</RTE_Settings_AutoCapture_ForceReset_Result>
+  <RTE_Settings_AutoCapture_ForceReset_NoManager>无法执行：事件管理器未加载</RTE_Settings_AutoCapture_ForceReset_NoManager>
+  <RTE_Settings_AutoCapture_ForceReset_NoGame>无法执行：请先加载存档</RTE_Settings_AutoCapture_ForceReset_NoGame>
+  
   <!-- 设置界面 - AI 史官 -->
   <RTE_Settings_AI_Title>AI 史官设置</RTE_Settings_AI_Title>
   <RTE_Settings_AI_Enable>启用 AI 每日总结</RTE_Settings_AI_Enable>
