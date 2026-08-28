@@ -179,6 +179,8 @@ namespace RimTalkHealthEnhance
 
         private void CheckAutoCompletion()
         {
+            try
+            {
             if (Data.Announcements == null) return;
             
             var settings = RimTalkHealthEnhanceMod.Settings;
@@ -258,6 +260,92 @@ namespace RimTalkHealthEnhance
             
             if (toRemove.Count > 0)
                 DataVersion++;
+            }
+            catch (Exception ex)
+            {
+                Log.Error($"[RimTalk Enhance] CheckAutoCompletion failed: {ex.Message}\n{ex.StackTrace}");
+            }
+        }
+
+        /// <summary>
+        /// 强制重置所有自动捕获事件的过期时间（供设置界面调用）
+        /// 返回操作报告字符串
+        /// </summary>
+        public string ForceResetEventDeadlines()
+        {
+            if (Data.Announcements == null) return "No announcements data.";
+            
+            var settings = RimTalkHealthEnhanceMod.Settings;
+            if (settings == null) return "Settings not loaded.";
+            
+            int currentTick = Find.TickManager.TicksGame;
+            int resetCount = 0;
+            int completedCount = 0;
+            int deletedCount = 0;
+            var toRemove = new List<ColonyAnnouncement>();
+            
+            foreach (var announcement in Data.Announcements)
+            {
+                // 1. 重新计算所有自动捕获的活跃事件的 DeadlineTicks
+                if (announcement.IsAutoCaptured && announcement.Status == AnnouncementStatus.Active)
+                {
+                    // GameCondition/天气/袭击/商队事件有专门的完成机制，跳过
+                    if (announcement.IsGameConditionEvent || announcement.IsWeatherEvent ||
+                        announcement.IsRaidEvent || announcement.IsCaravanEvent)
+                        continue;
+                    
+                    if (announcement.Category == AnnouncementCategory.Quest && settings.AutoCompleteDays > 0)
+                    {
+                        announcement.DeadlineTicks = announcement.CreatedTick + (settings.AutoCompleteDays * 60000);
+                        resetCount++;
+                    }
+                    else if (announcement.Category != AnnouncementCategory.Quest && settings.EventExpireDays > 0)
+                    {
+                        announcement.DeadlineTicks = announcement.CreatedTick + (int)(settings.EventExpireDays * 60000);
+                        resetCount++;
+                    }
+                    
+                    // 如果重新计算后已过期，立即标记为完成
+                    if (announcement.DeadlineTicks > 0 && currentTick > announcement.DeadlineTicks)
+                    {
+                        announcement.Status = AnnouncementStatus.Completed;
+                        announcement.CompletedTick = currentTick;
+                        completedCount++;
+                    }
+                }
+                
+                // 2. 检查已完成事件的删除
+                if (announcement.Status == AnnouncementStatus.Completed && announcement.IsAutoCaptured)
+                {
+                    // 修复 CompletedTick 为 0 的异常情况
+                    if (announcement.CompletedTick <= 0)
+                    {
+                        announcement.CompletedTick = currentTick;
+                    }
+                    
+                    int deleteTicks = (int)(settings.AutoCapturedDeleteDays * 60000);
+                    if (deleteTicks == 0 || currentTick > announcement.CompletedTick + deleteTicks)
+                    {
+                        toRemove.Add(announcement);
+                        deletedCount++;
+                    }
+                }
+            }
+            
+            foreach (var item in toRemove)
+            {
+                Data.Announcements.Remove(item);
+            }
+            
+            if (resetCount > 0 || completedCount > 0 || deletedCount > 0)
+                DataVersion++;
+            
+            string report = $"Reset: {resetCount}, Completed: {completedCount}, Deleted: {deletedCount}. " +
+                            $"TicksGame: {currentTick}, EventExpire: {settings.EventExpireDays}d, " +
+                            $"QuestExpire: {settings.AutoCompleteDays}d, DeleteDays: {settings.AutoCapturedDeleteDays}d";
+            
+            Log.Message($"[RimTalk Enhance] ForceResetEventDeadlines: {report}");
+            return report;
         }
 
         public override void ExposeData()

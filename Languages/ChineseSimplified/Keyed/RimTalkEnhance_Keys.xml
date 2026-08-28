@@ -298,6 +298,14 @@
   <RTE_Settings_AutoCapture_ConditionExpire>状况事件过期时间: {0} 小时</RTE_Settings_AutoCapture_ConditionExpire>
   <RTE_Settings_AutoCapture_ConditionExpire_Desc>    永久性状况使用此过期时间，临时状况会在结束时自动完成</RTE_Settings_AutoCapture_ConditionExpire_Desc>
   
+  <!-- 维护工具 -->
+  <RTE_Settings_AutoCapture_MaintenanceTitle>━━ 维护工具 ━━</RTE_Settings_AutoCapture_MaintenanceTitle>
+  <RTE_Settings_AutoCapture_ForceReset>强制重置事件过期时间</RTE_Settings_AutoCapture_ForceReset>
+  <RTE_Settings_AutoCapture_ForceReset_Desc>如果自动捕获的事件不过期或不自动删除，点击此按钮可以根据当前设置重新计算所有事件的过期时间，并立即清理已过期的事件。需要在游戏中使用。</RTE_Settings_AutoCapture_ForceReset_Desc>
+  <RTE_Settings_AutoCapture_ForceReset_Result>重置完成: {0}</RTE_Settings_AutoCapture_ForceReset_Result>
+  <RTE_Settings_AutoCapture_ForceReset_NoManager>无法执行：事件管理器未加载</RTE_Settings_AutoCapture_ForceReset_NoManager>
+  <RTE_Settings_AutoCapture_ForceReset_NoGame>无法执行：请先加载存档</RTE_Settings_AutoCapture_ForceReset_NoGame>
+  
   <!-- 设置界面 - AI 史官 -->
   <RTE_Settings_AI_Title>AI 史官设置</RTE_Settings_AI_Title>
   <RTE_Settings_AI_Enable>启用 AI 每日总结</RTE_Settings_AI_Enable>
@@ -431,5 +439,16 @@
   <!-- 通告全局属性 -->
   <RTE_TaskEditor_IsGlobal>全局生效</RTE_TaskEditor_IsGlobal>
   <RTE_TaskEditor_IsGlobal_Tip>开启后，此通告将在所有地图生效（包括进攻其他派系时）</RTE_TaskEditor_IsGlobal_Tip>
+
+  <!-- API 描述 -->
+  <RTE_API_ColonyStatus_Desc>殖民地状况信息（概况、通告）</RTE_API_ColonyStatus_Desc>
+  <RTE_API_ColonyHistory_Desc>殖民地历史快照摘要</RTE_API_ColonyHistory_Desc>
+  <RTE_API_ColonyLayout_Desc>殖民地布局信息（房间、区域、方位）</RTE_API_ColonyLayout_Desc>
+  <RTE_API_ColonyFactions_Desc>地图上的派系关系信息</RTE_API_ColonyFactions_Desc>
+  <RTE_API_LocalSocial_Desc>本地图所有 pawn 的社交关系（不含世界 pawns）</RTE_API_LocalSocial_Desc>
+  <RTE_API_MapWealth_Desc>地图财富等级描述（贫困/温饱/富裕等）</RTE_API_MapWealth_Desc>
+
+  <!-- 杂项设置说明 -->
+  <RTE_Settings_Misc_Note>说明：\n1. 解除关系数量限制：显示所有关系，不再受 RimTalk 设置中的 MaxPawnContextCount 限制。\n2. 解除配角特质限制：在 Short 模式下显示所有特质，不再只显示前 3 个。\n注意：开启这些选项可能会增加 Token 消耗。</RTE_Settings_Misc_Note>
 
 </LanguageData>

@@ -33,11 +33,7 @@ namespace RimTalkHealthEnhance
             listing.Gap();
 
             Text.Font = GameFont.Tiny;
-            Widgets.Label(listing.GetRect(60f), 
-                "说明：\n" +
-                "1. 解除关系数量限制：显示所有关系，不再受 RimTalk 设置中的 MaxPawnContextCount 限制。\n" +
-                "2. 解除配角特质限制：在 Short 模式下显示所有特质，不再只显示前 3 个。\n" +
-                "注意：开启这些选项可能会增加 Token 消耗。");
+            Widgets.Label(listing.GetRect(60f), "RTE_Settings_Misc_Note".Translate());
             Text.Font = GameFont.Small;
         }
     }
