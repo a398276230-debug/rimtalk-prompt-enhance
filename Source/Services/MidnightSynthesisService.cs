@@ -13,19 +13,19 @@ namespace RimTalkHealthEnhance
     {
         public static async Task PerformSynthesis()
         {
-            Log.Message("[RimTalk Enhance] Starting Midnight Synthesis...");
+            DebugLog.Log("Starting Midnight Synthesis...");
             var manager = ColonyAnnouncementManager.Instance;
             var settings = RimTalkHealthEnhanceMod.Settings;
             
             if (!settings.EnableAISynthesis) 
             {
-                Log.Message("[RimTalk Enhance] AI Synthesis disabled.");
+                DebugLog.Log("AI Synthesis disabled.");
                 return;
             }
             
             // 1. 拍摄今日快照
             var todaySnapshot = SnapshotService.TakeSnapshot();
-            Log.Message($"[RimTalk Enhance] Snapshot taken. Buildings: {todaySnapshot.BuildingCounts.Count}, Rooms: {todaySnapshot.Rooms.Count}");
+            DebugLog.Log($"Snapshot taken. Buildings: {todaySnapshot.BuildingCounts.Count}, Rooms: {todaySnapshot.Rooms.Count}");
             
             // 2. 生成差分报告
             var yesterdaySnapshot = manager.Data.LastSnapshot ?? new ColonySnapshot();
@@ -46,7 +46,7 @@ namespace RimTalkHealthEnhance
                     .Where(a => a.Category == AnnouncementCategory.Project)
                     .ToList();
                 
-                Log.Message($"[RimTalk Enhance] Found {activeProjects.Count} projects in status board");
+                DebugLog.Log($"Found {activeProjects.Count} projects in status board");
                 
                 foreach (var project in activeProjects)
                 {
@@ -81,12 +81,12 @@ namespace RimTalkHealthEnhance
                     
                     string projectLine = $"{statusText} {project.Title}{progressText}{assignedText}{descText}{blueprintsText}";
                     projectInfo.Add(projectLine);
-                    Log.Message($"[RimTalk Enhance] Project: {projectLine}");
+                    DebugLog.Log($"Project: {projectLine}");
                 }
             }
             else
             {
-                Log.Message("[RimTalk Enhance] Project tracking is disabled in settings");
+                DebugLog.Log("Project tracking is disabled in settings");
             }
             
             // 5. 收集科技信息（如果启用）
@@ -96,12 +96,12 @@ namespace RimTalkHealthEnhance
                 researchInfo = ResearchInfoBuilder.BuildResearchContext();
                 if (!string.IsNullOrEmpty(researchInfo))
                 {
-                    Log.Message($"[RimTalk Enhance] Research info collected: {researchInfo.Length} chars");
+                    DebugLog.Log($"Research info collected: {researchInfo.Length} chars");
                 }
             }
             else
             {
-                Log.Message("[RimTalk Enhance] Research tracking is disabled in settings");
+                DebugLog.Log("Research tracking is disabled in settings");
             }
             
             // 6. 收集电力信息（如果启用）
@@ -111,12 +111,12 @@ namespace RimTalkHealthEnhance
                 powerInfo = PowerInfoBuilder.BuildPowerContext();
                 if (!string.IsNullOrEmpty(powerInfo))
                 {
-                    Log.Message($"[RimTalk Enhance] Power info collected: {powerInfo.Length} chars");
+                    DebugLog.Log($"Power info collected: {powerInfo.Length} chars");
                 }
             }
             else
             {
-                Log.Message("[RimTalk Enhance] Power tracking is disabled in settings");
+                DebugLog.Log("Power tracking is disabled in settings");
             }
             
             // 6. 创建快照记录
@@ -139,7 +139,7 @@ namespace RimTalkHealthEnhance
                               manager.Data.TodayActionLogs.Count > 0 ||
                               projectInfo.Count > 0;
 
-            Log.Message($"[RimTalk Enhance] Changes detected - Diff: {!string.IsNullOrWhiteSpace(diffReport)}, Events: {todayEvents.Count}, Actions: {manager.Data.TodayActionLogs.Count}, Projects: {projectInfo.Count}");
+            DebugLog.Log($"Changes detected - Diff: {!string.IsNullOrWhiteSpace(diffReport)}, Events: {todayEvents.Count}, Actions: {manager.Data.TodayActionLogs.Count}, Projects: {projectInfo.Count}");
 
             if (!string.IsNullOrEmpty(settings.CustomApiKey))
             {
@@ -148,7 +148,7 @@ namespace RimTalkHealthEnhance
                     try
                     {
                         string prompt = BuildSynthesisPrompt(diffReport, dailySnapshot, projectInfo, researchInfo, powerInfo);
-                        Log.Message($"[RimTalk Enhance] Sending prompt to AI ({prompt.Length} chars)...");
+                        DebugLog.Log($"Sending prompt to AI ({prompt.Length} chars)...");
                         dailySnapshot.AISummary = await SimpleAIClient.CallAI(prompt);
                         
                         if (string.IsNullOrEmpty(dailySnapshot.AISummary))
@@ -160,7 +160,7 @@ namespace RimTalkHealthEnhance
                         }
                         else
                         {
-                            Log.Message($"[RimTalk Enhance] AI response received ({dailySnapshot.AISummary.Length} chars)");
+                            DebugLog.Log($"AI response received ({dailySnapshot.AISummary.Length} chars)");
                         }
                     }
                     catch (Exception ex)
@@ -198,7 +198,7 @@ namespace RimTalkHealthEnhance
             
             manager.NotifyDataChanged();
             
-            Log.Message($"[RimTalk Enhance] Synthesis completed. Total snapshots: {manager.Data.DailySnapshots.Count}");
+            DebugLog.Log($"Synthesis completed. Total snapshots: {manager.Data.DailySnapshots.Count}");
             
             // 在主线程显示消息（添加异常保护避免整个方法因小问题失败）
             try
@@ -408,8 +408,8 @@ namespace RimTalkHealthEnhance
                 int woundedEnemies = RaidTrackingService.GetWoundedEnemyCount();
                 int woundedColonists = RaidTrackingService.GetWoundedColonistCount();
                 
-                // 根据袭击类型智能选择措辞（与 FinishRaidTracking 保持一致）
-                var (threatName, unitName) = RaidTrackingService.GetRaidTypeDisplayNames(announcement.Title);
+                // 根据袭击类型智能选择措辞（与 FinishRaidTracking 保持一致，优先 RaidKind）
+                var (threatName, unitName) = RaidTrackingService.GetRaidTypeDisplayNames(announcement);
                 
                 // 如果有初始计数，显示详细统计
                 if (announcement.RaidInitialCount > 0)

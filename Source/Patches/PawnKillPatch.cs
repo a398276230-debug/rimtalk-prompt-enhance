@@ -48,12 +48,12 @@ namespace RimTalkHealthEnhance
                 // 识别威胁类型用于日志
                 string raceType = isHumanlike ? "Humanlike" : (isAnimal ? "Animal" : (isMechanoid ? "Mechanoid" : "Other"));
                 
-                Log.Message($"[RimTalk Enhance] PawnKillPatch triggered for: {__instance.LabelShort}, Faction: {factionName}, Type: {raceType}, IsHostileNow: {isHostileNow}, WasDownedEnemy: {wasDownedEnemy}, WasActiveHostile: {wasActiveHostile}, IsHostileFaction: {isHostileFaction}");
+                DebugLog.Log($"PawnKillPatch triggered for: {__instance.LabelShort}, Faction: {factionName}, Type: {raceType}, IsHostileNow: {isHostileNow}, WasDownedEnemy: {wasDownedEnemy}, WasActiveHostile: {wasActiveHostile}, IsHostileFaction: {isHostileFaction}");
                 
                 // 敌对目标死亡（包括人类、动物、机械族等）
                 if (isEnemy)
                 {
-                    Log.Message($"[RimTalk Enhance] Enemy killed: {__instance.LabelShort} (Type: {raceType})");
+                    DebugLog.Log($"Enemy killed: {__instance.LabelShort} (Type: {raceType})");
                     
                     // 记录敌人死亡
                     RaidTrackingService.RecordEnemyKill(__instance);
@@ -65,7 +65,7 @@ namespace RimTalkHealthEnhance
                 // 殖民者死亡（玩家派系的人类）
                 else if (isPlayerFaction && isHumanlike)
                 {
-                    Log.Message($"[RimTalk Enhance] Colonist killed: {__instance.LabelShort}");
+                    DebugLog.Log($"Colonist killed: {__instance.LabelShort}");
                     RaidTrackingService.RecordColonistDeath(__instance);
                 }
             }
@@ -98,12 +98,12 @@ namespace RimTalkHealthEnhance
                 bool isMechanoid = pawn.RaceProps?.IsMechanoid ?? false;
                 string raceType = isHumanlike ? "Humanlike" : (isAnimal ? "Animal" : (isMechanoid ? "Mechanoid" : "Other"));
                 
-                Log.Message($"[RimTalk Enhance] PawnDownedPatch triggered for: {pawn.LabelShort} (Type: {raceType})");
+                DebugLog.Log($"PawnDownedPatch triggered for: {pawn.LabelShort} (Type: {raceType})");
                 
                 // 敌对目标倒地（包括人类、动物、机械族等）
                 if (pawn.HostileTo(Faction.OfPlayer))
                 {
-                    Log.Message($"[RimTalk Enhance] Enemy downed: {pawn.LabelShort} (Type: {raceType})");
+                    DebugLog.Log($"Enemy downed: {pawn.LabelShort} (Type: {raceType})");
                     RaidTrackingService.RecordEnemyDowned(pawn);
                     
                     // 倒地也可能导致袭击结束，调度检测
@@ -113,7 +113,7 @@ namespace RimTalkHealthEnhance
                 // 殖民者倒地（玩家派系的人类）
                 else if (pawn.Faction == Faction.OfPlayer && isHumanlike)
                 {
-                    Log.Message($"[RimTalk Enhance] Colonist downed: {pawn.LabelShort}");
+                    DebugLog.Log($"Colonist downed: {pawn.LabelShort}");
                     RaidTrackingService.RecordColonistDowned(pawn);
                 }
             }

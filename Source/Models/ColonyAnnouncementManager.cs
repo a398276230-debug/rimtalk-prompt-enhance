@@ -41,6 +41,15 @@ namespace RimTalkHealthEnhance
         {
         }
 
+        public override void FinalizeInit()
+        {
+            base.FinalizeInit();
+            // 游戏加载后重扫描（此时存档 Archive 实例可补充程序集/Defs 扫不到的类型），
+            // 并为新增类型填充默认启用值（Message 类默认关）
+            ArchivableTypeScanner.Scan();
+            EventCaptureService.ClearCapturedLabels();
+        }
+
         public override void GameComponentTick()
         {
             base.GameComponentTick();
@@ -56,7 +65,7 @@ namespace RimTalkHealthEnhance
                     // 如果是新游戏，DaysPassed 为 0，LastSynthesisDay 为 0，明天触发。
                     // 如果是旧存档，DaysPassed 为 N，LastSynthesisDay 为 N，明天触发。
                     Data.LastSynthesisDay = GenDate.DaysPassed;
-                    Log.Message($"[RimTalk Enhance] Initialized baseline snapshot. Day: {Data.LastSynthesisDay}");
+                    DebugLog.Log($"Initialized baseline snapshot. Day: {Data.LastSynthesisDay}");
                 }
                 
                 // 订阅当前地图的 Lord 事件
@@ -90,7 +99,7 @@ namespace RimTalkHealthEnhance
             // 检查延迟的袭击检测（改进版：使用 tick 比较，确保快进时也能正确检测）
             if (_pendingRaidCheckTick > 0 && currentTick >= _pendingRaidCheckTick)
             {
-                Log.Message($"[RimTalk Enhance] Raid check delay elapsed. CurrentTick: {currentTick}, ScheduledTick: {_pendingRaidCheckTick}");
+                DebugLog.Log($"Raid check delay elapsed. CurrentTick: {currentTick}, ScheduledTick: {_pendingRaidCheckTick}");
                 CheckRaidCompletion();
                 _pendingRaidCheckTick = -1; // 重置
             }
@@ -105,7 +114,7 @@ namespace RimTalkHealthEnhance
             // 检查延迟的商队检测
             if (_pendingCaravanCheckTick > 0 && currentTick >= _pendingCaravanCheckTick)
             {
-                Log.Message($"[RimTalk Enhance] Caravan check delay elapsed. CurrentTick: {currentTick}");
+                DebugLog.Log($"Caravan check delay elapsed. CurrentTick: {currentTick}");
                 CaravanTrackingService.CheckCaravanDepartures();
                 _pendingCaravanCheckTick = -1;
             }
@@ -141,7 +150,7 @@ namespace RimTalkHealthEnhance
             // Debug log every hour to check status（每小时输出一次状态，方便诊断）
             if (currentTick % 2500 == 0)
             {
-                Log.Message($"[RimTalk Enhance] Synthesis status check - CurrentDay: {currentDay}, LastSynthesisDay: {Data.LastSynthesisDay}, ShouldTrigger: {currentDay > Data.LastSynthesisDay}");
+                DebugLog.Log($"Synthesis status check - CurrentDay: {currentDay}, LastSynthesisDay: {Data.LastSynthesisDay}, ShouldTrigger: {currentDay > Data.LastSynthesisDay}");
             }
 
             if (currentDay > Data.LastSynthesisDay)
@@ -150,7 +159,7 @@ namespace RimTalkHealthEnhance
                 var map = Find.CurrentMap;
                 if (map != null && map.IsPlayerHome)
                 {
-                    Log.Message($"[RimTalk Enhance] Triggering daily synthesis. GameDay: {currentDay}, LastSynthesisDay: {Data.LastSynthesisDay}, Offset: {Data.SnapshotDayOffset}");
+                    DebugLog.Log($"Triggering daily synthesis. GameDay: {currentDay}, LastSynthesisDay: {Data.LastSynthesisDay}, Offset: {Data.SnapshotDayOffset}");
                     
                     // 更新 LastSynthesisDay 为当前游戏天数
                     Data.LastSynthesisDay = currentDay;
@@ -172,7 +181,7 @@ namespace RimTalkHealthEnhance
                 {
                     // 如果不在主殖民地，仍然更新日期，避免重复触发
                     Data.LastSynthesisDay = currentDay;
-                    Log.Message($"[RimTalk Enhance] Skipping daily synthesis - not on player home map. Day: {currentDay}");
+                    DebugLog.Log($"Skipping daily synthesis - not on player home map. Day: {currentDay}");
                 }
             }
         }
@@ -344,7 +353,7 @@ namespace RimTalkHealthEnhance
                             $"TicksGame: {currentTick}, EventExpire: {settings.EventExpireDays}d, " +
                             $"QuestExpire: {settings.AutoCompleteDays}d, DeleteDays: {settings.AutoCapturedDeleteDays}d";
             
-            Log.Message($"[RimTalk Enhance] ForceResetEventDeadlines: {report}");
+            DebugLog.Log($"ForceResetEventDeadlines: {report}");
             return report;
         }
 
@@ -511,7 +520,7 @@ namespace RimTalkHealthEnhance
         {
             int targetTick = Find.TickManager.TicksGame + delayTicks;
             _pendingRaidInitializations.Add((raidEvent, targetTick));
-            Log.Message($"[RimTalk Enhance] Scheduled raid initialization for '{raidEvent.Title}' at tick {targetTick} (delay: {delayTicks} ticks)");
+            DebugLog.Log($"Scheduled raid initialization for '{raidEvent.Title}' at tick {targetTick} (delay: {delayTicks} ticks)");
         }
         
         /// <summary>
@@ -525,7 +534,7 @@ namespace RimTalkHealthEnhance
             
             // 使用同样的队列，但会更新计数而非初始化
             _pendingRaidInitializations.Add((raidEvent, targetTick));
-            Log.Message($"[RimTalk Enhance] Scheduled raid recount for '{raidEvent.Title}' at tick {targetTick}");
+            DebugLog.Log($"Scheduled raid recount for '{raidEvent.Title}' at tick {targetTick}");
         }
         
         /// <summary>
@@ -552,13 +561,13 @@ namespace RimTalkHealthEnhance
                         if (raidEvent.RaidInitialCount > 0)
                         {
                             int newCount = Math.Max(raidEvent.RaidInitialCount, count);
-                            Log.Message($"[RimTalk Enhance] Raid recount for '{raidEvent.Title}'. Previous: {raidEvent.RaidInitialCount}, Current: {count}, Updated to: {newCount}");
+                            DebugLog.Log($"Raid recount for '{raidEvent.Title}'. Previous: {raidEvent.RaidInitialCount}, Current: {count}, Updated to: {newCount}");
                             raidEvent.RaidInitialCount = newCount;
                         }
                         else
                         {
                             raidEvent.RaidInitialCount = count;
-                            Log.Message($"[RimTalk Enhance] Raid tracking initialized (delayed) for '{raidEvent.Title}'. Initial enemies: {count}");
+                            DebugLog.Log($"Raid tracking initialized (delayed) for '{raidEvent.Title}'. Initial enemies: {count}");
                         }
                         
                         RaidTrackingService.SetActiveRaidEvent(raidEvent);
@@ -603,7 +612,7 @@ namespace RimTalkHealthEnhance
             if (settings == null || !settings.AutoCompleteCaravanEvents) return;
             
             _pendingCaravanCheckTick = Find.TickManager.TicksGame + delayTicks;
-            Log.Message($"[RimTalk Enhance] Scheduled caravan check at tick {_pendingCaravanCheckTick}");
+            DebugLog.Log($"Scheduled caravan check at tick {_pendingCaravanCheckTick}");
         }
 
         private void CheckRaidCompletion()
@@ -614,7 +623,7 @@ namespace RimTalkHealthEnhance
             // 使用 RaidTrackingService 的计数方法，确保逻辑一致
             int hostileCount = RaidTrackingService.CountHostileThreats(map);
             
-            Log.Message($"[RimTalk Enhance] CheckRaidCompletion: Hostile count = {hostileCount}");
+            DebugLog.Log($"CheckRaidCompletion: Hostile count = {hostileCount}");
             
             if (hostileCount == 0)
             {
@@ -652,7 +661,7 @@ namespace RimTalkHealthEnhance
             // 如果敌对单位从有变成没有，触发完成检测
             if (_lastHostileCount > 0 && hostileCount == 0)
             {
-                Log.Message($"[RimTalk Enhance] Fallback raid check triggered. Previous: {_lastHostileCount}, Current: {hostileCount}");
+                DebugLog.Log($"Fallback raid check triggered. Previous: {_lastHostileCount}, Current: {hostileCount}");
                 CompleteActiveRaidEvents();
             }
             
@@ -688,7 +697,7 @@ namespace RimTalkHealthEnhance
                     
                     announcement.Status = AnnouncementStatus.Completed;
                     announcement.CompletedTick = currentTick;
-                    Log.Message($"[RimTalk Enhance] Auto-completed raid event: {announcement.Title}. {battleReport}");
+                    DebugLog.Log($"Auto-completed raid event: {announcement.Title}. {battleReport}");
                 }
             }
             

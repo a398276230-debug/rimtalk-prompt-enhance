@@ -243,7 +243,9 @@
   
   <!-- Settings - Misc -->
   <RTE_Settings_Misc_Title>Misc Settings</RTE_Settings_Misc_Title>
-  <RTE_Settings_Misc_UnlimitedRelations>Unlimited Relations</RTE_Settings_Misc_UnlimitedRelations>
+   <RTE_Settings_Misc_UnlimitedRelations>Unlimited Relations</RTE_Settings_Misc_UnlimitedRelations>
+   <RTE_Settings_Misc_DebugMode>Debug Mode</RTE_Settings_Misc_DebugMode>
+   <RTE_Settings_Misc_DebugMode_Desc>Output verbose debug logs (event capture, context collection content, discussion pipeline, etc.) to Player.log. Keep it off during normal play for a clean log.</RTE_Settings_Misc_DebugMode_Desc>
   <RTE_Settings_Misc_UnlimitedRelations_Desc>Show all relations, ignoring MaxPawnContextCount limit in RimTalk settings</RTE_Settings_Misc_UnlimitedRelations_Desc>
   <RTE_Settings_Misc_UnlimitedTraits>Unlimited Traits</RTE_Settings_Misc_UnlimitedTraits>
   <RTE_Settings_Misc_UnlimitedTraits_Desc>Show all traits in Short mode, ignoring the limit of 3</RTE_Settings_Misc_UnlimitedTraits_Desc>
@@ -287,6 +289,8 @@
   <RTE_Settings_AutoCapture_DiscoveredTypes>Discovered Event Types ({0})</RTE_Settings_AutoCapture_DiscoveredTypes>
   <RTE_Settings_AutoCapture_NoTypes>No event types discovered. Please enter game and load a save, then refresh.</RTE_Settings_AutoCapture_NoTypes>
   <RTE_Settings_AutoCapture_ResetDefaults>Reset to Defaults</RTE_Settings_AutoCapture_ResetDefaults>
+  <RTE_Settings_AutoCapture_TypeFilterTitle>━━ Event Type Filter ━━</RTE_Settings_AutoCapture_TypeFilterTitle>
+  <RTE_Settings_AutoCapture_TypeFilterTip>This filter is independent of RimTalk's broadcast settings: disabling RimTalk broadcasts does not affect event recording here.\nParents are event mechanism types, children are specific events (defName). Message types are disabled by default to avoid spam.</RTE_Settings_AutoCapture_TypeFilterTip>
   
   <!-- Environment Event Capture -->
   <RTE_Settings_AutoCapture_EnvironmentTitle>━━ Environment Events ━━</RTE_Settings_AutoCapture_EnvironmentTitle>
@@ -426,7 +430,6 @@
   <RTE_GroupDiscussion_NoParticipants>Please select at least one participant</RTE_GroupDiscussion_NoParticipants>
   <RTE_GroupDiscussion_NotEnough>At least two colonists are required for a group discussion. Please gather them together.</RTE_GroupDiscussion_NotEnough>
   <RTE_GroupDiscussion_Started>{0} initiated a group discussion about "{1}"</RTE_GroupDiscussion_Started>
-  <RTE_GroupDiscussion_AIBusy>AI is processing, please try again later</RTE_GroupDiscussion_AIBusy>
 
   <!-- Snapshot Date Reset -->
   <RTE_Snapshot_ResetOffset>Reset Date</RTE_Snapshot_ResetOffset>
@@ -447,7 +450,6 @@
   <RTE_API_ColonyLayout_Desc>Colony layout info (rooms, areas, directions)</RTE_API_ColonyLayout_Desc>
   <RTE_API_ColonyFactions_Desc>Faction relations info on map</RTE_API_ColonyFactions_Desc>
   <RTE_API_LocalSocial_Desc>Social relations of all pawns on local map (excluding world pawns)</RTE_API_LocalSocial_Desc>
-  <RTE_API_MapWealth_Desc>Map wealth level description (impecunious/needy/rich, etc.)</RTE_API_MapWealth_Desc>
 
   <!-- Misc Settings Note -->
   <RTE_Settings_Misc_Note>Note:\n1. Unlimited Relations: Show all relations, ignoring MaxPawnContextCount limit in RimTalk settings.\n2. Unlimited Traits: Show all traits in Short mode, ignoring the limit of 3.\nWarning: Enabling these options may increase token consumption.</RTE_Settings_Misc_Note>

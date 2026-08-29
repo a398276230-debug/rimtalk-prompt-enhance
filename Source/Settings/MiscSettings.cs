@@ -10,11 +10,13 @@ namespace RimTalkHealthEnhance
     {
         public bool UnlimitedRelations = false;          // 解除关系数量限制
         public bool UnlimitedTraits = false;             // 解除配角特质限制
+        public bool DebugMode = false;                   // 调试模式（输出详细 debug 日志）
 
         public void ExposeData()
         {
             Scribe_Values.Look(ref UnlimitedRelations, "unlimitedRelations", false);
             Scribe_Values.Look(ref UnlimitedTraits, "unlimitedTraits", false);
+            Scribe_Values.Look(ref DebugMode, "debugMode", false);
         }
 
         /// <summary>
@@ -22,11 +24,14 @@ namespace RimTalkHealthEnhance
         /// </summary>
         public void DrawSettings(Listing_Standard listing)
         {
-            listing.CheckboxLabeled("RTE_Settings_Misc_UnlimitedRelations".Translate(), ref UnlimitedRelations, 
+            listing.CheckboxLabeled("RTE_Settings_Misc_UnlimitedRelations".Translate(), ref UnlimitedRelations,
                 "RTE_Settings_Misc_UnlimitedRelations_Desc".Translate());
-            
-            listing.CheckboxLabeled("RTE_Settings_Misc_UnlimitedTraits".Translate(), ref UnlimitedTraits, 
+
+            listing.CheckboxLabeled("RTE_Settings_Misc_UnlimitedTraits".Translate(), ref UnlimitedTraits,
                 "RTE_Settings_Misc_UnlimitedTraits_Desc".Translate());
+
+            listing.CheckboxLabeled("RTE_Settings_Misc_DebugMode".Translate(), ref DebugMode,
+                "RTE_Settings_Misc_DebugMode_Desc".Translate());
 
             listing.Gap();
             listing.GapLine();

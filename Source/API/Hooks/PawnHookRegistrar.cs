@@ -40,7 +40,9 @@ namespace RimTalkHealthEnhance.API.Hooks
                     if (!contextSettings.IncludeHealth) return null;
 
                     var infoLevel = PromptService.InfoLevel.Normal;
-                    return HealthInfoBuilder.BuildEnhancedHealthContext(pawn, infoLevel);
+                    var result = HealthInfoBuilder.BuildEnhancedHealthContext(pawn, infoLevel);
+                    DebugLog.Dump($"PawnHook[{pawn?.LabelShort ?? "null"}] Health", result);
+                    return result;
                 },
                 priority: 50
             );
@@ -61,7 +63,9 @@ namespace RimTalkHealthEnhance.API.Hooks
                     if (!contextSettings.IncludeEquipment) return null;
 
                     var infoLevel = PromptService.InfoLevel.Normal;
-                    return EquipmentContextBuilder.Build(pawn, infoLevel);
+                    var result = EquipmentContextBuilder.Build(pawn, infoLevel);
+                    DebugLog.Dump($"PawnHook[{pawn?.LabelShort ?? "null"}] Equipment", result);
+                    return result;
                 },
                 priority: 50
             );
@@ -83,7 +87,9 @@ namespace RimTalkHealthEnhance.API.Hooks
 
                     if (!settings.UnlimitedRelations) return original;
 
-                    return RelationsContextBuilder.GetRelationsStringUnlimited(pawn);
+                    var result = RelationsContextBuilder.GetRelationsStringUnlimited(pawn);
+                    DebugLog.Dump($"PawnHook[{pawn?.LabelShort ?? "null"}] Relations(unlimited)", result);
+                    return result;
                 },
                 priority: 50
             );
@@ -106,7 +112,9 @@ namespace RimTalkHealthEnhance.API.Hooks
                     if (!settings.UnlimitedTraits) return original;
 
                     var infoLevel = PromptService.InfoLevel.Normal;
-                    return TraitsContextBuilder.GetTraitsContextUnlimited(pawn, infoLevel);
+                    var result = TraitsContextBuilder.GetTraitsContextUnlimited(pawn, infoLevel);
+                    DebugLog.Dump($"PawnHook[{pawn?.LabelShort ?? "null"}] Traits(unlimited)", result);
+                    return result;
                 },
                 priority: 50
             );
@@ -132,7 +140,9 @@ namespace RimTalkHealthEnhance.API.Hooks
                         string prefix = pawn.Map.IsPlayerHome
                             ? "Relative Position"
                             : "Current Map";
-                        return original + $"\n{prefix}: {relativeLocation}";
+                        var result = original + $"\n{prefix}: {relativeLocation}";
+                        DebugLog.Dump($"PawnHook[{pawn.LabelShort}] Location", result);
+                        return result;
                     }
                     return original;
                 },

@@ -50,7 +50,7 @@ namespace RimTalkHealthEnhance
                 {
                     _subscribedMap = map;
                     map.events.LordAdded += OnLordAdded;
-                    Log.Message($"[RimTalk Enhance] LordMonitorService: Subscribed to map events.");
+                    DebugLog.Log($"LordMonitorService: Subscribed to map events.");
                 }
                 else
                 {
@@ -103,7 +103,7 @@ namespace RimTalkHealthEnhance
             _raidLordPawnCounts.Clear();
             _maxObservedHostileCount = 0;
             _combatStarted = false;
-            Log.Message("[RimTalk Enhance] LordMonitorService: Monitoring reset.");
+            DebugLog.Log("LordMonitorService: Monitoring reset.");
         }
         
         /// <summary>
@@ -115,7 +115,7 @@ namespace RimTalkHealthEnhance
             if (!_combatStarted)
             {
                 _combatStarted = true;
-                Log.Message($"[RimTalk Enhance] LordMonitorService: Combat started. Initial count locked at {_maxObservedHostileCount}.");
+                DebugLog.Log($"LordMonitorService: Combat started. Initial count locked at {_maxObservedHostileCount}.");
             }
         }
         
@@ -142,7 +142,7 @@ namespace RimTalkHealthEnhance
                 int pawnCount = lord.ownedPawns?.Count ?? 0;
                 _raidLordPawnCounts[lord.loadID] = pawnCount;
                 
-                Log.Message($"[RimTalk Enhance] LordMonitorService: Raid Lord detected! " +
+                DebugLog.Log($"LordMonitorService: Raid Lord detected! " +
                            $"Job: {lord.LordJob?.GetType().Name}, " +
                            $"Faction: {lord.faction?.Name ?? "None"}, " +
                            $"Initial Pawns: {pawnCount}");
@@ -213,7 +213,7 @@ namespace RimTalkHealthEnhance
             {
                 int oldMax = _maxObservedHostileCount;
                 _maxObservedHostileCount = totalHostile;
-                Log.Message($"[RimTalk Enhance] LordMonitorService: Max hostile count updated from {oldMax} to {_maxObservedHostileCount}");
+                DebugLog.Log($"LordMonitorService: Max hostile count updated from {oldMax} to {_maxObservedHostileCount}");
             }
             
             // 更新事件的初始计数（使用最大观察值）
@@ -221,7 +221,7 @@ namespace RimTalkHealthEnhance
             {
                 int oldCount = raidEvent.RaidInitialCount;
                 raidEvent.RaidInitialCount = _maxObservedHostileCount;
-                Log.Message($"[RimTalk Enhance] LordMonitorService: Updated RaidInitialCount from {oldCount} to {_maxObservedHostileCount}");
+                DebugLog.Log($"LordMonitorService: Updated RaidInitialCount from {oldCount} to {_maxObservedHostileCount}");
             }
         }
         

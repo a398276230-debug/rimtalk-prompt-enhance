@@ -33,9 +33,10 @@ namespace RimTalkHealthEnhance
         public float GameConditionExpireHours = 24f;  // 游戏状况过期时间（游戏小时，永久状况用）
         
         // === 事件类型过滤 ===
-        // 存储每种事件类型的启用状态 (TypeName -> Enabled)
+        // 存储每种事件类型的启用状态 (C# 类型名或 defName -> Enabled)
+        // 与 RimTalk 的 EnabledArchivableTypes 播报过滤完全解耦（自建事件池）
         public Dictionary<string, bool> EnabledEventTypes = new Dictionary<string, bool>();
-        
+
         // 缓存发现的类型（不保存）
         public static List<string> DiscoveredEventTypes = new List<string>();
 
@@ -162,70 +163,33 @@ namespace RimTalkHealthEnhance
                 listing.GapLine();
                 listing.Gap();
 
-                if (DiscoveredEventTypes.Count > 0)
-                {
-                    Widgets.Label(listing.GetRect(24f), "RTE_Settings_AutoCapture_DiscoveredTypes".Translate(DiscoveredEventTypes.Count));
-                    listing.Gap(6f);
+                // === 事件类型过滤（层级树，与 RimTalk 播报过滤解耦） ===
+                ArchivableTypeScanner.ScanIfNeeded();
 
-                    var groupedTypes = DiscoveredEventTypes
-                        .GroupBy(typeName =>
-                        {
-                            string simpleName = typeName.Contains(".")
-                                ? typeName.Substring(typeName.LastIndexOf('.') + 1)
-                                : typeName;
+                Text.Font = GameFont.Medium;
+                GUI.color = new Color(0.6f, 0.9f, 1f);
+                Widgets.Label(listing.GetRect(26f), "RTE_Settings_AutoCapture_TypeFilterTitle".Translate());
+                GUI.color = Color.white;
+                Text.Font = GameFont.Small;
+                listing.Gap(4f);
 
-                            if (simpleName.Contains("Letter")) return "Letters (信件)";
-                            if (simpleName.Contains("Message")) return "Messages (消息)";
-                            return "Other (其他)";
-                        })
-                        .OrderBy(g => g.Key.StartsWith("Letters") ? 0 : g.Key.StartsWith("Messages") ? 1 : 2)
-                        .ToList();
+                Text.Font = GameFont.Tiny;
+                GUI.color = Color.cyan;
+                Widgets.Label(listing.GetRect(30f), "RTE_Settings_AutoCapture_TypeFilterTip".Translate());
+                GUI.color = Color.white;
+                Text.Font = GameFont.Small;
+                listing.Gap(4f);
 
-                    foreach (var group in groupedTypes)
-                    {
-                        Text.Font = GameFont.Small;
-                        GUI.color = Color.yellow;
-                        Widgets.Label(listing.GetRect(24f), $"━━ {group.Key} ({group.Count()}) ━━");
-                        GUI.color = Color.white;
-                        listing.Gap(4f);
+                DrawTypeFilterTree(listing);
 
-                        foreach (var typeName in group.OrderBy(x => x))
-                        {
-                            bool isEnabled = !EnabledEventTypes.ContainsKey(typeName) || EnabledEventTypes[typeName];
-                            bool newEnabled = isEnabled;
-                            
-                            string displayName = typeName.Contains(".") ? typeName.Substring(typeName.LastIndexOf('.') + 1) : typeName;
-                            
-                            if (typeName.Equals("Verse.Message", StringComparison.OrdinalIgnoreCase) && isEnabled)
-                            {
-                                GUI.color = new Color(1f, 0.5f, 0.5f);
-                            }
+                listing.Gap(6f);
 
-                            listing.CheckboxLabeled(displayName, ref newEnabled, typeName);
-                            GUI.color = Color.white;
-                            
-                            if (newEnabled != isEnabled)
-                            {
-                                EnabledEventTypes[typeName] = newEnabled;
-                            }
-                        }
-                        listing.Gap(8f);
-                    }
-                }
-                else
-                {
-                    GUI.color = Color.yellow;
-                    Widgets.Label(listing.GetRect(24f), "RTE_Settings_AutoCapture_NoTypes".Translate());
-                    GUI.color = Color.white;
-                }
-
-                listing.Gap(12f);
                 if (listing.ButtonText("RTE_Settings_AutoCapture_ResetDefaults".Translate()))
                 {
-                    foreach (var typeName in DiscoveredEventTypes)
+                    var messageTypes = ArchivableTypeScanner.GetMessageTypes();
+                    foreach (var typeName in AutoCaptureSettings.DiscoveredEventTypes)
                     {
-                        bool defaultEnabled = !typeName.Equals("Verse.Message", StringComparison.OrdinalIgnoreCase);
-                        EnabledEventTypes[typeName] = defaultEnabled;
+                        EnabledEventTypes[typeName] = !messageTypes.Contains(typeName);
                     }
                 }
             }
@@ -268,6 +232,121 @@ namespace RimTalkHealthEnhance
                 {
                     Messages.Message("RTE_Settings_AutoCapture_ForceReset_NoGame".Translate(), MessageTypeDefOf.RejectInput, false);
                 }
+            }
+        }
+
+        /// <summary>
+        /// 绘制事件类型过滤层级树（父 = C# 类型名，子 = defName）。
+        /// 机制参考上游 RimTalk Settings_EventFilter：父开关联动子项、子项开启强制父开启、
+        /// Verse.Message 排最后、来源 mod 名标注。数据读写本项目自建的 EnabledEventTypes。
+        /// </summary>
+        private void DrawTypeFilterTree(Listing_Standard listing)
+        {
+            var hierarchy = ArchivableTypeScanner.TypeHierarchy;
+            var sourceMap = ArchivableTypeScanner.SourceMap;
+
+            if (hierarchy.Count == 0)
+            {
+                GUI.color = Color.yellow;
+                Widgets.Label(listing.GetRect(24f), "RTE_Settings_AutoCapture_NoTypes".Translate());
+                GUI.color = Color.white;
+                return;
+            }
+
+            var sortedParents = hierarchy.Keys
+                .OrderBy(k => k.Equals(ArchivableTypeScanner.VerseMessage, StringComparison.OrdinalIgnoreCase) ? 1 : 0)
+                .ThenByDescending(k => hierarchy[k].Count)
+                .ThenBy(k => k)
+                .ToList();
+
+            foreach (var parentKey in sortedParents)
+            {
+                var children = hierarchy[parentKey];
+                bool hasChildren = children.Any();
+                bool showExpander = hasChildren && children.Count > 1;
+                bool isExpanded = ArchivableTypeScanner.ExpandedParents.Contains(parentKey);
+
+                // --- 父行 ---
+                Rect parentRect = listing.GetRect(24f);
+                float xOffset = 0f;
+
+                // 1. 展开按钮
+                if (showExpander)
+                {
+                    Rect expanderRect = new Rect(parentRect.x, parentRect.y, 24f, 24f);
+                    string label = isExpanded ? "[-]" : "[+]";
+                    if (Widgets.ButtonText(expanderRect, label, drawBackground: false))
+                    {
+                        if (isExpanded) ArchivableTypeScanner.ExpandedParents.Remove(parentKey);
+                        else ArchivableTypeScanner.ExpandedParents.Add(parentKey);
+                    }
+                }
+
+                xOffset += 28f;
+
+                // 2. 父复选框 + 标签
+                bool isParentEnabled = EnabledEventTypes.TryGetValue(parentKey, out var pVal) && pVal;
+                bool newParentEnabled = isParentEnabled;
+
+                Rect checkboxRect = new Rect(parentRect.x + xOffset, parentRect.y, parentRect.width - xOffset, 24f);
+                Widgets.CheckboxLabeled(checkboxRect, parentKey, ref newParentEnabled);
+
+                // 3. 来源 mod 名标注
+                DrawSourceTag(checkboxRect, parentKey, sourceMap);
+
+                if (newParentEnabled != isParentEnabled)
+                {
+                    EnabledEventTypes[parentKey] = newParentEnabled;
+                    // 父开关联动子项
+                    if (hasChildren)
+                    {
+                        foreach (var child in children)
+                            EnabledEventTypes[child] = newParentEnabled;
+                    }
+                }
+
+                // --- 子行 ---
+                if (!showExpander || !isExpanded) continue;
+
+                foreach (var childKey in children)
+                {
+                    Rect childRect = listing.GetRect(24f);
+                    childRect.xMin += 40f; // 缩进
+
+                    bool isChildEnabled = EnabledEventTypes.TryGetValue(childKey, out var cVal) && cVal;
+                    bool newChildEnabled = isChildEnabled;
+
+                    Widgets.CheckboxLabeled(childRect, childKey, ref newChildEnabled);
+
+                    DrawSourceTag(childRect, childKey, sourceMap);
+
+                    if (newChildEnabled != isChildEnabled)
+                    {
+                        EnabledEventTypes[childKey] = newChildEnabled;
+                        // 子项开启 -> 强制父开启
+                        if (newChildEnabled && !EnabledEventTypes[parentKey])
+                        {
+                            EnabledEventTypes[parentKey] = true;
+                        }
+                    }
+                }
+            }
+        }
+
+        /// <summary>在复选框行右侧绘制灰色小字来源标注（Core 不显示）</summary>
+        private static void DrawSourceTag(Rect rowRect, string key, IReadOnlyDictionary<string, string> sourceMap)
+        {
+            if (sourceMap.TryGetValue(key, out var source) &&
+                !string.IsNullOrEmpty(source) &&
+                source != ArchivableTypeScanner.Core)
+            {
+                float nameWidth = Text.CalcSize(key).x;
+                Text.Font = GameFont.Tiny;
+                GUI.color = Color.gray;
+                Rect sourceRect = new Rect(rowRect.x + nameWidth + 10f, rowRect.y + 2f, 300f, 24f);
+                Widgets.Label(sourceRect, $"({source})");
+                GUI.color = Color.white;
+                Text.Font = GameFont.Small;
             }
         }
     }

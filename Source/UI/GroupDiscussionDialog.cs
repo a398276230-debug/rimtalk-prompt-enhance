@@ -16,6 +16,7 @@ namespace RimTalkHealthEnhance.UI
     {
         private readonly ColonyAnnouncement _item;
         private readonly List<Pawn> _availableColonists;
+        private List<Pawn> _participantCandidates;
         private Pawn _selectedLeader;
         private HashSet<Pawn> _selectedParticipants;
         
@@ -39,7 +40,10 @@ namespace RimTalkHealthEnhance.UI
             {
                 _selectedLeader = _availableColonists[0];
             }
-            
+
+            // 参与者候选依赖领导者，须在默认领导者确定后构建
+            RefreshParticipantCandidates();
+
             doCloseButton = false;
             doCloseX = true;
             absorbInputAroundWindow = true;
@@ -159,9 +163,13 @@ namespace RimTalkHealthEnhance.UI
                 Rect radioRect = new Rect(5f, y + 5f, 20f, 20f);
                 if (Widgets.RadioButton(radioRect.x, radioRect.y, isSelected))
                 {
-                    _selectedLeader = pawn;
-                    // 如果新选择的领导者之前在参与者列表中，移除它
-                    _selectedParticipants.Remove(pawn);
+                    if (_selectedLeader != pawn)
+                    {
+                        _selectedLeader = pawn;
+                        // 如果新选择的领导者之前在参与者列表中，移除它
+                        _selectedParticipants.Remove(pawn);
+                        RefreshParticipantCandidates();
+                    }
                 }
                 
                 // 殖民者名称和状态
@@ -175,8 +183,12 @@ namespace RimTalkHealthEnhance.UI
                 // 点击整行也可选择
                 if (Widgets.ButtonInvisible(rowRect))
                 {
-                    _selectedLeader = pawn;
-                    _selectedParticipants.Remove(pawn);
+                    if (_selectedLeader != pawn)
+                    {
+                        _selectedLeader = pawn;
+                        _selectedParticipants.Remove(pawn);
+                        RefreshParticipantCandidates();
+                    }
                 }
                 
                 y += RowHeight;
@@ -185,15 +197,37 @@ namespace RimTalkHealthEnhance.UI
             Widgets.EndScrollView();
         }
         
+        /// <summary>
+        /// 领导者变更后重建参与者候选（与上游 Announcement 聚集规则一致），并剔除已不在候选中的选中项
+        /// </summary>
+        private void RefreshParticipantCandidates()
+        {
+            _participantCandidates = _selectedLeader == null
+                ? new List<Pawn>()
+                : GroupDiscussionService.GetAvailableColonists(_selectedLeader);
+
+            _selectedParticipants.RemoveWhere(p => !_participantCandidates.Contains(p));
+        }
+
         private void DrawParticipantSelection(Rect rect)
         {
             Widgets.DrawBoxSolid(rect, new Color(0.1f, 0.1f, 0.1f, 0.5f));
             Widgets.DrawBox(rect);
-            
-            // 过滤掉领导者
-            var availableParticipants = _availableColonists.Where(p => p != _selectedLeader).ToList();
-            
+
+            // 过滤掉领导者（上游已排除，双保险）
+            var availableParticipants = _participantCandidates.Where(p => p != _selectedLeader).ToList();
+
             Rect innerRect = rect.ContractedBy(5f);
+
+            // 过滤后候选为空：提示无可参与者
+            if (availableParticipants.Count == 0)
+            {
+                Text.Anchor = TextAnchor.MiddleCenter;
+                Widgets.Label(innerRect, "RTE_GroupDiscussion_NoParticipants".Translate());
+                Text.Anchor = TextAnchor.UpperLeft;
+                return;
+            }
+
             float viewHeight = availableParticipants.Count * RowHeight;
             Rect viewRect = new Rect(0f, 0f, innerRect.width - 16f, viewHeight);
             
@@ -275,7 +309,7 @@ namespace RimTalkHealthEnhance.UI
             Rect selectAllRect = new Rect(startX, rect.y, buttonWidth, rect.height);
             if (Widgets.ButtonText(selectAllRect, "RTE_GroupDiscussion_SelectAll".Translate()))
             {
-                foreach (var pawn in _availableColonists)
+                foreach (var pawn in _participantCandidates)
                 {
                     if (pawn != _selectedLeader)
                         _selectedParticipants.Add(pawn);

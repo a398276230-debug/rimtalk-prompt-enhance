@@ -92,6 +92,32 @@ namespace RimTalkHealthEnhance
             if (string.IsNullOrEmpty(title)) return false;
             return AnimalRaidKeywords.Any(k => title.IndexOf(k, StringComparison.OrdinalIgnoreCase) >= 0);
         }
+
+        /// <summary>
+        /// 从信件 LookTargets 判定袭击子类型（语言无关：基于 pawn race，不用本地化标题文本）。
+        /// 无法判定（无 pawn 目标）返回 Unknown，下游降级用标题关键词。
+        /// </summary>
+        public static RaidKindType ClassifyRaidKind(IArchivable archivable)
+        {
+            if (archivable?.LookTargets is not { Any: true } targets)
+                return RaidKindType.Unknown;
+
+            foreach (var target in targets.targets)
+            {
+                // GlobalTargetInfo 是值类型，无效目标的 Thing 为 null
+                if (target.Thing is not Pawn pawn)
+                    continue;
+
+                var race = pawn.def?.race;
+                if (race == null) continue;
+
+                if (race.Animal) return RaidKindType.Animal;
+                if (race.IsMechanoid) return RaidKindType.Mechanoid;
+                if (pawn.def.race.FleshType == FleshTypeDefOf.Insectoid) return RaidKindType.Infestation;
+            }
+
+            return RaidKindType.Faction;
+        }
         
         /// <summary>
         /// 判断是否为虫群袭击事件
@@ -112,7 +138,26 @@ namespace RimTalkHealthEnhance
         }
         
         /// <summary>
-        /// 获取袭击类型的显示名称
+        /// 获取袭击类型的显示名称（优先用捕获时语言无关判定的 RaidKind，Unknown 时降级标题关键词）
+        /// </summary>
+        public static (string threatName, string unitName) GetRaidTypeDisplayNames(ColonyAnnouncement announcement)
+        {
+            if (announcement != null)
+            {
+                switch (announcement.RaidKind)
+                {
+                    case RaidKindType.Animal: return ("发狂动物", "只");
+                    case RaidKindType.Infestation: return ("虫群", "只");
+                    case RaidKindType.Mechanoid: return ("机械族", "个");
+                    case RaidKindType.Faction: return ("敌人", "人");
+                }
+            }
+
+            return GetRaidTypeDisplayNames(announcement?.Title);
+        }
+
+        /// <summary>
+        /// 获取袭击类型的显示名称（标题关键词降级版，兼容旧调用）
         /// </summary>
         public static (string threatName, string unitName) GetRaidTypeDisplayNames(string title)
         {
@@ -136,29 +181,31 @@ namespace RimTalkHealthEnhance
             _woundedColonistIds.Clear();
             _downedEnemyIds.Clear();
             
-            Log.Message($"[RimTalk Enhance] Active raid event set to: '{raidEvent.Title}' (ID: {raidEvent.Id})");
+            DebugLog.Log($"Active raid event set to: '{raidEvent.Title}' (ID: {raidEvent.Id})");
         }
         
         /// <summary>
-        /// 输出防抖日志（相同内容短时间内不重复输出）
+        /// 输出防抖日志（相同内容短时间内不重复输出）。Debug 模式关闭时直接静默。
         /// </summary>
         private static void LogWithDebounce(string message)
         {
+            if (!DebugLog.Enabled) return;
+
             int currentTick = Find.TickManager?.TicksGame ?? 0;
-            
+
             if (message == _lastLogMessage && currentTick - _lastLogTick < LOG_DEBOUNCE_TICKS)
             {
                 _logRepeatCount++;
                 return; // 跳过重复日志
             }
-            
+
             // 如果之前有重复的日志被跳过，输出一条汇总
             if (_logRepeatCount > 0 && _lastLogMessage != null)
             {
-                Log.Message($"[RimTalk Enhance] (上述日志重复 {_logRepeatCount} 次，已省略)");
+                DebugLog.Log($"(上述日志重复 {_logRepeatCount} 次，已省略)");
             }
-            
-            Log.Message(message);
+
+            DebugLog.Log(message);
             _lastLogMessage = message;
             _lastLogTick = currentTick;
             _logRepeatCount = 0;
@@ -222,7 +269,7 @@ namespace RimTalkHealthEnhance
             if (map != null)
             {
                 raidEvent.RaidInitialCount = CountHostileThreats(map);
-                Log.Message($"[RimTalk Enhance] Raid tracking initialized for '{raidEvent.Title}' (ID: {raidEvent.Id}). Initial enemies: {raidEvent.RaidInitialCount}");
+                DebugLog.Log($"Raid tracking initialized for '{raidEvent.Title}' (ID: {raidEvent.Id}). Initial enemies: {raidEvent.RaidInitialCount}");
             }
             else
             {
@@ -318,12 +365,12 @@ namespace RimTalkHealthEnhance
                 }
             }
             
-            // 只输出一条汇总日志，而不是每个敌人单独输出
+            // 只输出一条汇总日志，而不是每个敌人单独输出（走防抖，避免轮询刷屏）
             // 注意：当没有敌对威胁时不输出日志，避免日志刷屏
             if (count > 0)
             {
                 var summaryParts = threatSummary.Select(kv => kv.Value > 1 ? $"{kv.Key}x{kv.Value}" : kv.Key);
-                Log.Message($"[RimTalk Enhance] Hostile threats counted: {count} total. [{string.Join(", ", summaryParts)}]");
+                LogWithDebounce($"Hostile threats counted: {count} total. [{string.Join(", ", summaryParts)}]");
             }
             
             return count;
@@ -352,7 +399,7 @@ namespace RimTalkHealthEnhance
                     {
                         // 找到了，设置为活跃
                         _activeRaidEventId = raidEvent.Id;
-                        Log.Message($"[RimTalk Enhance] RecordEnemyKill: Found raid event '{raidEvent.Title}' via fallback search.");
+                        DebugLog.Log($"RecordEnemyKill: Found raid event '{raidEvent.Title}' via fallback search.");
                     }
                 }
                 
@@ -369,7 +416,7 @@ namespace RimTalkHealthEnhance
             // 防止重复计算击杀（死亡逃避 Death Refusal 会导致同一个 Pawn 多次触发 Kill 事件）
             if (enemy != null && _killedEnemyIds.Contains(enemy.thingIDNumber))
             {
-                Log.Message($"[RimTalk Enhance] Enemy already killed (Death Refusal?): {enemy.LabelShort}. Skipping duplicate count.");
+                DebugLog.Log($"Enemy already killed (Death Refusal?): {enemy.LabelShort}. Skipping duplicate count.");
                 return;
             }
             
@@ -389,10 +436,10 @@ namespace RimTalkHealthEnhance
                 {
                     raidEvent.RaidDownedCount--;
                 }
-                Log.Message($"[RimTalk Enhance] Enemy killed (was downed): {enemy.LabelShort}. Adjusted downed count: {raidEvent.RaidDownedCount}");
+                DebugLog.Log($"Enemy killed (was downed): {enemy.LabelShort}. Adjusted downed count: {raidEvent.RaidDownedCount}");
             }
             
-            Log.Message($"[RimTalk Enhance] Enemy killed: {enemy?.LabelShort ?? "Unknown"}. Total kills: {raidEvent.RaidKillCount}");
+            DebugLog.Log($"Enemy killed: {enemy?.LabelShort ?? "Unknown"}. Total kills: {raidEvent.RaidKillCount}");
         }
         
         /// <summary>
@@ -411,13 +458,13 @@ namespace RimTalkHealthEnhance
             // 防止重复记录同一个敌人的倒地
             if (_downedEnemyIds.Contains(enemy.thingIDNumber))
             {
-                Log.Message($"[RimTalk Enhance] Enemy already recorded as downed: {enemy.LabelShort}");
+                DebugLog.Log($"Enemy already recorded as downed: {enemy.LabelShort}");
                 return;
             }
             
             _downedEnemyIds.Add(enemy.thingIDNumber);
             raidEvent.RaidDownedCount++;
-            Log.Message($"[RimTalk Enhance] Enemy downed: {enemy.LabelShort} (ID: {enemy.thingIDNumber}). Total downed: {raidEvent.RaidDownedCount}");
+            DebugLog.Log($"Enemy downed: {enemy.LabelShort} (ID: {enemy.thingIDNumber}). Total downed: {raidEvent.RaidDownedCount}");
         }
         
         /// <summary>
@@ -432,7 +479,7 @@ namespace RimTalkHealthEnhance
             LordMonitorService.MarkCombatStarted();
             
             raidEvent.RaidFleeCount++;
-            Log.Message($"[RimTalk Enhance] Enemy fled: {enemy?.LabelShort ?? "Unknown"}. Total fled: {raidEvent.RaidFleeCount}");
+            DebugLog.Log($"Enemy fled: {enemy?.LabelShort ?? "Unknown"}. Total fled: {raidEvent.RaidFleeCount}");
         }
         
         /// <summary>
@@ -462,7 +509,7 @@ namespace RimTalkHealthEnhance
             if (raidEvent == null) return;
             
             raidEvent.ColonistDeathCount++;
-            Log.Message($"[RimTalk Enhance] Colonist died: {colonist?.LabelShort ?? "Unknown"}. Total deaths: {raidEvent.ColonistDeathCount}");
+            DebugLog.Log($"Colonist died: {colonist?.LabelShort ?? "Unknown"}. Total deaths: {raidEvent.ColonistDeathCount}");
         }
         
         /// <summary>
@@ -474,7 +521,7 @@ namespace RimTalkHealthEnhance
             if (raidEvent == null) return;
             
             raidEvent.ColonistDownedCount++;
-            Log.Message($"[RimTalk Enhance] Colonist downed: {colonist?.LabelShort ?? "Unknown"}. Total downed: {raidEvent.ColonistDownedCount}");
+            DebugLog.Log($"Colonist downed: {colonist?.LabelShort ?? "Unknown"}. Total downed: {raidEvent.ColonistDownedCount}");
         }
         
         /// <summary>
@@ -553,8 +600,8 @@ namespace RimTalkHealthEnhance
             var report = new System.Text.StringBuilder();
             report.Append("[战斗结束] ");
             
-            // 根据袭击类型智能选择措辞
-            var (threatName, unitName) = GetRaidTypeDisplayNames(raidEvent.Title);
+            // 根据袭击类型智能选择措辞（优先 RaidKind，语言无关）
+            var (threatName, unitName) = GetRaidTypeDisplayNames(raidEvent);
             
             // 敌方统计
             // 注意：倒地的敌人如果后来死了，RaidDownedCount 已经在 RecordEnemyKill 中减去

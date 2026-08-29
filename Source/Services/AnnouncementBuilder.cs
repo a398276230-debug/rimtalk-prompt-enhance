@@ -21,7 +21,7 @@ namespace RimTalkHealthEnhance
             var manager = Current.Game.GetComponent<ColonyAnnouncementManager>();
             if (manager?.Data == null) return null;
             
-            // 检查当前地图是否属于玩家殖民地
+            // 按玩家当前查看地图语义，有意为之（涉及 manager 缓存 key，区别于 colony_layout 的对话实际地图）
             var map = Find.CurrentMap;
             bool isPlayerHome = map != null && map.IsPlayerHome;
             

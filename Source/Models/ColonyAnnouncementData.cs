@@ -5,6 +5,16 @@ using Verse;
 
 namespace RimTalkHealthEnhance
 {
+    /// <summary>袭击子类型（语言无关：由信件 LookTargets 指向的 pawn race 判定）</summary>
+    public enum RaidKindType
+    {
+        Unknown,     // 未能判定（下游降级用标题关键词）
+        Faction,     // 派系袭击（人形敌人）
+        Animal,      // 发狂动物
+        Infestation, // 虫群
+        Mechanoid    // 机械族
+    }
+
     public class ColonyAnnouncementData : IExposable
     {
         // === 自由文本区域 ===
@@ -126,6 +136,9 @@ namespace RimTalkHealthEnhance
         public bool IsRaidEvent = false;       // 是否为袭击事件
         public int RaidInitialCount = 0;       // 初始敌人数量
         public int RaidKillCount = 0;          // 敌人死亡数量
+
+        /// <summary>袭击子类型（捕获时由信件 LookTargets 的 pawn race 语言无关判定，Unknown 时下游降级用标题关键词）</summary>
+        public RaidKindType RaidKind = RaidKindType.Unknown;
         public int RaidFleeCount = 0;          // 敌人撤退数量
         public int RaidDownedCount = 0;        // 敌人倒地数量（被俘虏）
         public int ColonistDeathCount = 0;     // 殖民者死亡数量
@@ -169,6 +182,7 @@ namespace RimTalkHealthEnhance
             
             // 袭击统计
             Scribe_Values.Look(ref IsRaidEvent, "isRaidEvent", false);
+            Scribe_Values.Look(ref RaidKind, "raidKind", RaidKindType.Unknown);
             Scribe_Values.Look(ref RaidInitialCount, "raidInitialCount", 0);
             Scribe_Values.Look(ref RaidKillCount, "raidKillCount", 0);
             Scribe_Values.Look(ref RaidFleeCount, "raidFleeCount", 0);

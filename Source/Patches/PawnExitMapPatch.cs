@@ -25,7 +25,7 @@ namespace RimTalkHealthEnhance
                 bool isMechanoid = __instance.RaceProps?.IsMechanoid ?? false;
                 string raceType = isHumanlike ? "Humanlike" : (isAnimal ? "Animal" : (isMechanoid ? "Mechanoid" : "Other"));
                 
-                Log.Message($"[RimTalk Enhance] Enemy fled map: {__instance.LabelShort} (Type: {raceType})");
+                DebugLog.Log($"Enemy fled map: {__instance.LabelShort} (Type: {raceType})");
                 
                 RaidTrackingService.RecordEnemyFlee(__instance);
                 

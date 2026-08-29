@@ -30,6 +30,7 @@ namespace RimTalkHealthEnhance
             var settings = RimTalkHealthEnhanceMod.Settings;
             if (!settings.ShowFactionRelations) return null;
             
+            // 按玩家当前查看地图语义，有意为之（涉及 manager 缓存 key，区别于 colony_layout 的对话实际地图）
             var map = Find.CurrentMap;
             if (map == null || !map.IsPlayerHome) return null;
             

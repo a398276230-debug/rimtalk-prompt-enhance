@@ -921,15 +921,8 @@ namespace RimTalkHealthEnhance
         /// </summary>
         private void ShowPawnSelectorMenu(ColonyAnnouncement item)
         {
-            // 检查DiscussionService是否可用
-            if (!DiscussionService.IsAvailable())
-            {
-                Messages.Message("RTE_Announcement_Discuss_Failed".Translate(), MessageTypeDefOf.RejectInput, false);
-                return;
-            }
-            
             List<FloatMenuOption> options = new List<FloatMenuOption>();
-            
+
             // 模式一：玩家发起讨论
             options.Add(new FloatMenuOption(
                 "RTE_Announcement_Discuss_PlayerMode".Translate(),
@@ -943,13 +936,10 @@ namespace RimTalkHealthEnhance
             ));
             
             // 模式三：群体讨论
-            if (GroupDiscussionService.IsAvailable())
-            {
-                options.Add(new FloatMenuOption(
-                    "RTE_GroupDiscussion".Translate(),
-                    () => ShowGroupDiscussionDialog(item)
-                ));
-            }
+            options.Add(new FloatMenuOption(
+                "RTE_GroupDiscussion".Translate(),
+                () => ShowGroupDiscussionDialog(item)
+            ));
             
             Find.WindowStack.Add(new FloatMenu(options));
         }
@@ -966,14 +956,7 @@ namespace RimTalkHealthEnhance
                 Messages.Message("RTE_GroupDiscussion_NotEnough".Translate(), MessageTypeDefOf.RejectInput, false);
                 return;
             }
-            
-            // 检查AI是否繁忙
-            if (GroupDiscussionService.IsAIBusy())
-            {
-                Messages.Message("RTE_GroupDiscussion_AIBusy".Translate(), MessageTypeDefOf.RejectInput, false);
-                return;
-            }
-            
+
             // 打开群体讨论选择对话框
             Find.WindowStack.Add(new GroupDiscussionDialog(item));
         }

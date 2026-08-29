@@ -91,7 +91,21 @@ namespace RimTalkHealthEnhance.API.Entries
             }
             else
             {
-                Log.Message("[RimTalk Enhance] Chat History not found, colony status entry added at end");
+                var preset = RimTalkPromptAPI.GetActivePreset();
+                if (preset != null && preset.DeletedModEntryIds.Contains(entryId))
+                {
+                    // 玩家删除过该 entry → 上游 blacklist 静默拦截重插入，实际未添加（尊重玩家删除，正常路径）
+                    Log.Message("[RimTalk Enhance] Colony status entry previously removed by player, respecting blacklist");
+                }
+                else if (preset == null || preset.GetEntry(entryId) == null)
+                {
+                    // 复核仍不存在 → 插入被上游 ShouldSkipModEntry 兜底拒绝（重复 ID/blacklist），实际未添加
+                    Log.Message("[RimTalk Enhance] Colony status entry insert rejected (duplicate/blacklist)");
+                }
+                else
+                {
+                    Log.Message("[RimTalk Enhance] Chat History not found, colony status entry added at end");
+                }
             }
 
             return entryId;

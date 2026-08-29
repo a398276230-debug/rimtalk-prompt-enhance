@@ -71,7 +71,7 @@ namespace RimTalkHealthEnhance
                 var manager = ColonyAnnouncementManager.Instance;
                 manager?.AddAnnouncement(announcement);
 
-                Log.Message($"[RimTalk Enhance] Game condition started: {cond.def.label}");
+                DebugLog.Log($"Game condition started: {cond.def.label}");
             }
             catch (Exception ex)
             {
@@ -260,7 +260,7 @@ namespace RimTalkHealthEnhance
 
                 if (activeEvents.Count > 0)
                 {
-                    Log.Message($"[RimTalk Enhance] Game condition ended: {__instance.def.label}");
+                    DebugLog.Log($"Game condition ended: {__instance.def.label}");
                 }
             }
             catch (Exception ex)

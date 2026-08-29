@@ -48,6 +48,8 @@ namespace RimTalkHealthEnhance
         /// <summary>
         /// Mod 卸载时调用，清理所有注册
         /// </summary>
+        // 预留卸载语义：RimWorld 不支持运行期热卸载 mod，注册生命周期 = 进程生命周期，
+        // 当前无调用方；若未来支持卸载场景（如加载前检测 RimTalk 缺失），在 Mod 构造异常路径调用。
         public static void Cleanup()
         {
             if (!_registered) return;

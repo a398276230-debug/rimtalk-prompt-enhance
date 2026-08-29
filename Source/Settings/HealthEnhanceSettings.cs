@@ -136,6 +136,7 @@ namespace RimTalkHealthEnhance
         #region Misc Settings Proxies
         public bool UnlimitedRelations { get => Misc.UnlimitedRelations; set => Misc.UnlimitedRelations = value; }
         public bool UnlimitedTraits { get => Misc.UnlimitedTraits; set => Misc.UnlimitedTraits = value; }
+        public bool DebugMode { get => Misc.DebugMode; set => Misc.DebugMode = value; }
         #endregion
 
         // === UI State (不保存) ===

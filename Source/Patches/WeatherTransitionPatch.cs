@@ -57,7 +57,7 @@ namespace RimTalkHealthEnhance
                 // 添加到管理器（会自动合并相同天气事件）
                 AddWeatherEvent(announcement);
 
-                Log.Message($"[RimTalk Enhance] Weather change captured: {previousWeather?.label ?? "none"} → {newWeather.label}");
+                DebugLog.Log($"Weather change captured: {previousWeather?.label ?? "none"} → {newWeather.label}");
             }
             catch (Exception ex)
             {

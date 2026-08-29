@@ -48,6 +48,17 @@ namespace RimTalkHealthEnhance
             
             // 验证事件监听 patches
             VerifyEventPatches(harmony);
+
+            // 主动扫描可归档事件类型并填充默认值（Message 类默认关）。
+            // 存档 Archive 实例部分在 LoadedGameStarted 时补充扫描。
+            try
+            {
+                ArchivableTypeScanner.Scan();
+            }
+            catch (Exception ex)
+            {
+                Log.Warning($"[RimTalk Enhanced Prompt] Archivable type scan failed at startup: {ex.Message}");
+            }
         }
         
         /// <summary>

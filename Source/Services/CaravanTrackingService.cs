@@ -101,7 +101,7 @@ namespace RimTalkHealthEnhance
             caravanEvent.IsCaravanEvent = true;
             _activeCaravanEventIds.Add(caravanEvent.Id);
             
-            Log.Message($"[RimTalk Enhance] Caravan event set to active: '{caravanEvent.Title}' (ID: {caravanEvent.Id})");
+            DebugLog.Log($"Caravan event set to active: '{caravanEvent.Title}' (ID: {caravanEvent.Id})");
             
             // 尝试关联当前地图上的商队 Lord
             TryAssociateLords(caravanEvent);
@@ -125,7 +125,7 @@ namespace RimTalkHealthEnhance
                     int memberCount = lord.ownedPawns?.Count ?? 0;
                     string factionName = lord.faction?.Name ?? "Unknown";
                     
-                    Log.Message($"[RimTalk Enhance] Associated caravan Lord (ID: {lord.loadID}) with event '{caravanEvent.Title}'. " +
+                    DebugLog.Log($"Associated caravan Lord (ID: {lord.loadID}) with event '{caravanEvent.Title}'. " +
                                $"Faction: {factionName}, Members: {memberCount}");
                 }
             }
@@ -175,7 +175,7 @@ namespace RimTalkHealthEnhance
                 string eventId = _trackedCaravanLords[lordId];
                 _trackedCaravanLords.Remove(lordId);
                 
-                Log.Message($"[RimTalk Enhance] Caravan Lord (ID: {lordId}) has departed. Associated event ID: {eventId}");
+                DebugLog.Log($"Caravan Lord (ID: {lordId}) has departed. Associated event ID: {eventId}");
             }
             
             // 如果所有关联的商队都离开了，完成事件
@@ -236,7 +236,7 @@ namespace RimTalkHealthEnhance
             
             _activeCaravanEventIds.Remove(eventId);
             
-            Log.Message($"[RimTalk Enhance] Auto-completed caravan event: '{caravanEvent.Title}'. {report}");
+            DebugLog.Log($"Auto-completed caravan event: '{caravanEvent.Title}'. {report}");
             
             manager.NotifyDataChanged();
         }
@@ -261,7 +261,7 @@ namespace RimTalkHealthEnhance
                 string eventId = _trackedCaravanLords[lord.loadID];
                 _trackedCaravanLords.Remove(lord.loadID);
                 
-                Log.Message($"[RimTalk Enhance] Caravan Lord (ID: {lord.loadID}) removed. Scheduling completion check...");
+                DebugLog.Log($"Caravan Lord (ID: {lord.loadID}) removed. Scheduling completion check...");
                 
                 // 延迟检查是否需要完成事件（给其他商队一些时间）
                 var manager = ColonyAnnouncementManager.Instance;
@@ -290,7 +290,7 @@ namespace RimTalkHealthEnhance
                 int memberCount = lord.ownedPawns?.Count ?? 0;
                 string factionName = lord.faction?.Name ?? "Unknown";
                 
-                Log.Message($"[RimTalk Enhance] New caravan Lord detected (ID: {lord.loadID}). " +
+                DebugLog.Log($"New caravan Lord detected (ID: {lord.loadID}). " +
                            $"Faction: {factionName}, Members: {memberCount}. Associated with event '{latestEvent.Title}'");
             }
         }

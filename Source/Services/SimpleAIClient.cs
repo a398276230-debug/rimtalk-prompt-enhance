@@ -222,8 +222,8 @@ namespace RimTalkHealthEnhance
                 }
                 
                 // 输出请求 URL 以便调试
-                Log.Message($"[RimTalk Enhance] AI Request URL: {url}");
-                Log.Message($"[RimTalk Enhance] AI Request Model: {settings.CustomModelName ?? "(default)"}");
+                DebugLog.Log($"AI Request URL: {url}");
+                DebugLog.Log($"AI Request Model: {settings.CustomModelName ?? "(default)"}");
                 
                 // 使用重试机制
                 Exception lastException = null;
@@ -243,9 +243,9 @@ namespace RimTalkHealthEnhance
                         // 使用 CancellationToken 进行超时控制
                         using (var cts = new CancellationTokenSource(TimeSpan.FromSeconds(DEFAULT_TIMEOUT_SECONDS)))
                         {
-                            Log.Message($"[RimTalk Enhance] Sending request (attempt {attempt + 1})...");
+                            DebugLog.Log($"Sending request (attempt {attempt + 1})...");
                             var response = await client.PostAsync(url, content, cts.Token);
-                            Log.Message($"[RimTalk Enhance] Response status: {(int)response.StatusCode} {response.StatusCode}");
+                            DebugLog.Log($"Response status: {(int)response.StatusCode} {response.StatusCode}");
                             var responseJson = await response.Content.ReadAsStringAsync();
                             
                             if (!response.IsSuccessStatusCode)
@@ -270,7 +270,7 @@ namespace RimTalkHealthEnhance
                                 var text = json["candidates"]?[0]?["content"]?["parts"]?[0]?["text"]?.ToString();
                                 if (attempt > 0)
                                 {
-                                    Log.Message($"[RimTalk Enhance] AI call succeeded after {attempt + 1} attempts.");
+                                    DebugLog.Log($"AI call succeeded after {attempt + 1} attempts.");
                                 }
                                 return text;
                             }
@@ -281,7 +281,7 @@ namespace RimTalkHealthEnhance
                                 var text = json["choices"]?[0]?["message"]?["content"]?.ToString();
                                 if (attempt > 0)
                                 {
-                                    Log.Message($"[RimTalk Enhance] AI call succeeded after {attempt + 1} attempts.");
+                                    DebugLog.Log($"AI call succeeded after {attempt + 1} attempts.");
                                 }
                                 return text;
                             }

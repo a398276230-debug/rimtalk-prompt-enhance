@@ -1,5 +1,4 @@
 using RimTalk.API;
-using RimTalk.Util;
 using Verse;
 
 namespace RimTalkHealthEnhance.API.Variables
@@ -19,7 +18,6 @@ namespace RimTalkHealthEnhance.API.Variables
             RegisterColonyLayoutVariable(modId);
             RegisterColonyFactionsVariable(modId);
             RegisterLocalSocialVariable(modId);
-            RegisterMapWealthVariable(modId);
         }
 
         /// <summary>
@@ -33,9 +31,15 @@ namespace RimTalkHealthEnhance.API.Variables
                 (ctx) =>
                 {
                     var settings = RimTalkHealthEnhanceMod.Settings;
-                    if (!settings.ShowColonyAnnouncements) return "";
+                    if (!settings.ShowColonyAnnouncements)
+                    {
+                        DebugLog.Dump("Variable {{colony_status}}", "(disabled: ShowColonyAnnouncements=off)");
+                        return "";
+                    }
 
-                    return AnnouncementBuilder.BuildAnnouncementContext() ?? "";
+                    var result = AnnouncementBuilder.BuildAnnouncementContext() ?? "";
+                    DebugLog.Dump("Variable {{colony_status}}", result);
+                    return result;
                 },
                 description: "RTE_API_ColonyStatus_Desc".Translate(),
                 priority: 100
@@ -54,9 +58,14 @@ namespace RimTalkHealthEnhance.API.Variables
                 {
                     var settings = RimTalkHealthEnhanceMod.Settings;
                     if (!settings.EnableAISynthesis || !settings.InjectSnapshotToContext)
+                    {
+                        DebugLog.Dump("Variable {{colony_history}}", "(disabled: EnableAISynthesis or InjectSnapshotToContext=off)");
                         return "";
+                    }
 
-                    return ColonyHistoryContextBuilder.Build() ?? "";
+                    var result = ColonyHistoryContextBuilder.Build() ?? "";
+                    DebugLog.Dump("Variable {{colony_history}}", result);
+                    return result;
                 },
                 description: "RTE_API_ColonyHistory_Desc".Translate(),
                 priority: 100
@@ -74,12 +83,23 @@ namespace RimTalkHealthEnhance.API.Variables
                 (ctx) =>
                 {
                     var settings = RimTalkHealthEnhanceMod.Settings;
-                    if (!settings.EnableGlobalLayout) return "";
+                    if (!settings.EnableGlobalLayout)
+                    {
+                        DebugLog.Dump("Variable {{colony_layout}}", "(disabled: EnableGlobalLayout=off)");
+                        return "";
+                    }
 
-                    var map = Find.CurrentMap;
-                    if (map == null || !map.IsPlayerHome) return "";
+                    // 对话实际发生地图（ctx.Map，来自 PromptContext.FromTalkRequest），非玩家当前查看地图
+                    var map = ctx.Map;
+                    if (map == null || !map.IsPlayerHome)
+                    {
+                        DebugLog.Dump("Variable {{colony_layout}}", "(skipped: no current map or not player home)");
+                        return "";
+                    }
 
-                    return ColonyLayoutBuilder.GetColonyLayout(map) ?? "";
+                    var result = ColonyLayoutBuilder.GetColonyLayout(map) ?? "";
+                    DebugLog.Dump("Variable {{colony_layout}}", result);
+                    return result;
                 },
                 description: "RTE_API_ColonyLayout_Desc".Translate(),
                 priority: 100
@@ -97,9 +117,15 @@ namespace RimTalkHealthEnhance.API.Variables
                 (ctx) =>
                 {
                     var settings = RimTalkHealthEnhanceMod.Settings;
-                    if (!settings.ShowFactionRelations) return "";
+                    if (!settings.ShowFactionRelations)
+                    {
+                        DebugLog.Dump("Variable {{colony_factions}}", "(disabled: ShowFactionRelations=off)");
+                        return "";
+                    }
 
-                    return FactionInfoBuilder.BuildFactionContext() ?? "";
+                    var result = FactionInfoBuilder.BuildFactionContext() ?? "";
+                    DebugLog.Dump("Variable {{colony_factions}}", result);
+                    return result;
                 },
                 description: "RTE_API_ColonyFactions_Desc".Translate(),
                 priority: 100
@@ -115,31 +141,16 @@ namespace RimTalkHealthEnhance.API.Variables
             RimTalkPromptAPI.RegisterPawnVariable(
                 modId,
                 "local_social",
-                (pawn) => LocalSocialBuilder.GetLocalMapSocialString(pawn),
+                (pawn) =>
+                {
+                    var result = LocalSocialBuilder.GetLocalMapSocialString(pawn);
+                    DebugLog.Dump($"PawnVariable[{{{pawn?.LabelShort ?? "null"}}}] {{{{local_social}}}}", result);
+                    return result;
+                },
                 description: "RTE_API_LocalSocial_Desc".Translate(),
                 priority: 100
             );
         }
 
-        /// <summary>
-        /// 注册地图财富等级变量 {{map.wealth}}
-        /// 使用RimTalk的Describer.Wealth方法返回财富分级描述
-        /// </summary>
-        private static void RegisterMapWealthVariable(string modId)
-        {
-            RimTalkPromptAPI.RegisterEnvironmentVariable(
-                modId,
-                "wealth",
-                (map) =>
-                {
-                    if (map == null) return "";
-
-                    float wealthTotal = map.wealthWatcher.WealthTotal;
-                    return Describer.Wealth(wealthTotal);
-                },
-                description: "RTE_API_MapWealth_Desc".Translate(),
-                priority: 100
-            );
-        }
     }
 }

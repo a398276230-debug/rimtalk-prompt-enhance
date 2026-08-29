@@ -245,6 +245,8 @@
   <RTE_Settings_Misc_Title>杂项设置</RTE_Settings_Misc_Title>
   <RTE_Settings_Misc_UnlimitedRelations>解除关系数量限制</RTE_Settings_Misc_UnlimitedRelations>
   <RTE_Settings_Misc_UnlimitedRelations_Desc>显示所有关系，不再受 RimTalk 设置中的 MaxPawnContextCount 限制</RTE_Settings_Misc_UnlimitedRelations_Desc>
+  <RTE_Settings_Misc_DebugMode>调试模式</RTE_Settings_Misc_DebugMode>
+  <RTE_Settings_Misc_DebugMode_Desc>开启后输出详细调试日志（事件捕获、上下文采集内容、讨论链路等）到 Player.log。日常游玩建议关闭以保持日志干净。</RTE_Settings_Misc_DebugMode_Desc>
   <RTE_Settings_Misc_UnlimitedTraits>解除配角特质限制</RTE_Settings_Misc_UnlimitedTraits>
   <RTE_Settings_Misc_UnlimitedTraits_Desc>在 Short 模式下显示所有特质，不再只显示前 3 个</RTE_Settings_Misc_UnlimitedTraits_Desc>
 
@@ -287,6 +289,8 @@
   <RTE_Settings_AutoCapture_DiscoveredTypes>已发现的事件类型 ({0})</RTE_Settings_AutoCapture_DiscoveredTypes>
   <RTE_Settings_AutoCapture_NoTypes>未发现事件类型。请进入游戏加载存档后刷新。</RTE_Settings_AutoCapture_NoTypes>
   <RTE_Settings_AutoCapture_ResetDefaults>重置为默认</RTE_Settings_AutoCapture_ResetDefaults>
+  <RTE_Settings_AutoCapture_TypeFilterTitle>━━ 事件类型过滤 ━━</RTE_Settings_AutoCapture_TypeFilterTitle>
+  <RTE_Settings_AutoCapture_TypeFilterTip>此过滤独立于 RimTalk 的播报设置：关闭 RimTalk 播报不影响此处的事件记录。\n父项为事件机制类型，子项为具体事件（defName）。Message 类消息默认关闭以避免刷屏。</RTE_Settings_AutoCapture_TypeFilterTip>
   
   <!-- 环境事件捕获 -->
   <RTE_Settings_AutoCapture_EnvironmentTitle>━━ 环境事件 ━━</RTE_Settings_AutoCapture_EnvironmentTitle>
@@ -425,7 +429,6 @@
   <RTE_GroupDiscussion_NoParticipants>请至少选择一个参与者</RTE_GroupDiscussion_NoParticipants>
   <RTE_GroupDiscussion_NotEnough>需要至少2名殖民者才能进行群体讨论，请将小人们聚在一起</RTE_GroupDiscussion_NotEnough>
   <RTE_GroupDiscussion_Started>{0}发起了关于「{1}」的群体讨论</RTE_GroupDiscussion_Started>
-  <RTE_GroupDiscussion_AIBusy>AI正在处理中，请稍后再试</RTE_GroupDiscussion_AIBusy>
 
   <!-- 快照日期重置 -->
   <RTE_Snapshot_ResetOffset>重置日期</RTE_Snapshot_ResetOffset>
@@ -446,7 +449,6 @@
   <RTE_API_ColonyLayout_Desc>殖民地布局信息（房间、区域、方位）</RTE_API_ColonyLayout_Desc>
   <RTE_API_ColonyFactions_Desc>地图上的派系关系信息</RTE_API_ColonyFactions_Desc>
   <RTE_API_LocalSocial_Desc>本地图所有 pawn 的社交关系（不含世界 pawns）</RTE_API_LocalSocial_Desc>
-  <RTE_API_MapWealth_Desc>地图财富等级描述（贫困/温饱/富裕等）</RTE_API_MapWealth_Desc>
 
   <!-- 杂项设置说明 -->
   <RTE_Settings_Misc_Note>说明：\n1. 解除关系数量限制：显示所有关系，不再受 RimTalk 设置中的 MaxPawnContextCount 限制。\n2. 解除配角特质限制：在 Short 模式下显示所有特质，不再只显示前 3 个。\n注意：开启这些选项可能会增加 Token 消耗。</RTE_Settings_Misc_Note>
