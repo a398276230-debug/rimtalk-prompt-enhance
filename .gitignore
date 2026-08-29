@@ -2,3 +2,4 @@
 docs/
 .kilo
 Source/obj
+*.ps1
