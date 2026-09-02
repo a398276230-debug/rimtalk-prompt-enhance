@@ -11,7 +11,7 @@ namespace RimTalkHealthEnhance.Services
 {
     /// <summary>
     /// 群体讨论服务 - 让多个殖民者同时参与讨论一个话题。
-    /// 直接引用 RimTalk v1.1.0 API，底层改用上游原生 Announcement 通告模式：
+    /// 直接引用 RimTalk v1.2.0 API，底层改用上游原生 Announcement 通告模式：
     /// AddTalkRequest(Announcement) 会 AddFirst 优先处理 + UserRequestPool 每秒消费，
     /// 附近最多 8 人自动进入上下文（TalkService.GetAllNearByPawns isAnnouncement 路径）。
     /// 与上游 gizmo 通告的差异：本入口从通告板条目发起，带话题上下文。
@@ -123,11 +123,24 @@ namespace RimTalkHealthEnhance.Services
                 // 构建讨论提示词
                 string prompt = BuildGroupDiscussionPrompt(item, leader, participants);
 
+                // 会话链（RimTalk v1.2）：Announcement 非独白路径领新会话号（与上游 ExecuteDialogue 一致）
+                int conversationId = ApiHistory.NextConversationId();
+
                 // Announcement 模式：AddFirst 优先 + UserRequestPool 每秒消费 + 最多 8 人上下文
                 leaderState.AddTalkRequest(prompt, leader, TalkType.Announcement);
+                if (leaderState.TalkRequests.First != null)
+                {
+                    leaderState.TalkRequests.First.Value.ConversationId = conversationId;
+                }
 
-                // 记录历史并把领导者的话以气泡形式立即显示（与上游 ExecuteDialogue 非 player 分支一致）
-                ApiLog apiLog = ApiHistory.AddUserHistory(leader, leader, prompt, TalkType.Announcement);
+                // AI 正在生成时抢占（Announcement 优先，与上游一致）
+                if (AIService.IsBusy())
+                {
+                    AIService.CancelCurrent();
+                }
+
+                // 记录历史（带会话号）并把领导者的话以气泡形式立即显示（与上游 ExecuteDialogue 非 player 分支一致）
+                ApiLog apiLog = ApiHistory.AddUserHistory(leader, leader, prompt, TalkType.Announcement, null, conversationId);
                 TalkResponse talkResponse = new TalkResponse(TalkType.Announcement, leader.LabelShort, prompt)
                 {
                     Id = apiLog.Id

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using RimTalk.Data;
+using RimTalk.Service;
 using RimTalk.Source.Data;
 using RimTalk.UI;
 using RimWorld;
@@ -12,7 +13,7 @@ namespace RimTalkHealthEnhance.Services
 {
     /// <summary>
     /// 负责与RimTalk通信，发起关于通告条目的讨论。
-    /// 直接引用 RimTalk v1.1.0 API（csproj 已引用 RimTalk.dll，About.xml 已声明依赖），
+    /// 直接引用 RimTalk v1.2.0 API（csproj 已引用 RimTalk.dll，About.xml 已声明依赖），
     /// 调用链与上游 CustomDialogueService.ExecuteDialogue 保持一致。
     /// </summary>
     public static class DiscussionService
@@ -62,7 +63,7 @@ namespace RimTalkHealthEnhance.Services
         /// <summary>
         /// 发起关于通告条目的讨论（玩家对殖民者说话）。
         /// 调用链与上游 CustomDialogueService.ExecuteDialogue 的玩家路径一致：
-        /// AddTalkRequest(User) -> AddUserHistory -> SpokenTick -> NotifyLogUpdated
+        /// 会话号 -> AddTalkRequest(User) -> 回填ConversationId -> 抢占 -> AddUserHistory(带会话号) -> SpokenTick -> NotifyLogUpdated
         /// </summary>
         /// <param name="recipient">接收讨论的殖民者</param>
         /// <param name="item">要讨论的通告条目</param>
@@ -98,11 +99,24 @@ namespace RimTalkHealthEnhance.Services
                 // 构建讨论提示词
                 string prompt = BuildDiscussionPrompt(item);
 
+                // 会话链（RimTalk v1.2）：玩家路径领新会话号（与上游 ExecuteDialogue 一致）
+                int conversationId = ApiHistory.NextConversationId();
+
                 // 对接收者添加TalkRequest（玩家作为发起者；User 类型会 AddFirst 优先处理并进入 UserRequestPool）
                 recipientState.AddTalkRequest(prompt, playerPawn, TalkType.User);
+                if (recipientState.TalkRequests.First != null)
+                {
+                    recipientState.TalkRequests.First.Value.ConversationId = conversationId;
+                }
 
-                // 记录玩家输入历史，标记已说出口并刷新对话悬浮层（与上游一致）
-                ApiLog apiLog = ApiHistory.AddUserHistory(playerPawn, recipient, prompt, TalkType.User);
+                // AI 正在生成时抢占（玩家输入优先，与上游一致）
+                if (AIService.IsBusy())
+                {
+                    AIService.CancelCurrent();
+                }
+
+                // 记录玩家输入历史（带会话号），标记已说出口并刷新对话悬浮层（与上游一致）
+                ApiLog apiLog = ApiHistory.AddUserHistory(playerPawn, recipient, prompt, TalkType.User, null, conversationId);
                 apiLog.SpokenTick = GenTicks.TicksGame;
                 Overlay.NotifyLogUpdated();
 
@@ -166,12 +180,25 @@ namespace RimTalkHealthEnhance.Services
                 // 构建小人自己发起讨论的提示词（与玩家发起的不同）
                 string prompt = BuildPawnSelfDiscussionPrompt(item);
 
+                // 会话链（RimTalk v1.2）：Announcement 非独白路径领新会话号（与上游 ExecuteDialogue 一致）
+                int conversationId = ApiHistory.NextConversationId();
+
                 // 通告模式广播：recipient 传发起者自身，与上游 gizmo 通告路径一致
                 // (TalkRequest(message, pawn, pawn, TalkType.Announcement))
                 initiatorState.AddTalkRequest(prompt, initiator, TalkType.Announcement);
+                if (initiatorState.TalkRequests.First != null)
+                {
+                    initiatorState.TalkRequests.First.Value.ConversationId = conversationId;
+                }
 
-                // 记录历史并把发起者的话以气泡形式立即显示（与上游 ExecuteDialogue 非 player 分支一致）
-                ApiLog apiLog = ApiHistory.AddUserHistory(initiator, initiator, prompt, TalkType.Announcement);
+                // AI 正在生成时抢占（Announcement 优先，与上游一致）
+                if (AIService.IsBusy())
+                {
+                    AIService.CancelCurrent();
+                }
+
+                // 记录历史（带会话号）并把发起者的话以气泡形式立即显示（与上游 ExecuteDialogue 非 player 分支一致）
+                ApiLog apiLog = ApiHistory.AddUserHistory(initiator, initiator, prompt, TalkType.Announcement, null, conversationId);
                 TalkResponse talkResponse = new TalkResponse(TalkType.Announcement, initiator.LabelShort, prompt)
                 {
                     Id = apiLog.Id
