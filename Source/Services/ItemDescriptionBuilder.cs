@@ -11,14 +11,18 @@ namespace RimTalkHealthEnhance
     public static class ItemDescriptionBuilder
     {
         /// <summary>
-        /// Get item description based on settings and filters
+        /// Get item description based on settings and filters.
+        /// Worldbuilder (ferny.Worldbuilder) description overrides take priority over def descriptions:
+        /// players write concise, world-specific text there, while some apparel mods ship very long
+        /// descriptions that hurt AI judgment. Label overrides are handled natively (Worldbuilder
+        /// patches GenLabel.ThingLabel, which LabelCap goes through).
         /// </summary>
         public static string GetItemDescription(Thing item, int maxLength)
         {
             if (item?.def == null) return null;
-            
+
             var settings = RimTalkHealthEnhanceMod.Settings;
-            
+
             // Skip art description (Tynan tales) if enabled
             if (settings.SkipArtDescription)
             {
@@ -32,14 +36,18 @@ namespace RimTalkHealthEnhance
                     // We want to force base description from def
                 }
             }
-            
+
+            // Worldbuilder override first (player-written text beats mod def text)
+            if (WorldbuilderBridge.TryGetDescriptionOverride(item, out string wbDesc))
+                return CleanDescription(wbDesc, maxLength);
+
             // Always use def description to avoid art tales
             string desc = item.def.description;
-            
+
             // If description is empty, try label
             if (string.IsNullOrEmpty(desc))
                 return null;
-            
+
             // Clean and truncate
             return CleanDescription(desc, maxLength);
         }
@@ -123,6 +131,60 @@ namespace RimTalkHealthEnhance
             }
             
             return desc;
+        }
+
+        /// <summary>
+        /// Reflection bridge to Worldbuilder (ferny.Worldbuilder, optional dependency).
+        /// Reads CustomizationData.descriptionOverride via CustomizationDataCollections.GetCustomizationData(Thing).
+        /// Degrades to a no-op (single cached null check) when Worldbuilder is not installed.
+        /// </summary>
+        private static class WorldbuilderBridge
+        {
+            private static bool _resolved;
+            private static System.Reflection.MethodInfo _getMethod;
+            private static System.Reflection.FieldInfo _descriptionField;
+
+            public static bool TryGetDescriptionOverride(Thing thing, out string description)
+            {
+                description = null;
+                if (!_resolved) Resolve();
+                if (_getMethod == null || _descriptionField == null) return false;
+
+                try
+                {
+                    var data = _getMethod.Invoke(null, new object[] { thing });
+                    if (data == null) return false;
+                    description = _descriptionField.GetValue(data) as string;
+                    return !string.IsNullOrEmpty(description);
+                }
+                catch
+                {
+                    // Worldbuilder internals changed or threw - disable the bridge for this session
+                    _getMethod = null;
+                    _descriptionField = null;
+                    return false;
+                }
+            }
+
+            private static void Resolve()
+            {
+                _resolved = true;
+                try
+                {
+                    var collectionsType = HarmonyLib.AccessTools.TypeByName("Worldbuilder.CustomizationDataCollections");
+                    if (collectionsType == null) return;
+
+                    _getMethod = HarmonyLib.AccessTools.Method(collectionsType, "GetCustomizationData", new[] { typeof(Thing) });
+                    if (_getMethod == null || _getMethod.ReturnType == null) return;
+
+                    _descriptionField = HarmonyLib.AccessTools.Field(_getMethod.ReturnType, "descriptionOverride");
+                }
+                catch
+                {
+                    _getMethod = null;
+                    _descriptionField = null;
+                }
+            }
         }
     }
 }

@@ -81,10 +81,12 @@ namespace RimTalkHealthEnhance.Services
         /// <summary>
         /// 发起群体讨论：领导者作为公告者广播话题，附近殖民者自动参与。
         /// 调用链与上游 CustomDialogueService.ExecuteDialogue 的 Announcement 分支一致。
+        /// participants 为预选参与者（仅用于提示词）；为空时公告仍可发起，
+        /// 实际参与者在生成时由 TalkService 按距离自动聚集。
         /// </summary>
         /// <param name="item">要讨论的通告条目</param>
         /// <param name="leader">发起者/领导者（第一个发言的人）</param>
-        /// <param name="participants">其他参与者（Announcement 模式下由 TalkService 按距离自动聚集，此参数仅用于提示词与人数校验）</param>
+        /// <param name="participants">预选参与者（可为空列表）</param>
         /// <returns>是否成功发起讨论</returns>
         public static bool StartGroupDiscussion(ColonyAnnouncement item, Pawn leader, List<Pawn> participants)
         {
@@ -101,13 +103,6 @@ namespace RimTalkHealthEnhance.Services
                 return false;
             }
 
-            if (participants == null || participants.Count == 0)
-            {
-                Log.Warning("[RimTalk Enhance] StartGroupDiscussion: no participants");
-                Messages.Message("RTE_GroupDiscussion_NoParticipants".Translate(), MessageTypeDefOf.RejectInput, false);
-                return false;
-            }
-
             // AI 忙时不拦截：与 Player/PawnSelf 入口一致，经 UserRequestPool 入队等待、每秒重试
             try
             {
@@ -120,8 +115,8 @@ namespace RimTalkHealthEnhance.Services
                     return false;
                 }
 
-                // 构建讨论提示词
-                string prompt = BuildGroupDiscussionPrompt(item, leader, participants);
+                // 构建讨论提示词（participants 允许为空：公告模式由 RimTalk 自动聚集附近殖民者）
+                string prompt = BuildGroupDiscussionPrompt(item, leader, participants ?? new List<Pawn>());
 
                 // 会话链（RimTalk v1.2）：Announcement 非独白路径领新会话号（与上游 ExecuteDialogue 一致）
                 int conversationId = ApiHistory.NextConversationId();
@@ -150,7 +145,7 @@ namespace RimTalkHealthEnhance.Services
                 // 显示成功消息
                 Messages.Message("RTE_GroupDiscussion_Started".Translate(leader.LabelShortCap, item.Title), MessageTypeDefOf.TaskCompletion, false);
 
-                DebugLog.Log($"Group discussion started: {leader.LabelShort} leading announcement about '{item.Title}' with {participants.Count} participants");
+                DebugLog.Log($"Group discussion started: {leader.LabelShort} leading announcement about '{item.Title}' with {participants?.Count ?? 0} pre-selected participants");
                 return true;
             }
             catch (Exception ex)
@@ -196,12 +191,19 @@ namespace RimTalkHealthEnhance.Services
                 sb.AppendLine("状态: 已暂停");
             }
 
-            // 列出参与者
-            var allNames = new List<string> { leader.LabelShortCap };
-            allNames.AddRange(participants.Where(p => p != leader).Select(p => p.LabelShortCap));
-            sb.AppendLine($"参与者: {string.Join(", ", allNames)}");
-
-            sb.AppendLine("请各位就此事发表看法，展开讨论。");
+            // 列出参与者（预选为空时说明将自动聚集附近殖民者）
+            var otherParticipants = participants.Where(p => p != leader).ToList();
+            if (otherParticipants.Any())
+            {
+                var allNames = new List<string> { leader.LabelShortCap };
+                allNames.AddRange(otherParticipants.Select(p => p.LabelShortCap));
+                sb.AppendLine($"参与者: {string.Join(", ", allNames)}");
+                sb.AppendLine("请各位就此事发表看法，展开讨论。");
+            }
+            else
+            {
+                sb.AppendLine("请公开发表你对这件事的看法，与附近醒着的同伴一起讨论。");
+            }
 
             return sb.ToString();
         }

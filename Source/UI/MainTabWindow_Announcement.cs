@@ -949,11 +949,11 @@ namespace RimTalkHealthEnhance
         /// </summary>
         private void ShowGroupDiscussionDialog(ColonyAnnouncement item)
         {
-            // 检查是否有足够的殖民者
+            // 至少要有一位可选领导者；参与者候选为空也可发起（Announcement 模式自动聚集附近殖民者）
             var colonists = GroupDiscussionService.GetAvailableColonists();
-            if (colonists.Count < 2)
+            if (colonists.Count == 0)
             {
-                Messages.Message("RTE_GroupDiscussion_NotEnough".Translate(), MessageTypeDefOf.RejectInput, false);
+                Messages.Message("RTE_Announcement_Discuss_NoColonist".Translate(), MessageTypeDefOf.RejectInput, false);
                 return;
             }
 

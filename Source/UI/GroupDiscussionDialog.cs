@@ -81,15 +81,6 @@ namespace RimTalkHealthEnhance.UI
                 return;
             }
             
-            if (_availableColonists.Count < 2)
-            {
-                Rect notEnoughRect = new Rect(0f, curY, inRect.width, 30f);
-                Widgets.Label(notEnoughRect, "RTE_GroupDiscussion_NotEnough".Translate());
-                curY = inRect.height - ButtonHeight - Margin;
-                DrawCloseButton(new Rect(0f, curY, inRect.width, ButtonHeight));
-                return;
-            }
-            
             // 分割线
             curY += 5f;
             Widgets.DrawLineHorizontal(0f, curY, inRect.width);
@@ -219,11 +210,11 @@ namespace RimTalkHealthEnhance.UI
 
             Rect innerRect = rect.ContractedBy(5f);
 
-            // 过滤后候选为空：提示无可参与者
+            // 过滤后候选为空：公告模式下可直接发起，附近醒着的殖民者会自动加入
             if (availableParticipants.Count == 0)
             {
                 Text.Anchor = TextAnchor.MiddleCenter;
-                Widgets.Label(innerRect, "RTE_GroupDiscussion_NoParticipants".Translate());
+                Widgets.Label(innerRect, "RTE_GroupDiscussion_NoParticipantsNearby".Translate());
                 Text.Anchor = TextAnchor.UpperLeft;
                 return;
             }
@@ -323,9 +314,9 @@ namespace RimTalkHealthEnhance.UI
                 _selectedParticipants.Clear();
             }
             
-            // 确认按钮
+            // 确认按钮：仅领导者即可开始（Announcement 模式下参与者由 RimTalk 按距离自动聚集）
             Rect confirmRect = new Rect(startX + (buttonWidth + buttonSpacing) * 2, rect.y, buttonWidth, rect.height);
-            bool canConfirm = _selectedLeader != null && _selectedParticipants.Count > 0;
+            bool canConfirm = _selectedLeader != null;
             
             GUI.color = canConfirm ? Color.white : Color.gray;
             if (Widgets.ButtonText(confirmRect, "RTE_GroupDiscussion_Confirm".Translate()) && canConfirm)
@@ -360,13 +351,7 @@ namespace RimTalkHealthEnhance.UI
                 return;
             }
             
-            if (_selectedParticipants.Count == 0)
-            {
-                Messages.Message("RTE_GroupDiscussion_NoParticipants".Translate(), MessageTypeDefOf.RejectInput, false);
-                return;
-            }
-            
-            // 发起群体讨论
+            // 发起群体讨论（participants 允许为空：公告模式由 RimTalk 自动聚集附近殖民者）
             bool success = GroupDiscussionService.StartGroupDiscussion(
                 _item,
                 _selectedLeader,

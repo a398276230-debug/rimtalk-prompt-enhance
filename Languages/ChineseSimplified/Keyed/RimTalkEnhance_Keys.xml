@@ -427,6 +427,7 @@
   <RTE_GroupDiscussion_Cancel>取消</RTE_GroupDiscussion_Cancel>
   <RTE_GroupDiscussion_NoLeader>请选择一个发起者</RTE_GroupDiscussion_NoLeader>
   <RTE_GroupDiscussion_NoParticipants>请至少选择一个参与者</RTE_GroupDiscussion_NoParticipants>
+  <RTE_GroupDiscussion_NoParticipantsNearby>发起者附近暂无可选同伴。\n可直接开始：公告将广播给附近醒着的殖民者，他们会自动加入讨论。</RTE_GroupDiscussion_NoParticipantsNearby>
   <RTE_GroupDiscussion_NotEnough>需要至少2名殖民者才能进行群体讨论，请将小人们聚在一起</RTE_GroupDiscussion_NotEnough>
   <RTE_GroupDiscussion_Started>{0}发起了关于「{1}」的群体讨论</RTE_GroupDiscussion_Started>
 

@@ -428,6 +428,7 @@
   <RTE_GroupDiscussion_Cancel>Cancel</RTE_GroupDiscussion_Cancel>
   <RTE_GroupDiscussion_NoLeader>Please select a leader</RTE_GroupDiscussion_NoLeader>
   <RTE_GroupDiscussion_NoParticipants>Please select at least one participant</RTE_GroupDiscussion_NoParticipants>
+  <RTE_GroupDiscussion_NoParticipantsNearby>No selectable colonists near the leader.\nYou can still start: the announcement will be broadcast to nearby awake colonists, who will join the discussion automatically.</RTE_GroupDiscussion_NoParticipantsNearby>
   <RTE_GroupDiscussion_NotEnough>At least two colonists are required for a group discussion. Please gather them together.</RTE_GroupDiscussion_NotEnough>
   <RTE_GroupDiscussion_Started>{0} initiated a group discussion about "{1}"</RTE_GroupDiscussion_Started>
 
