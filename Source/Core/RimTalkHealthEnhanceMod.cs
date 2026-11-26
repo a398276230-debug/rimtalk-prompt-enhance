@@ -21,7 +21,7 @@ namespace RimTalkHealthEnhance
             Settings = GetSettings<HealthEnhanceSettings>();
         }
 
-        public override string SettingsCategory() => "RimTalk 增强提示词";
+        public override string SettingsCategory() => "RTE_Settings_Category".Translate();
 
         public override void DoSettingsWindowContents(Rect inRect)
         {

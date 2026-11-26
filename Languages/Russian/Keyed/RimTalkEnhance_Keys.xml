@@ -1,0 +1,382 @@
+<?xml version='1.0' encoding='utf-8'?>
+<LanguageData>
+  <RTE_Tab_CurrentStatus>Текущий статус</RTE_Tab_CurrentStatus>
+  <RTE_Tab_HistorySnapshots>Ежедневный отчёт</RTE_Tab_HistorySnapshots>
+  <RTE_Tab_CustomAreas>Пользовательские области</RTE_Tab_CustomAreas>
+  <RTE_ColonyOverview_Title>📝 Обзор колонии</RTE_ColonyOverview_Title>
+  <RTE_ColonyOverview_Save>Сохранить обзор</RTE_ColonyOverview_Save>
+  <RTE_ColonyOverview_AISummary>Сводка ИИ</RTE_ColonyOverview_AISummary>
+  <RTE_ColonyOverview_CustomPrompt>⚙ Промпт</RTE_ColonyOverview_CustomPrompt>
+  <RTE_ColonyOverview_Tip>Совет: опишите состояние колонии обычным текстом — ИИ сможет использовать эту информацию.</RTE_ColonyOverview_Tip>
+  <RTE_ColonyOverview_Updated>Обзор колонии обновлён</RTE_ColonyOverview_Updated>
+  <RTE_ColonyOverview_EmptyError>Обзор пуст — невозможно создать сводку</RTE_ColonyOverview_EmptyError>
+  <RTE_ColonyOverview_ConfirmSummary>Вы уверены, что хотите, чтобы ИИ обобщил и сократил текущий обзор?\nТекущий текст будет заменён.</RTE_ColonyOverview_ConfirmSummary>
+  <RTE_ColonyOverview_SummarySuccess>Обзор обновлён по результатам сводки ИИ</RTE_ColonyOverview_SummarySuccess>
+  <RTE_ColonyOverview_SummaryFailed>Не удалось создать сводку ИИ</RTE_ColonyOverview_SummaryFailed>
+  <RTE_Snapshot_NoData>Записей снимков пока нет. Снимки будут автоматически создаваться в полночь.</RTE_Snapshot_NoData>
+  <RTE_Snapshot_PrevDay>← Предыдущий день</RTE_Snapshot_PrevDay>
+  <RTE_Snapshot_NextDay>Следующий день →</RTE_Snapshot_NextDay>
+  <RTE_Snapshot_DateBack>−1 день</RTE_Snapshot_DateBack>
+  <RTE_Snapshot_DateForward>+1 день</RTE_Snapshot_DateForward>
+  <RTE_Snapshot_DateAdjusted>Дата снимка скорректирована</RTE_Snapshot_DateAdjusted>
+  <RTE_Snapshot_AISummary>【Сводка ИИ】</RTE_Snapshot_AISummary>
+  <RTE_Snapshot_SaveSummary>Сохранить</RTE_Snapshot_SaveSummary>
+  <RTE_Snapshot_SummarySaved>Сводка ИИ сохранена</RTE_Snapshot_SummarySaved>
+  <RTE_Snapshot_DetailedChanges>📊 Подробные изменения</RTE_Snapshot_DetailedChanges>
+  <RTE_Snapshot_PlayerActions>【Действия игрока】</RTE_Snapshot_PlayerActions>
+  <RTE_Snapshot_Events>【Записи событий】</RTE_Snapshot_Events>
+  <RTE_Snapshot_CopyToOverview>Добавить в обзор</RTE_Snapshot_CopyToOverview>
+  <RTE_Snapshot_Regenerate>Создать заново</RTE_Snapshot_Regenerate>
+  <RTE_Snapshot_CopiedWithDate>Добавлено в обзор (с датой)</RTE_Snapshot_CopiedWithDate>
+  <RTE_Snapshot_ConfirmRegenerate>Вы уверены, что хотите заново создать сводку ИИ для этого снимка?</RTE_Snapshot_ConfirmRegenerate>
+  <RTE_Snapshot_RegenerateSuccess>Сводка ИИ обновлена</RTE_Snapshot_RegenerateSuccess>
+  <RTE_Snapshot_RegenerateFailed>Не удалось создать сводку ИИ</RTE_Snapshot_RegenerateFailed>
+  <RTE_Announcement_NewTask>+ Новая запись</RTE_Announcement_NewTask>
+  <RTE_Announcement_AllCategories>Все</RTE_Announcement_AllCategories>
+  <RTE_Announcement_Category_Project>Проект</RTE_Announcement_Category_Project>
+  <RTE_Announcement_Category_Event>Событие</RTE_Announcement_Category_Event>
+  <RTE_Announcement_Category_Quest>Задание</RTE_Announcement_Category_Quest>
+  <RTE_Announcement_Category_Resource>Ресурс</RTE_Announcement_Category_Resource>
+  <RTE_Announcement_Category_Personnel>Персонал</RTE_Announcement_Category_Personnel>
+  <RTE_Announcement_Category_Custom>Другое</RTE_Announcement_Category_Custom>
+  <RTE_Announcement_Complete>Завершить</RTE_Announcement_Complete>
+  <RTE_Announcement_Resume>Возобновить</RTE_Announcement_Resume>
+  <RTE_Announcement_Reopen>Открыть заново</RTE_Announcement_Reopen>
+  <RTE_Announcement_Edit>Изменить</RTE_Announcement_Edit>
+  <RTE_Announcement_Delete>Удалить</RTE_Announcement_Delete>
+  <RTE_Announcement_Progress>Прогресс: {0}</RTE_Announcement_Progress>
+  <RTE_Announcement_AssignedTo>Назначено: {0}</RTE_Announcement_AssignedTo>
+  <RTE_Area_NewArea>+ Новая область</RTE_Area_NewArea>
+  <RTE_Area_NoData>Пользовательских областей пока нет. Нажмите кнопку «Новая область» в правом верхнем углу, чтобы создать её.</RTE_Area_NoData>
+  <RTE_Area_EnterMapFirst>Сначала откройте карту</RTE_Area_EnterMapFirst>
+  <RTE_Area_CellCount>Клеток: {0}</RTE_Area_CellCount>
+  <RTE_Area_Status_Active>Активна</RTE_Area_Status_Active>
+  <RTE_Area_Status_Inactive>Неактивна</RTE_Area_Status_Inactive>
+  <RTE_Area_Draw>Рисовать</RTE_Area_Draw>
+  <RTE_Area_RemoveCells>Удалить клетки</RTE_Area_RemoveCells>
+  <RTE_Area_ConfirmDelete>Вы уверены, что хотите удалить область «{0}»?</RTE_Area_ConfirmDelete>
+  <RTE_Area_NewAreaName>Новая область</RTE_Area_NewAreaName>
+  <RTE_TaskEditor_NewTask>Новая запись</RTE_TaskEditor_NewTask>
+  <RTE_TaskEditor_EditTask>Изменить запись</RTE_TaskEditor_EditTask>
+  <RTE_TaskEditor_Category>Категория:</RTE_TaskEditor_Category>
+  <RTE_TaskEditor_Title>Название:</RTE_TaskEditor_Title>
+  <RTE_TaskEditor_Description>Описание:</RTE_TaskEditor_Description>
+  <RTE_TaskEditor_Priority>Приоритет:</RTE_TaskEditor_Priority>
+  <RTE_TaskEditor_Status>Статус:</RTE_TaskEditor_Status>
+  <RTE_TaskEditor_Progress_Auto>Прогресс: {0} (автоматически)</RTE_TaskEditor_Progress_Auto>
+  <RTE_TaskEditor_Progress_Manual>Прогресс: {0}</RTE_TaskEditor_Progress_Manual>
+  <RTE_TaskEditor_AssignedPawn>Исполнитель:</RTE_TaskEditor_AssignedPawn>
+  <RTE_TaskEditor_RelatedPerson>Связанный персонаж:</RTE_TaskEditor_RelatedPerson>
+  <RTE_TaskEditor_None>Нет</RTE_TaskEditor_None>
+  <RTE_TaskEditor_Save>Сохранить (Enter)</RTE_TaskEditor_Save>
+  <RTE_TaskEditor_Cancel>Отмена (Esc)</RTE_TaskEditor_Cancel>
+  <RTE_TaskEditor_SelectArea>Выбрать область строительства</RTE_TaskEditor_SelectArea>
+  <RTE_TaskEditor_ConstructionArea>Область строительства: {0} (чертежей: {1})</RTE_TaskEditor_ConstructionArea>
+  <RTE_TaskEditor_AreaDeleted>Область строительства: (удалена)</RTE_TaskEditor_AreaDeleted>
+  <RTE_TaskEditor_RemoveArea>Удалить область</RTE_TaskEditor_RemoveArea>
+  <RTE_TaskEditor_AreaRemoved>Область строительства удалена</RTE_TaskEditor_AreaRemoved>
+  <RTE_TaskEditor_AISummary>Составить сводку проекта с помощью ИИ</RTE_TaskEditor_AISummary>
+  <RTE_TaskEditor_Generating>Создание...</RTE_TaskEditor_Generating>
+  <RTE_TaskEditor_SelectAreaFirst>Сначала выберите область строительства</RTE_TaskEditor_SelectAreaFirst>
+  <RTE_TaskEditor_AreaNotExist>Область строительства не существует</RTE_TaskEditor_AreaNotExist>
+  <RTE_TaskEditor_NoBlueprintsInArea>В области строительства нет чертежей</RTE_TaskEditor_NoBlueprintsInArea>
+  <RTE_TaskEditor_AICallFailed>Не удалось обратиться к ИИ. Проверьте настройки API.</RTE_TaskEditor_AICallFailed>
+  <RTE_TaskEditor_AISummaryComplete>Сводка ИИ создана</RTE_TaskEditor_AISummaryComplete>
+  <RTE_TaskEditor_AIResponseError>Неверный формат ответа ИИ, используется исходный текст</RTE_TaskEditor_AIResponseError>
+  <RTE_TaskEditor_AIResponseFormatError>Ошибка формата ответа ИИ: {0}</RTE_TaskEditor_AIResponseFormatError>
+  <RTE_TaskEditor_SelectAreaTip>Перетащите мышью, чтобы выделить область строительства. После завершения количество чертежей будет определено автоматически.</RTE_TaskEditor_SelectAreaTip>
+  <RTE_TaskEditor_UnnamedProject>Проект без названия</RTE_TaskEditor_UnnamedProject>
+  <RTE_AreaEditor_AreaName>Название области:</RTE_AreaEditor_AreaName>
+  <RTE_AreaEditor_AreaColor>Цвет области:</RTE_AreaEditor_AreaColor>
+  <RTE_AreaEditor_SelectColor>Выбрать цвет</RTE_AreaEditor_SelectColor>
+  <RTE_AreaEditor_EnableArea>Включить эту область</RTE_AreaEditor_EnableArea>
+  <RTE_AreaEditor_CellCount>Количество клеток: {0}</RTE_AreaEditor_CellCount>
+  <RTE_AreaEditor_SaveAndClose>Сохранить и закрыть</RTE_AreaEditor_SaveAndClose>
+  <RTE_AreaEditor_ClearArea>Очистить область</RTE_AreaEditor_ClearArea>
+  <RTE_ColorPicker_Title>Выбрать готовый цвет:</RTE_ColorPicker_Title>
+  <RTE_Settings_Tab_Health>Информация о здоровье</RTE_Settings_Tab_Health>
+  <RTE_Settings_Tab_Items>Описания предметов</RTE_Settings_Tab_Items>
+  <RTE_Settings_Tab_Factions>Отношения фракций</RTE_Settings_Tab_Factions>
+  <RTE_Settings_Tab_Location>Расположение на карте</RTE_Settings_Tab_Location>
+  <RTE_Settings_Tab_Announcement>Система объявлений</RTE_Settings_Tab_Announcement>
+  <RTE_Settings_Tab_AutoCapture>Автоматическая запись событий</RTE_Settings_Tab_AutoCapture>
+  <RTE_Settings_Tab_AIHistorian>Летописец ИИ</RTE_Settings_Tab_AIHistorian>
+  <RTE_Settings_Tab_ContextEnhancement>Расширение контекста</RTE_Settings_Tab_ContextEnhancement>
+  <RTE_Settings_Tab_ColonyStatus>Состояние колонии</RTE_Settings_Tab_ColonyStatus>
+  <RTE_Settings_ContextEnhancement_PageTitle>Настройки расширения контекста</RTE_Settings_ContextEnhancement_PageTitle>
+  <RTE_Settings_ColonyStatus_PageTitle>Настройки состояния колонии</RTE_Settings_ColonyStatus_PageTitle>
+  <RTE_Settings_Health_Title>Настройки расширенной информации о здоровье RimTalk</RTE_Settings_Health_Title>
+  <RTE_Settings_Health_ShowSeverity>Показывать процент тяжести состояния</RTE_Settings_Health_ShowSeverity>
+  <RTE_Settings_Health_ShowSeverity_Desc>Отображать процент тяжести для каждого состояния здоровья</RTE_Settings_Health_ShowSeverity_Desc>
+  <RTE_Settings_Health_ShowPainLevel>Показывать уровень боли</RTE_Settings_Health_ShowPainLevel>
+  <RTE_Settings_Health_ShowPainLevel_Desc>Отображать интенсивность боли (слабая/умеренная/сильная/невыносимая)</RTE_Settings_Health_ShowPainLevel_Desc>
+  <RTE_Settings_Health_ShowLethalMarker>Показывать отметку смертельной опасности</RTE_Settings_Health_ShowLethalMarker>
+  <RTE_Settings_Health_ShowLethalMarker_Desc>Отмечать состояния здоровья, которые могут привести к смерти</RTE_Settings_Health_ShowLethalMarker_Desc>
+  <RTE_Settings_Health_ShowDescription>Показывать подробное описание (только в полном режиме)</RTE_Settings_Health_ShowDescription>
+  <RTE_Settings_Health_ShowDescription_Desc>Добавлять подробные описания при полном уровне детализации</RTE_Settings_Health_ShowDescription_Desc>
+  <RTE_Settings_Health_MinPainThreshold>Минимальный порог боли: {0}</RTE_Settings_Health_MinPainThreshold>
+  <RTE_Settings_Health_LethalThreshold>Порог отметки смертельной опасности: {0}</RTE_Settings_Health_LethalThreshold>
+  <RTE_Settings_Health_MaxDescLength>Максимальная длина описания: {0} симв.</RTE_Settings_Health_MaxDescLength>
+  <RTE_Settings_Health_Note1>Примечание: необходимо включить информацию о здоровье в настройках RimTalk.</RTE_Settings_Health_Note1>
+  <RTE_Settings_Health_Note2>Этот мод расширяет сведения о здоровье, которые RimTalk передаёт ИИ.</RTE_Settings_Health_Note2>
+  <RTE_Settings_Health_Note3>Совет: установите 0, чтобы не ограничивать длину.</RTE_Settings_Health_Note3>
+  <RTE_Settings_Health_FilterSection>━━ Фильтрация по категориям ━━</RTE_Settings_Health_FilterSection>
+  <RTE_Settings_Health_ShowBionics>Показывать бионические протезы</RTE_Settings_Health_ShowBionics>
+  <RTE_Settings_Health_ShowBionics_Desc>Показывать бионические и обычные протезы, заменяющие части тела</RTE_Settings_Health_ShowBionics_Desc>
+  <RTE_Settings_Health_ShowImplants>Показывать другие импланты</RTE_Settings_Health_ShowImplants>
+  <RTE_Settings_Health_ShowImplants_Desc>Показывать импланты, не заменяющие части тела (например, пси-усилитель)</RTE_Settings_Health_ShowImplants_Desc>
+  <RTE_Settings_Health_ShowInjuries>Показывать травмы</RTE_Settings_Health_ShowInjuries>
+  <RTE_Settings_Health_ShowInjuries_Desc>Показывать различные травмы (огнестрельные ранения, порезы и т. п.)</RTE_Settings_Health_ShowInjuries_Desc>
+  <RTE_Settings_Health_ShowMissingParts>Показывать отсутствующие части тела</RTE_Settings_Health_ShowMissingParts>
+  <RTE_Settings_Health_ShowMissingParts_Desc>Показывать отсутствующие части тела</RTE_Settings_Health_ShowMissingParts_Desc>
+  <RTE_Settings_Health_ShowConditions>Показывать состояния и болезни</RTE_Settings_Health_ShowConditions>
+  <RTE_Settings_Health_ShowConditions_Desc>Показывать болезни, токсическое воздействие, положительные эффекты и другие состояния</RTE_Settings_Health_ShowConditions_Desc>
+  <RTE_Settings_Health_MaxToShow>Максимум для отображения: {0}</RTE_Settings_Health_MaxToShow>
+  <RTE_Settings_Health_ConsolidationSection>━━ Умное объединение ━━</RTE_Settings_Health_ConsolidationSection>
+  <RTE_Settings_Health_EnableInjuryConsolidation>Объединять небольшие травмы</RTE_Settings_Health_EnableInjuryConsolidation>
+  <RTE_Settings_Health_EnableInjuryConsolidation_Desc>Объединять несколько небольших травм одной части тела (например: левая рука — 3 лёгкие раны)</RTE_Settings_Health_EnableInjuryConsolidation_Desc>
+  <RTE_Settings_Health_MinorInjuryThreshold>Порог небольшой травмы: {0}</RTE_Settings_Health_MinorInjuryThreshold>
+  <RTE_Settings_Health_MinorInjuryThreshold_Desc>Травмы с тяжестью ниже этого значения будут объединяться</RTE_Settings_Health_MinorInjuryThreshold_Desc>
+  <RTE_Settings_Health_EnableBionicSummary>Включить сводку по бионике</RTE_Settings_Health_EnableBionicSummary>
+  <RTE_Settings_Health_EnableBionicSummary_Desc>Если установлено 3 и более бионических частей, показывать сводку вместо списка каждой из них</RTE_Settings_Health_EnableBionicSummary_Desc>
+  <RTE_Settings_Items_Title>Настройки расширенных описаний предметов</RTE_Settings_Items_Title>
+  <RTE_Settings_Items_ShowEquipmentDesc>Показывать описания экипировки (оружие и одежда)</RTE_Settings_Items_ShowEquipmentDesc>
+  <RTE_Settings_Items_ShowEquipmentDesc_Desc>Добавлять подробные описания в список экипировки</RTE_Settings_Items_ShowEquipmentDesc_Desc>
+  <RTE_Settings_Items_ShowCarriedDesc>Показывать описания переносимых предметов</RTE_Settings_Items_ShowCarriedDesc>
+  <RTE_Settings_Items_ShowCarriedDesc_Desc>Отображать описания предметов, которые пешка переносит или транспортирует</RTE_Settings_Items_ShowCarriedDesc_Desc>
+  <RTE_Settings_Items_ShowInventory>Показывать список предметов в инвентаре</RTE_Settings_Items_ShowInventory>
+  <RTE_Settings_Items_ShowInventory_Desc>Перечислять предметы в инвентаре (расходует токены)</RTE_Settings_Items_ShowInventory_Desc>
+  <RTE_Settings_Items_ShowInventoryDesc>  └─ Показывать описания предметов в инвентаре</RTE_Settings_Items_ShowInventoryDesc>
+  <RTE_Settings_Items_ShowInventoryDesc_Desc>Добавлять подробные описания предметов в инвентаре (расходует больше токенов)</RTE_Settings_Items_ShowInventoryDesc_Desc>
+  <RTE_Settings_Items_InteractionTitle>Настройки используемых предметов</RTE_Settings_Items_InteractionTitle>
+  <RTE_Settings_Items_ShowInteraction>Показывать описания используемых предметов и построек</RTE_Settings_Items_ShowInteraction>
+  <RTE_Settings_Items_ShowInteraction_Desc>Например: исследовательский стол, верстак или используемая кровать</RTE_Settings_Items_ShowInteraction_Desc>
+  <RTE_Settings_Items_OnlyImportantBuildings>  └─ Показывать только важные постройки</RTE_Settings_Items_OnlyImportantBuildings>
+  <RTE_Settings_Items_OnlyImportantBuildings_Desc>Показывать только рабочие столы, исследовательские столы и т. п., скрывая обычную мебель</RTE_Settings_Items_OnlyImportantBuildings_Desc>
+  <RTE_Settings_Items_InteractionMaxLength>Максимальная длина описания используемого объекта: {0} симв.</RTE_Settings_Items_InteractionMaxLength>
+  <RTE_Settings_Items_MinQuality>Минимальное качество для описаний:</RTE_Settings_Items_MinQuality>
+  <RTE_Settings_Items_MaxDescLength>Максимальная длина описания предмета: {0} симв.</RTE_Settings_Items_MaxDescLength>
+  <RTE_Settings_Items_MaxInventoryItems>Максимум предметов инвентаря для отображения: {0}</RTE_Settings_Items_MaxInventoryItems>
+  <RTE_Settings_Items_MaxItemsWithDesc>Максимум предметов с описаниями: {0}</RTE_Settings_Items_MaxItemsWithDesc>
+  <RTE_Settings_Items_SkipCommon>Пропускать обычные предметы</RTE_Settings_Items_SkipCommon>
+  <RTE_Settings_Items_SkipCommon_Desc>Не добавлять описания сырья, еды, трупов и т. п.</RTE_Settings_Items_SkipCommon_Desc>
+  <RTE_Settings_Items_SkipArt>Пропускать художественные описания (избегать «Тайнанезского»)</RTE_Settings_Items_SkipArt>
+  <RTE_Settings_Items_SkipArt_Desc>Художественные описания предметов высокого качества часто представляют собой бессмысленные истории. Включите этот параметр, чтобы показывать только функциональные описания.</RTE_Settings_Items_SkipArt_Desc>
+  <RTE_Settings_Items_QualityTip>Совет: уровни качества от низшего к высшему: Ужасное &lt; Плохое &lt; Обычное &lt; Хорошее &lt; Отличное &lt; Мастерская работа &lt; Легендарное\nРекомендуется выбрать «Обычное» или «Хорошее» для баланса между информативностью и расходом токенов.</RTE_Settings_Items_QualityTip>
+  <RTE_Settings_Factions_Title>Настройки отношений фракций</RTE_Settings_Factions_Title>
+  <RTE_Settings_Factions_Enable>Включить отображение отношений фракций</RTE_Settings_Factions_Enable>
+  <RTE_Settings_Factions_Enable_Desc>Показывать другие фракции, присутствующие на текущей карте, и их отношения с игроком</RTE_Settings_Factions_Enable_Desc>
+  <RTE_Settings_Factions_ShowGoodwill>Показывать значения отношений фракций</RTE_Settings_Factions_ShowGoodwill>
+  <RTE_Settings_Factions_ShowGoodwill_Desc>Отображать отношение каждой фракции к игроку (от −100 до 100)</RTE_Settings_Factions_ShowGoodwill_Desc>
+  <RTE_Settings_Factions_ShowMemberCount>Показывать количество членов фракции</RTE_Settings_Factions_ShowMemberCount>
+  <RTE_Settings_Factions_ShowMemberCount_Desc>Отображать количество членов этой фракции на текущей карте</RTE_Settings_Factions_ShowMemberCount_Desc>
+  <RTE_Settings_Factions_ShowIdentity>Показывать распределение по типам</RTE_Settings_Factions_ShowIdentity>
+  <RTE_Settings_Factions_ShowIdentity_Desc>Различать пленников, врагов, гостей и караваны</RTE_Settings_Factions_ShowIdentity_Desc>
+  <RTE_Settings_Factions_ShowSummary>Показывать общую сводку по типам</RTE_Settings_Factions_ShowSummary>
+  <RTE_Settings_Factions_ShowSummary_Desc>Показывать общую сводку ситуации перед списком фракций (статистика угроз, пленников и гостей)</RTE_Settings_Factions_ShowSummary_Desc>
+  <RTE_Settings_Factions_ShowNeutral>Показывать нейтральные фракции</RTE_Settings_Factions_ShowNeutral>
+  <RTE_Settings_Factions_ShowNeutral_Desc>Включать нейтральные фракции (расположение от −75 до 75)</RTE_Settings_Factions_ShowNeutral_Desc>
+  <RTE_Settings_Factions_CacheInterval>Интервал обновления кэша: {0} сек.</RTE_Settings_Factions_CacheInterval>
+  <RTE_Settings_Factions_CacheInterval_Desc>    Сведения о фракциях обновляются с заданным интервалом (чтобы избежать конфликтов потоков)</RTE_Settings_Factions_CacheInterval_Desc>
+  <RTE_Settings_Factions_FilterByGoodwill>Фильтровать по отношению фракций</RTE_Settings_Factions_FilterByGoodwill>
+  <RTE_Settings_Factions_FilterByGoodwill_Desc>Показывать только фракции, отношение которых к игроку выше заданного порога</RTE_Settings_Factions_FilterByGoodwill_Desc>
+  <RTE_Settings_Factions_MinGoodwill>  └─ Минимальное значение отношений: {0}</RTE_Settings_Factions_MinGoodwill>
+  <RTE_Settings_Factions_MinGoodwill_Desc>      Показывать только фракции со значением отношений не ниже {0}</RTE_Settings_Factions_MinGoodwill_Desc>
+  <RTE_Settings_Factions_Note>Примечание:\n1. Эта функция показывает только фракции, фактически присутствующие на текущей карте (имеющие участников на карте).\n2. Используется встроенный в игру статус отношений.\n3. Информация автоматически добавляется в контекст ИИ, помогая ему понимать текущую дипломатическую ситуацию.\n4. Если на карте нет других фракций, информация не отображается.</RTE_Settings_Factions_Note>
+  <RTE_Settings_Location_Title>Настройки информации о расположении на карте</RTE_Settings_Location_Title>
+  <RTE_Settings_Location_Enable>Включить отображение относительного расположения</RTE_Settings_Location_Enable>
+  <RTE_Settings_Location_Enable_Desc>Показывать позицию и направление пешки относительно центра колонии</RTE_Settings_Location_Enable_Desc>
+  <RTE_Settings_Location_ShowArea>  └─ Показывать информацию об областях</RTE_Settings_Location_ShowArea>
+  <RTE_Settings_Location_ShowArea_Desc>Отображать сведения об областях, например зонах выращивания и хранения</RTE_Settings_Location_ShowArea_Desc>
+  <RTE_Settings_Location_TownCenter>  └─ Включить определение центра поселения</RTE_Settings_Location_TownCenter>
+  <RTE_Settings_Location_TownCenter_Desc>Различать центр поселения и обычные участки поселения (необязательная функция)</RTE_Settings_Location_TownCenter_Desc>
+  <RTE_Settings_Location_CenterRadius>    └─ Радиус центра: {0} клеток</RTE_Settings_Location_CenterRadius>
+  <RTE_Settings_Location_CenterRadius_Desc>      Область в пределах {0} клеток от центра колонии считается центральной</RTE_Settings_Location_CenterRadius_Desc>
+  <RTE_Settings_Location_Note>Примечание:\n1. Система автоматически рассчитывает центр колонии (на основе домашней области).\n2. Определяет 8 направлений (восток, юг, запад, север и четыре диагонали).\n3. Типы областей: центр поселения, поселение, окраина поселения, дикая местность.\n4. Автоматически определяет зоны выращивания, хранения и другие стандартные игровые области.\n5. Информация автоматически добавляется в контекст ИИ, позволяя ему знать местоположение пешки.</RTE_Settings_Location_Note>
+  <RTE_Settings_Location_EnableGlobalLayout>Включить информацию об общей планировке</RTE_Settings_Location_EnableGlobalLayout>
+  <RTE_Settings_Location_EnableGlobalLayout_Desc>Создавать описание пространственной планировки всей колонии (комнаты, области, направления)</RTE_Settings_Location_EnableGlobalLayout_Desc>
+  <RTE_Settings_Location_MinRoomSize>  └─ Минимальный размер комнаты: {0} клеток</RTE_Settings_Location_MinRoomSize>
+  <RTE_Settings_Location_MaxDistance>  └─ Максимальное расстояние: {0} клеток</RTE_Settings_Location_MaxDistance>
+  <RTE_Settings_Location_OnlyNamedRooms>  └─ Показывать только именованные комнаты</RTE_Settings_Location_OnlyNamedRooms>
+  <RTE_Settings_Location_OnlyNamedRooms_Desc>      Игнорировать комнаты без названий (например, «Комната»)</RTE_Settings_Location_OnlyNamedRooms_Desc>
+  <RTE_Settings_Location_IncludeCustomAreas>  └─ Включать пользовательские области</RTE_Settings_Location_IncludeCustomAreas>
+  <RTE_Settings_Location_IncludeCustomAreas_Desc>      Включать нарисованные вручную области в планировку</RTE_Settings_Location_IncludeCustomAreas_Desc>
+  <RTE_Settings_Location_GroupByDirection>  └─ Группировать по направлению</RTE_Settings_Location_GroupByDirection>
+  <RTE_Settings_Location_GroupByDirection_Desc>      Группировать по сторонам света (иначе — по типу комнаты или области)</RTE_Settings_Location_GroupByDirection_Desc>
+  <RTE_Settings_Location_GlobalLayout_Warning>⚠️ Внимание: включение этой функции значительно увеличит расход токенов (примерно на 500–1500 символов). Включайте при необходимости.</RTE_Settings_Location_GlobalLayout_Warning>
+  <RTE_Settings_Location_ExampleTitle>Примеры вывода</RTE_Settings_Location_ExampleTitle>
+  <RTE_Settings_Misc_Title>Прочие настройки</RTE_Settings_Misc_Title>
+  <RTE_Settings_Misc_UnlimitedRelations>Неограниченные отношения</RTE_Settings_Misc_UnlimitedRelations>
+  <RTE_Settings_Misc_DebugMode>Режим отладки</RTE_Settings_Misc_DebugMode>
+  <RTE_Settings_Misc_DebugMode_Desc>Выводить подробные отладочные журналы (запись событий, сбор контекста, процесс обсуждений и т. д.) в Player.log. Для обычной игры отключите этот параметр, чтобы журнал не засорялся.</RTE_Settings_Misc_DebugMode_Desc>
+  <RTE_Settings_Misc_UnlimitedRelations_Desc>Показывать все отношения, игнорируя ограничение MaxPawnContextCount в настройках RimTalk</RTE_Settings_Misc_UnlimitedRelations_Desc>
+  <RTE_Settings_Misc_UnlimitedTraits>Неограниченные черты характера</RTE_Settings_Misc_UnlimitedTraits>
+  <RTE_Settings_Misc_UnlimitedTraits_Desc>Показывать все черты характера в кратком режиме, игнорируя ограничение в 3 черты</RTE_Settings_Misc_UnlimitedTraits_Desc>
+  <RTE_Settings_Announcement_Title>Настройки системы объявлений</RTE_Settings_Announcement_Title>
+  <RTE_Settings_Announcement_Enable>Включить систему объявлений</RTE_Settings_Announcement_Enable>
+  <RTE_Settings_Announcement_Enable_Desc>Разрешить ИИ читать содержимое доски объявлений колонии</RTE_Settings_Announcement_Enable_Desc>
+  <RTE_Settings_Announcement_ShowOverview>Показывать обзор колонии</RTE_Settings_Announcement_ShowOverview>
+  <RTE_Settings_Announcement_ShowOverview_Desc>Включать свободный текст обзора, написанный игроком</RTE_Settings_Announcement_ShowOverview_Desc>
+  <RTE_Settings_Announcement_OverviewMaxLength>Максимальная длина обзора: {0} симв.</RTE_Settings_Announcement_OverviewMaxLength>
+  <RTE_Settings_Announcement_ShowTasks>Показывать структурированные задачи</RTE_Settings_Announcement_ShowTasks>
+  <RTE_Settings_Announcement_ShowTasks_Desc>Включать задачи из списка задач</RTE_Settings_Announcement_ShowTasks_Desc>
+  <RTE_Settings_Announcement_OnlyActive>  └─ Показывать только активные задачи</RTE_Settings_Announcement_OnlyActive>
+  <RTE_Settings_Announcement_OnlyActive_Desc>Не показывать завершённые или приостановленные задачи</RTE_Settings_Announcement_OnlyActive_Desc>
+  <RTE_Settings_Announcement_CompletedDays>    └─ Срок хранения завершённых задач: {0} дн.</RTE_Settings_Announcement_CompletedDays>
+  <RTE_Settings_Announcement_Tip>Совет: доску объявлений можно открыть через вкладку «Объявления» в нижней части экрана игры. Здесь вы можете передавать ИИ любую информацию о колонии.</RTE_Settings_Announcement_Tip>
+  <RTE_Settings_AutoCapture_Title>Настройки автоматической записи событий</RTE_Settings_AutoCapture_Title>
+  <RTE_Settings_AutoCapture_Enable>Включить автоматическую запись событий</RTE_Settings_AutoCapture_Enable>
+  <RTE_Settings_AutoCapture_Enable_Desc>Автоматически добавлять игровые события на доску объявлений</RTE_Settings_AutoCapture_Enable_Desc>
+  <RTE_Settings_AutoCapture_GeneralOptions>Общие параметры</RTE_Settings_AutoCapture_GeneralOptions>
+  <RTE_Settings_AutoCapture_Quests>Записывать задания</RTE_Settings_AutoCapture_Quests>
+  <RTE_Settings_AutoCapture_Events>Записывать события</RTE_Settings_AutoCapture_Events>
+  <RTE_Settings_AutoCapture_Resources>Записывать обнаруженные ресурсы</RTE_Settings_AutoCapture_Resources>
+  <RTE_Settings_AutoCapture_QuestExpire>Автоматическое истечение заданий: {0} дн.</RTE_Settings_AutoCapture_QuestExpire>
+  <RTE_Settings_AutoCapture_EventExpire>Срок действия события: {0} дн.</RTE_Settings_AutoCapture_EventExpire>
+  <RTE_Settings_AutoCapture_DeleteDays>Удалять автоматически записанные события через {0} дн. после завершения</RTE_Settings_AutoCapture_DeleteDays>
+  <RTE_Settings_AutoCapture_DeleteDays_Zero>    Если установить 0 дней, завершённые автоматически записанные события будут удаляться сразу</RTE_Settings_AutoCapture_DeleteDays_Zero>
+  <RTE_Settings_AutoCapture_DeleteDays_Desc>    Автоматически записанные события будут удалены через {0} дн. после завершения</RTE_Settings_AutoCapture_DeleteDays_Desc>
+  <RTE_Settings_AutoCapture_MergeDuplicates>Объединять повторяющиеся события</RTE_Settings_AutoCapture_MergeDuplicates>
+  <RTE_Settings_AutoCapture_MergeDuplicates_Desc>Если названия совпадают, объединять записи и увеличивать счётчик</RTE_Settings_AutoCapture_MergeDuplicates_Desc>
+  <RTE_Settings_AutoCapture_AutoArchive>Автоматически архивировать завершённые записи, созданные вручную</RTE_Settings_AutoCapture_AutoArchive>
+  <RTE_Settings_AutoCapture_AutoArchive_Desc>Периодически очищать завершённые записи, созданные вручную (через 1 день)</RTE_Settings_AutoCapture_AutoArchive_Desc>
+  <RTE_Settings_AutoCapture_AutoCompleteRaid>Автоматически завершать события рейдов</RTE_Settings_AutoCapture_AutoCompleteRaid>
+  <RTE_Settings_AutoCapture_AutoCompleteRaid_Desc>Автоматически отмечать рейды как завершённые, когда все противники уничтожены</RTE_Settings_AutoCapture_AutoCompleteRaid_Desc>
+  <RTE_Settings_AutoCapture_RaidDelay>  └─ Задержка проверки: {0} сек.</RTE_Settings_AutoCapture_RaidDelay>
+  <RTE_Settings_AutoCapture_AutoCompleteCaravan>Автоматически завершать события караванов</RTE_Settings_AutoCapture_AutoCompleteCaravan>
+  <RTE_Settings_AutoCapture_AutoCompleteCaravan_Desc>Автоматически отмечать события караванов как завершённые, когда караван покидает карту</RTE_Settings_AutoCapture_AutoCompleteCaravan_Desc>
+  <RTE_Settings_AutoCapture_DiscoveredTypes>Обнаруженные типы событий ({0})</RTE_Settings_AutoCapture_DiscoveredTypes>
+  <RTE_Settings_AutoCapture_NoTypes>Типы событий не обнаружены. Зайдите в игру, загрузите сохранение и обновите список.</RTE_Settings_AutoCapture_NoTypes>
+  <RTE_Settings_AutoCapture_ResetDefaults>Сбросить настройки по умолчанию</RTE_Settings_AutoCapture_ResetDefaults>
+  <RTE_Settings_AutoCapture_TypeFilterTitle>━━ Фильтр типов событий ━━</RTE_Settings_AutoCapture_TypeFilterTitle>
+  <RTE_Settings_AutoCapture_TypeFilterTip>Этот фильтр не зависит от настроек трансляции RimTalk: отключение трансляции RimTalk не влияет на запись событий здесь.\nРодительские элементы — типы механизмов событий, дочерние — конкретные события (defName). Типы сообщений по умолчанию отключены, чтобы избежать спама.</RTE_Settings_AutoCapture_TypeFilterTip>
+  <RTE_Settings_AutoCapture_EnvironmentTitle>━━ События окружающей среды ━━</RTE_Settings_AutoCapture_EnvironmentTitle>
+  <RTE_Settings_AutoCapture_Weather>Записывать изменения погоды</RTE_Settings_AutoCapture_Weather>
+  <RTE_Settings_AutoCapture_Weather_Desc>Автоматически записывать изменения погоды (ясно, дождь, метель и т. п.)</RTE_Settings_AutoCapture_Weather_Desc>
+  <RTE_Settings_AutoCapture_WeatherExpire>Срок действия погодного события: {0} ч.</RTE_Settings_AutoCapture_WeatherExpire>
+  <RTE_Settings_AutoCapture_GameConditions>Записывать игровые условия</RTE_Settings_AutoCapture_GameConditions>
+  <RTE_Settings_AutoCapture_GameConditions_Desc>Автоматически записывать игровые условия (жара, похолодание, токсичные осадки, затмение и т. п.)</RTE_Settings_AutoCapture_GameConditions_Desc>
+  <RTE_Settings_AutoCapture_ConditionExpire>Срок действия события условия: {0} ч.</RTE_Settings_AutoCapture_ConditionExpire>
+  <RTE_Settings_AutoCapture_ConditionExpire_Desc>    Для постоянных условий используется этот срок действия; временные условия завершаются автоматически после окончания</RTE_Settings_AutoCapture_ConditionExpire_Desc>
+  <RTE_Settings_AutoCapture_MaintenanceTitle>━━ Инструменты обслуживания ━━</RTE_Settings_AutoCapture_MaintenanceTitle>
+  <RTE_Settings_AutoCapture_ForceReset>Принудительно пересчитать сроки событий</RTE_Settings_AutoCapture_ForceReset>
+  <RTE_Settings_AutoCapture_ForceReset_Desc>Если автоматически записанные события не истекают или не удаляются должным образом, нажмите эту кнопку, чтобы пересчитать все сроки событий на основе текущих настроек и немедленно очистить просроченные записи. Использовать нужно в игре.</RTE_Settings_AutoCapture_ForceReset_Desc>
+  <RTE_Settings_AutoCapture_ForceReset_Result>Сброс выполнен: {0}</RTE_Settings_AutoCapture_ForceReset_Result>
+  <RTE_Settings_AutoCapture_ForceReset_NoManager>Невозможно выполнить: менеджер событий не загружен</RTE_Settings_AutoCapture_ForceReset_NoManager>
+  <RTE_Settings_AutoCapture_ForceReset_NoGame>Невозможно выполнить: сначала загрузите сохранение</RTE_Settings_AutoCapture_ForceReset_NoGame>
+  <RTE_Settings_AI_Title>Настройки летописца ИИ</RTE_Settings_AI_Title>
+  <RTE_Settings_AI_Enable>Включить ежедневную сводку ИИ</RTE_Settings_AI_Enable>
+  <RTE_Settings_AI_Enable_Desc>Автоматически создавать снимки и сводки развития колонии в полночь</RTE_Settings_AI_Enable_Desc>
+  <RTE_Settings_AI_Provider>Поставщик ИИ:</RTE_Settings_AI_Provider>
+  <RTE_Settings_AI_APIConfig>Настройки API</RTE_Settings_AI_APIConfig>
+  <RTE_Settings_AI_APIKey>Ключ API:</RTE_Settings_AI_APIKey>
+  <RTE_Settings_AI_APIURL>URL API (необязательно, по умолчанию {0}):</RTE_Settings_AI_APIURL>
+  <RTE_Settings_AI_DefaultURL>По умолчанию: {0}</RTE_Settings_AI_DefaultURL>
+  <RTE_Settings_AI_ModelName>Название модели:</RTE_Settings_AI_ModelName>
+  <RTE_Settings_AI_TestConnection>Проверить соединение</RTE_Settings_AI_TestConnection>
+  <RTE_Settings_AI_TestSuccess>Соединение установлено! Ответ ИИ: {0}</RTE_Settings_AI_TestSuccess>
+  <RTE_Settings_AI_TestFailed>Не удалось подключиться. Проверьте журнал.</RTE_Settings_AI_TestFailed>
+  <RTE_Settings_AI_SnapshotContent>Настройки содержимого снимка</RTE_Settings_AI_SnapshotContent>
+  <RTE_Settings_AI_IncludeProjects>Включать информацию о проектах с доски объявлений</RTE_Settings_AI_IncludeProjects>
+  <RTE_Settings_AI_IncludeProjects_Desc>Передавать летописцу текущие и завершённые проекты с доски объявлений</RTE_Settings_AI_IncludeProjects_Desc>
+  <RTE_Settings_AI_IncludeResearch>Включать состояние исследований</RTE_Settings_AI_IncludeResearch>
+  <RTE_Settings_AI_IncludeResearch_Desc>Передавать летописцу сведения обо всех завершённых исследованиях (примерно до 1000 символов)</RTE_Settings_AI_IncludeResearch_Desc>
+  <RTE_Settings_AI_IncludeUnfinished>  └─ Включать список незавершённых исследований</RTE_Settings_AI_IncludeUnfinished>
+  <RTE_Settings_AI_IncludeUnfinished_Desc>Также передавать список незавершённых исследований (увеличивает расход токенов)</RTE_Settings_AI_IncludeUnfinished_Desc>
+  <RTE_Settings_AI_IncludePower>Включать состояние электроснабжения</RTE_Settings_AI_IncludePower>
+  <RTE_Settings_AI_IncludePower_Desc>Передавать летописцу сведения о выработке и потреблении энергии колонией</RTE_Settings_AI_IncludePower_Desc>
+  <RTE_Settings_AI_ContextInjection>Настройки внедрения контекста</RTE_Settings_AI_ContextInjection>
+  <RTE_Settings_AI_InjectSnapshot>Автоматически добавлять снимки в диалоги ИИ</RTE_Settings_AI_InjectSnapshot>
+  <RTE_Settings_AI_InjectSnapshot_Desc>Если включено, ИИ будет автоматически видеть сводки недавних исторических снимков во время диалогов</RTE_Settings_AI_InjectSnapshot_Desc>
+  <RTE_Settings_AI_InjectionMode>  └─ Режим внедрения</RTE_Settings_AI_InjectionMode>
+  <RTE_Settings_AI_InjectionMode_Context>Контекст (системный контекст)</RTE_Settings_AI_InjectionMode_Context>
+  <RTE_Settings_AI_InjectionMode_Prompt>Промпт (промпт диалога)</RTE_Settings_AI_InjectionMode_Prompt>
+  <RTE_Settings_AI_InjectionMode_Context_Desc>      Режим контекста: снимки добавляются в системный контекст и видны всем пешкам. Подходит для обсуждения пешками истории колонии.</RTE_Settings_AI_InjectionMode_Context_Desc>
+  <RTE_Settings_AI_InjectionMode_Prompt_Desc>      Режим промпта: снимки добавляются в промпт диалога и влияют только на текущую беседу. Подходит для передачи ИИ фоновой информации без прямого обсуждения её пешками.</RTE_Settings_AI_InjectionMode_Prompt_Desc>
+  <RTE_Settings_AI_InjectDays>  └─ Количество дней: {0}</RTE_Settings_AI_InjectDays>
+  <RTE_Settings_AI_InjectDays_Desc>      Будут добавлены сводки снимков за последние {0} дн.</RTE_Settings_AI_InjectDays_Desc>
+  <RTE_Settings_AI_Note>Примечание:\n1. Система автоматически делает снимки колонии в полночь (постройки, комнаты, чертежи).\n2. ИИ сравнивает снимок со вчерашним, объединяет журнал действий игрока, прогресс проектов, состояние исследований и события, чтобы создать краткую сводку.\n3. Результаты отображаются на вкладке «Исторические снимки» и не изменяют обзор напрямую.\n4. Если включено автоматическое внедрение, во время диалогов ИИ будет видеть недавнюю историю с датами.\n5. Информация о проектах: считываются текущие и завершённые проекты с доски объявлений.\n6. Состояние исследований: включает текущие и завершённые исследования, а также, при необходимости, незавершённые (по умолчанию отключено для экономии токенов).</RTE_Settings_AI_Note>
+  <RTE_PromptEditor_CustomPrompt>Пользовательский промпт «{0}»</RTE_PromptEditor_CustomPrompt>
+  <RTE_PromptEditor_OverviewSummary>Сводка обзора</RTE_PromptEditor_OverviewSummary>
+  <RTE_PromptEditor_DailySynthesis>Ежедневный снимок</RTE_PromptEditor_DailySynthesis>
+  <RTE_PromptEditor_ProjectSummary>Сводка проекта от ИИ</RTE_PromptEditor_ProjectSummary>
+  <RTE_PromptEditor_Tip>Совет: оставьте поле пустым, чтобы использовать стандартный промпт. Поддерживается многострочный текст.\nДоступные переменные: {overview}, {diffReport}, {actions}, {events}</RTE_PromptEditor_Tip>
+  <RTE_PromptEditor_RestoreDefault>Восстановить по умолчанию</RTE_PromptEditor_RestoreDefault>
+  <RTE_PromptEditor_ViewDefault>Показать стандартный</RTE_PromptEditor_ViewDefault>
+  <RTE_PromptEditor_Save>Сохранить</RTE_PromptEditor_Save>
+  <RTE_PromptEditor_Cancel>Отмена</RTE_PromptEditor_Cancel>
+  <RTE_PromptEditor_Restored>Пользовательский промпт очищен, будет использоваться стандартный промпт</RTE_PromptEditor_Restored>
+  <RTE_PromptEditor_DefaultPrompt>Стандартный промпт:\n\n{0}</RTE_PromptEditor_DefaultPrompt>
+  <RTE_PromptEditor_Close>Закрыть</RTE_PromptEditor_Close>
+  <RTE_PromptEditor_Saved>Промпт сохранён</RTE_PromptEditor_Saved>
+  <RTE_PromptEditor_UseDefault>Используется стандартный промпт</RTE_PromptEditor_UseDefault>
+  <RTE_PromptEditor_CharCount>Количество символов: {0}</RTE_PromptEditor_CharCount>
+  <RTE_AreaDrawing_Label>Рисовать область</RTE_AreaDrawing_Label>
+  <RTE_AreaDrawing_Desc>Перетаскивайте мышь, чтобы добавлять или удалять клетки области</RTE_AreaDrawing_Desc>
+  <RTE_AreaDrawing_NoAreaSelected>Область не выбрана</RTE_AreaDrawing_NoAreaSelected>
+  <RTE_AreaDrawing_SelectAreaFirst>Сначала выберите область</RTE_AreaDrawing_SelectAreaFirst>
+  <RTE_TaskEditor_Progress_AutoCalc>Прогресс: {0} (автоматически)</RTE_TaskEditor_Progress_AutoCalc>
+  <RTE_TaskEditor_Progress_Manual_Display>Прогресс: {0}</RTE_TaskEditor_Progress_Manual_Display>
+  <RTE_TaskEditor_ConstructionArea_Display>Область строительства: {0} (чертежей: {1})</RTE_TaskEditor_ConstructionArea_Display>
+  <RTE_TaskEditor_ConstructionArea_Deleted>Область строительства: (удалена)</RTE_TaskEditor_ConstructionArea_Deleted>
+  <RTE_TaskEditor_ConstructionArea_Name>Строительная зона {0}</RTE_TaskEditor_ConstructionArea_Name>
+  <RTE_TaskEditor_ConstructionArea_DefaultName>Строительная зона</RTE_TaskEditor_ConstructionArea_DefaultName>
+  <RTE_TaskEditor_CustomPromptButton>Пользовательский промпт</RTE_TaskEditor_CustomPromptButton>
+  <RTE_AreaEditor_CellCount_Display>Количество клеток: {0}</RTE_AreaEditor_CellCount_Display>
+  <RTE_Announcement_Status_Completed>[Завершено]</RTE_Announcement_Status_Completed>
+  <RTE_Announcement_Status_Paused>[Приостановлено]</RTE_Announcement_Status_Paused>
+  <RTE_Announcement_Status_Active>[В процессе]</RTE_Announcement_Status_Active>
+  <RTE_Announcement_Progress_Display> [Прогресс: {0}]</RTE_Announcement_Progress_Display>
+  <RTE_Announcement_AssignedTo_Display> [Назначено: {0}]</RTE_Announcement_AssignedTo_Display>
+  <RTE_Area_CellCount_Display>Клеток: {0}</RTE_Area_CellCount_Display>
+  <RTE_Area_Status_Label>Статус</RTE_Area_Status_Label>
+  <RimTalkEnhance.TravelingPattern>Направляется к → {0}</RimTalkEnhance.TravelingPattern>
+  <RTE_ColonyCenter_Tooltip>Показать/изменить центральную точку колонии</RTE_ColonyCenter_Tooltip>
+  <RTE_ColonyCenter_Title>Настройка центральной точки колонии</RTE_ColonyCenter_Title>
+  <RTE_ColonyCenter_AutoCenter>Автоматический центр: ({0}, {1})</RTE_ColonyCenter_AutoCenter>
+  <RTE_ColonyCenter_OffsetX>Смещение по X: {0}</RTE_ColonyCenter_OffsetX>
+  <RTE_ColonyCenter_OffsetZ>Смещение по Z: {0}</RTE_ColonyCenter_OffsetZ>
+  <RTE_ColonyCenter_FinalCenter>Итоговый центр: ({0}, {1})</RTE_ColonyCenter_FinalCenter>
+  <RTE_ColonyCenter_Reset>Сбросить смещение</RTE_ColonyCenter_Reset>
+  <RTE_ColonyCenter_Apply>Применить</RTE_ColonyCenter_Apply>
+  <RTE_ColonyCenter_ApplyClose>Применить и закрыть</RTE_ColonyCenter_ApplyClose>
+  <RTE_ColonyCenter_Hint>Подсказка: жёлтый маркер на карте будет перемещаться в реальном времени при изменении смещения.\nДаже если домашняя область расширится, смещение автоматически применится к новому автоматическому центру.</RTE_ColonyCenter_Hint>
+  <RTE_ColonyCenter_Updated>Смещение центра колонии обновлено</RTE_ColonyCenter_Updated>
+  <RTE_Announcement_Discuss>Обсудить</RTE_Announcement_Discuss>
+  <RTE_Announcement_Discuss_Random>Случайный поселенец</RTE_Announcement_Discuss_Random>
+  <RTE_Announcement_Discuss_NoColonist>Нет поселенцев, доступных для обсуждения</RTE_Announcement_Discuss_NoColonist>
+  <RTE_Announcement_Discuss_Started>{0} задумался о теме «{1}»...</RTE_Announcement_Discuss_Started>
+  <RTE_Announcement_Discuss_Failed>Не удалось начать обсуждение: RimTalk загружен некорректно</RTE_Announcement_Discuss_Failed>
+  <RTE_Announcement_Discuss_PlayerMode>Игрок начинает обсуждение</RTE_Announcement_Discuss_PlayerMode>
+  <RTE_Announcement_Discuss_PawnMode>Поселенцы обсуждают между собой</RTE_Announcement_Discuss_PawnMode>
+  <RTE_Announcement_Discuss_SelectPawn>Выбрать поселенца</RTE_Announcement_Discuss_SelectPawn>
+  <RTE_Announcement_Discuss_PawnStarted>{0} начал обсуждать тему «{1}»...</RTE_Announcement_Discuss_PawnStarted>
+  <RTE_GroupDiscussion>Групповое обсуждение</RTE_GroupDiscussion>
+  <RTE_GroupDiscussion_Title>Групповое обсуждение — тема: «{0}»</RTE_GroupDiscussion_Title>
+  <RTE_GroupDiscussion_Warning>⚠️ Внимание: чем больше участников, тем выше расход токенов. Выбирайте внимательно!</RTE_GroupDiscussion_Warning>
+  <RTE_GroupDiscussion_Leader>Ведущий (один выбор)</RTE_GroupDiscussion_Leader>
+  <RTE_GroupDiscussion_Participants>Участники (множественный выбор)</RTE_GroupDiscussion_Participants>
+  <RTE_GroupDiscussion_Selected>Выбрано поселенцев: {0}</RTE_GroupDiscussion_Selected>
+  <RTE_GroupDiscussion_SelectAll>Выбрать всех</RTE_GroupDiscussion_SelectAll>
+  <RTE_GroupDiscussion_DeselectAll>Снять выделение со всех</RTE_GroupDiscussion_DeselectAll>
+  <RTE_GroupDiscussion_Confirm>Начать обсуждение</RTE_GroupDiscussion_Confirm>
+  <RTE_GroupDiscussion_Cancel>Отмена</RTE_GroupDiscussion_Cancel>
+  <RTE_GroupDiscussion_NoLeader>Выберите ведущего</RTE_GroupDiscussion_NoLeader>
+  <RTE_GroupDiscussion_NoParticipants>Выберите хотя бы одного участника</RTE_GroupDiscussion_NoParticipants>
+  <RTE_GroupDiscussion_NoParticipantsNearby>Рядом с ведущим нет доступных для выбора поселенцев.\nВы всё равно можете начать обсуждение: объявление будет передано бодрствующим поселенцам поблизости, и они автоматически присоединятся.</RTE_GroupDiscussion_NoParticipantsNearby>
+  <RTE_GroupDiscussion_NotEnough>Для группового обсуждения нужны как минимум два поселенца. Соберите их вместе.</RTE_GroupDiscussion_NotEnough>
+  <RTE_GroupDiscussion_Started>{0} начал групповое обсуждение на тему «{1}»</RTE_GroupDiscussion_Started>
+  <RTE_Snapshot_ResetOffset>Сбросить дату</RTE_Snapshot_ResetOffset>
+  <RTE_Snapshot_OffsetReset>Смещение даты сброшено</RTE_Snapshot_OffsetReset>
+  <RTE_Snapshot_ResetAll>Сбросить летописца ИИ</RTE_Snapshot_ResetAll>
+  <RTE_Snapshot_ConfirmResetAll>Вы уверены, что хотите сбросить летописца ИИ?\n\nБудут выполнены действия:\n• Удалены все исторические снимки\n• Сброшено смещение даты\n• Создан новый исходный снимок\n\nЭто действие нельзя отменить!</RTE_Snapshot_ConfirmResetAll>
+  <RTE_Snapshot_ResetComplete>Летописец ИИ сброшен, создан новый исходный снимок</RTE_Snapshot_ResetComplete>
+  <RTE_TaskEditor_IsGlobal>Глобальное действие</RTE_TaskEditor_IsGlobal>
+  <RTE_TaskEditor_IsGlobal_Tip>Если включено, это объявление будет действовать на всех картах (в том числе во время нападения на другие фракции)</RTE_TaskEditor_IsGlobal_Tip>
+  <RTE_API_ColonyStatus_Desc>Сведения о состоянии колонии (обзор, объявления)</RTE_API_ColonyStatus_Desc>
+  <RTE_API_ColonyHistory_Desc>Сводка исторических снимков колонии</RTE_API_ColonyHistory_Desc>
+  <RTE_API_ColonyLayout_Desc>Информация о планировке колонии (комнаты, области, направления)</RTE_API_ColonyLayout_Desc>
+  <RTE_API_ColonyFactions_Desc>Информация об отношениях фракций на карте</RTE_API_ColonyFactions_Desc>
+  <RTE_API_LocalSocial_Desc>Социальные отношения всех пешек на локальной карте (без пешек вне карты)</RTE_API_LocalSocial_Desc>
+  <RTE_Settings_Misc_Note>Примечание:\n1. Неограниченные отношения: показывать все отношения, игнорируя ограничение MaxPawnContextCount в настройках RimTalk.\n2. Неограниченные черты: показывать все черты в кратком режиме, игнорируя ограничение в 3 черты.\nВнимание: включение этих параметров может увеличить расход токенов.</RTE_Settings_Misc_Note>
+</LanguageData>
